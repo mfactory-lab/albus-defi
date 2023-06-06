@@ -1,15 +1,18 @@
 $sidebar-block-height: 68px;
+$transition-sidebar: .4s;
 
 aside {
+  min-width: 232px;
   width: 232px;
   background-color: $primary;
-  transition: width 0.4s;
+  transition: $transition-sidebar;
   height: 100vh;
   position: sticky;
   top: 0;
 }
 
 .sidebar-minimize {
+  min-width: 80px;
   width: 80px;
 
   .sidebar-modify-button img {
