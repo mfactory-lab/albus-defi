@@ -29,6 +29,7 @@ declare module '@vue/runtime-core' {
     SidebarHeader: typeof import('./../src/components/Sidebar/SidebarHeader.vue')['default']
     SidebarNavigation: typeof import('./../src/components/Sidebar/SidebarNavigation.vue')['default']
     SidebarSocial: typeof import('./../src/components/Sidebar/SidebarSocial.vue')['default']
+    SocialLinks: typeof import('./../src/components/SocialLinks.vue')['default']
     SwapCard: typeof import('./../src/components/Swap/SwapCard.vue')['default']
     SwapContent: typeof import('./../src/components/Swap/SwapContent.vue')['default']
     TransferCard: typeof import('./../src/components/Transfer/TransferCard.vue')['default']

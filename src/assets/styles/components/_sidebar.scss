@@ -44,11 +44,10 @@ aside {
     a {
       justify-content: center;
 
-        width: 45px;
-        height: 45px;
-        border-radius: 7px;
-        margin: 0 auto 17px;
-
+      width: 45px;
+      height: 45px;
+      border-radius: 7px;
+      margin: 0 auto 17px;
     }
 
     svg {
@@ -77,8 +76,10 @@ aside {
     }
   }
 
-  .sidebar-social {
-    flex-direction: column;
+  .sidebar {
+    .social-links {
+      flex-direction: column;
+    }
   }
 }
 
@@ -224,7 +225,7 @@ aside {
     }
   }
 
-  &-social {
+  .social-links {
     padding: 15px 0;
     display: flex;
     justify-content: center;

@@ -3,7 +3,7 @@ import { DISCORD_URL, TELEGRAM_URL, TWITTER_URL } from '@/config/common'
 </script>
 
 <template>
-  <nav class="sidebar-social">
+  <nav class="social-links">
     <a :href="TELEGRAM_URL" target="_blank" :title="TELEGRAM_URL">
       <i-app-telegram />
     </a>

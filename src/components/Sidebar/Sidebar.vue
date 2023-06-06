@@ -17,7 +17,7 @@ function handleSidebar() {
       <sidebar-navigation />
       <sidebar-footer />
       <dark-theme-toggle prop-class="sidebar-theme" />
-      <sidebar-social />
+      <social-links />
       <sidebar-copyrights />
     </div>
     <q-btn

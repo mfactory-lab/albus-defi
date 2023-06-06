@@ -1,3 +1,74 @@
 body.body--dark {
     background: $primary;
+
+    aside {
+        background: $secondary;
+    }
+
+    .swap-card {
+        border: 1px solid #ffffff42;
+
+        &__body {
+            background-color: $secondary;
+        }
+    }
+
+    .q-dark {
+        background: $secondary;
+    }
+
+    .swap-field__label,
+    .swap-field__balance,
+    .transfer-address__label {
+        color: #fff;
+    }
+
+    .swap-info {
+        color: #fff;
+    }
+
+    .swap-input {
+        &.q-field--focused {
+            .q-field__control {
+                &::after {
+                    border-color: $light-gray-middle !important;
+                }
+            }
+        }
+    }
+
+    .q-item.q-router-link--active,
+    .q-item--active {
+        color: #ddeff8;
+    }
+
+    .transfer-select {
+            .q-field--focused {
+            .q-field__control {
+                &::after {
+                    border-color: $light-gray-middle !important;
+                }
+            }
+        }
+        .q-field__control-container span {
+            color: #fff;
+        }
+    }
+
+    // menu
+
+    .menu-container {
+        a {
+            color: #fff;
+        }
+
+        path {
+            fill: #fff;
+        }
+
+        .q-item:nth-child(3),
+        .q-item:nth-child(5) {
+            border-bottom: 1px solid $light-gray;
+        }
+    }
 }

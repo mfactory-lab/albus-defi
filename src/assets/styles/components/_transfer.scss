@@ -1,6 +1,6 @@
 .transfer-select {
     .q-field__control:before {
-        border: 1px solid $light-gray;
+        border: 1px solid $swap-info-border-color;
     }
 
     .q-field--focused {
@@ -43,7 +43,7 @@
     }
 
     &-address {
-        margin: 20px 0;
+        margin: 10px 0;
         &__label {
             padding: 5px 10px;
             font-weight: 500;

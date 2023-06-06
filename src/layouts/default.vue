@@ -6,5 +6,4 @@
       <router-view />
     </main>
   </div>
-  <app-footer />
 </template>

@@ -37,6 +37,9 @@ watch(isOpen, (o) => {
               </router-link>
             </q-item-section>
           </q-item>
+          <q-item clickable>
+            <social-links />
+          </q-item>
         </q-list>
       </q-menu>
     </q-btn>
@@ -45,12 +48,13 @@ watch(isOpen, (o) => {
 
 <style lang="scss">
 .menu-container {
-  padding: 20px 0 10px;
+  padding: 10px 0 0;
 
   a {
     text-transform: uppercase;
     text-decoration: none;
     color: $primary;
+    display: flex;
   }
 
   .active-route {
@@ -62,8 +66,15 @@ watch(isOpen, (o) => {
     align-items: center;
   }
 
-  .q-item:nth-child(4) {
+  .q-item:nth-child(3),
+  .q-item:nth-child(5) {
     border-bottom: 1px solid rgba(78, 76, 76, 0.56);
+  }
+
+  .social-links {
+    margin: 12px auto;
+    display: flex;
+    gap: 10px;
   }
 }
 
@@ -74,6 +85,12 @@ watch(isOpen, (o) => {
     width: 50px;
     height: 50px;
     z-index: 10000;
+  }
+
+  @media (max-width: $breakpoint-xs) {
+    position: absolute;
+    right: 8px;
+    top: 2px;
   }
 }
 </style>

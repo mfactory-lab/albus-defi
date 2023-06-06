@@ -81,7 +81,7 @@ const denseOpts = ref(false)
           Address
         </div>
         <q-input
-          v-model="state.from.value" :maxlength="14" outlined placeholder="0.0"
+          v-model="state.from.value" :maxlength="14" outlined
           class="swap-input col" @keypress="onlyNumber"
         />
       </div>

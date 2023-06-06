@@ -73,9 +73,5 @@
         </ul>
       </div>
     </div>
-
-    <div class="swap-smart">
-      <i-app-smart-contract />
-    </div>
   </div>
 </template>
