@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 
 const { state, changeDirection } = useSwap()
@@ -27,16 +28,6 @@ function setMax(from: any) {
 
 function swapSubmit() {
   console.log('swapSubmit')
-}
-
-function onlyNumber(e: any) {
-  const keyCode = e.keyCode ? e.keyCode : e.which
-  if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
-    e.preventDefault()
-  }
-  if (keyCode === 46 && String(e.target.value).includes('.')) {
-    e.preventDefault()
-  }
 }
 </script>
 

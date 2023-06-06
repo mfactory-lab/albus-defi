@@ -267,6 +267,7 @@ declare global {
   const useToNumber: typeof import('@vueuse/core')['useToNumber']
   const useToString: typeof import('@vueuse/core')['useToString']
   const useToggle: typeof import('@vueuse/core')['useToggle']
+  const useTransfer: typeof import('../src/stores/transfer')['useTransfer']
   const useTransition: typeof import('@vueuse/core')['useTransition']
   const useTranslation: typeof import('i18next-vue')['useTranslation']
   const useUrlSearchParams: typeof import('@vueuse/core')['useUrlSearchParams']

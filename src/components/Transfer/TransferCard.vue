@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const { state } = useSwap()
+import { onlyNumber } from '@/utils'
+
+const { state, tokens } = useTransfer()
 
 function setMax(from: any) {
   console.log(from)
@@ -9,19 +11,13 @@ function swapSubmit() {
   console.log('swapSubmit')
 }
 
-function onlyNumber(e: any) {
-  const keyCode = e.keyCode ? e.keyCode : e.which
-  if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
-    e.preventDefault()
-  }
-  if (keyCode === 46 && String(e.target.value).includes('.')) {
-    e.preventDefault()
-  }
-}
+const options = computed(() => tokens.map(t => ({
+  label: t.name,
+  value: t.symbol,
+  img: t.img,
+})))
 
-const options = ['sol', 'usdc', 'usdt']
-
-const model = ref(options[0])
+const model = ref(options.value[0])
 
 const denseOpts = ref(false)
 </script>
@@ -44,7 +40,7 @@ const denseOpts = ref(false)
                 AMOUNT:
               </div>
               <div class="col swap-field__balance">
-                Balance: 1
+                Balance: {{ state.balance }}
               </div>
             </div>
           </div>
@@ -56,18 +52,30 @@ const denseOpts = ref(false)
               >
                 <template #prepend>
                   <q-avatar>
-                    <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
+                    <img :src="model.img">
                   </q-avatar>
+                </template>
+                <template #option="scope">
+                  <q-item v-bind="scope.itemProps" class="transfer-select__token">
+                    <q-item-section avatar class="transfer-select__token--item">
+                      <q-avatar>
+                        <img :src="scope.opt.img">
+                      </q-avatar>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
                 </template>
               </q-select>
             </div>
             <q-input
-              v-model="state.from.value" :maxlength="14" outlined placeholder="0.0"
+              v-model="state.value" :maxlength="14" outlined placeholder="0.0"
               class="swap-input col" @keypress="onlyNumber"
             >
               <!-- @keyup="changeValue" -->
               <template #append>
-                <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMax(state.from)">
+                <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMax(state.balance)">
                   MAX
                 </q-btn>
               </template>
@@ -81,8 +89,8 @@ const denseOpts = ref(false)
           Address
         </div>
         <q-input
-          v-model="state.from.value" :maxlength="14" outlined
-          class="swap-input col" @keypress="onlyNumber"
+          v-model="state.address" :maxlength="14" outlined
+          class="swap-input col"
         />
       </div>
 
@@ -94,7 +102,7 @@ const denseOpts = ref(false)
       </div>
 
       <div class="swap-submit transfer-submit">
-        <q-btn :loading="state.swapping" :disable="!state.active" rounded :ripple="false" @click="swapSubmit">
+        <q-btn :loading="state.loading" :disable="!state.active" rounded :ripple="false" @click="swapSubmit">
           Send
         </q-btn>
       </div>

@@ -34,6 +34,21 @@
     .q-field__marginal {
         height: 48px !important;
     }
+
+    &__token {
+        .q-item__section {
+            min-width: 20px;
+            width: 40px;
+            text-transform: uppercase;
+        }
+        .q-avatar {
+            font-size: 24px;
+            padding: 0;
+        }
+        .q-item__section {
+            padding: 0;
+        }
+    }
 }
 
 .transfer {
