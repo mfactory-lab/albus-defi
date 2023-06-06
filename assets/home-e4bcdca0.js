@@ -1,0 +1,1 @@
+import{_ as t,r as s,o as a,j as c,k as r,m as e,F as _,n as m}from"./index-f862f4d4.js";const i={},p={class:"container"};function f(l,d){const o=s("router-view"),n=m;return a(),c(_,null,[r("main",p,[e(o)]),e(n)],64)}const h=t(i,[["render",f]]);export{h as default};
