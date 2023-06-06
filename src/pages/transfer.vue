@@ -1,3 +1,4 @@
 <template>
-  transfer
+  <transfer-card />
+  <transfer-content />
 </template>

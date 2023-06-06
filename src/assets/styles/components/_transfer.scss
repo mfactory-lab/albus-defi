@@ -1,0 +1,54 @@
+.transfer-select {
+    .q-field__control:before {
+        border: 1px solid $light-gray;
+    }
+
+    .q-field--focused {
+        .q-field__control {
+            &::after {
+                border-color: $swap-input-focused-color;
+            }
+        }
+    }
+
+    .q-field--dense .q-field__marginal .q-avatar {
+        font-size: 35px;
+    }
+
+    .q-field__control-container {
+        span {
+            margin-left: 5px;
+            text-transform: uppercase;
+            font-weight: 400;
+            font-size: 15px;
+            line-height: 18px;
+            color: $secondary;
+        }
+    }
+
+    .q-field__append {
+        display: none;
+    }
+
+    .q-field__control,
+    .q-field__marginal {
+        height: 48px !important;
+    }
+}
+
+.transfer {
+    &-submit {
+        font-weight: 400;
+        padding-bottom: 15px;
+    }
+
+    &-address {
+        margin: 20px 0;
+        &__label {
+            padding: 5px 10px;
+            font-weight: 500;
+            font-size: 13px;
+            color: $secondary;
+        }
+    }
+}

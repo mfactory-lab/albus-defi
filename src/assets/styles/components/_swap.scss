@@ -125,6 +125,10 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
     font-weight: 500;
     font-size: 13px;
     color: $secondary;
+
+    &:nth-child(2) {
+      padding-left: 16px;
+    }
   }
 
   &__balance {
