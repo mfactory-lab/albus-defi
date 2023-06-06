@@ -15,6 +15,7 @@ declare module '@vue/runtime-core' {
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     CopyToClipboard: typeof import('./../src/components/CopyToClipboard.vue')['default']
     DarkThemeToggle: typeof import('./../src/components/DarkThemeToggle.vue')['default']
+    HomeNav: typeof import('./../src/components/Home/HomeNav.vue')['default']
     IAppDiscord: typeof import('~icons/app/discord')['default']
     IAppSmartContract: typeof import('~icons/app/smart-contract')['default']
     IAppTelegram: typeof import('~icons/app/telegram')['default']

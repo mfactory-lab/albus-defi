@@ -5,7 +5,6 @@ $swap-base-color: $yellow !default;
 $swap-header-color: $swap-base-color !default;
 $swap-btn-color: $swap-base-color !default;
 $swap-shadow: 0 4px 4px rgba(0, 0, 0, 0.25) !default;
-$swap-border-radius: 12px;
 $swap-max-btn-color: $light-gray;
 $swap-input-focused-color: rgba($secondary, 0.7) !important;
 
@@ -42,7 +41,6 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
   max-height: 417px;
   box-shadow: $swap-shadow;
   margin: 80px auto 66px;
-  border-radius: $swap-border-radius;
 
 
   &__header {

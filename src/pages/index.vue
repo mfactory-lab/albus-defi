@@ -1,9 +1,8 @@
 <template>
-  home page
+  <home-nav />
 </template>
 
 <route lang="yaml">
-  meta:
-    layout: home
+meta:
+  layout: home
             </route>
-  
