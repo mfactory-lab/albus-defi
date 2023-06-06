@@ -71,4 +71,11 @@ body.body--dark {
             border-bottom: 1px solid $light-gray;
         }
     }
+
+    .main-page-nav a {
+        color: #fff;
+        &:hover {
+            color: $light-gray-middle;
+        }
+    }
 }
