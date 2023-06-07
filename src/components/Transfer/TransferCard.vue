@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { SwapData } from '@/stores/swap'
-import { onlyNumber } from '@/utils'
+import { formatBalance, onlyNumber } from '@/utils'
 
 const { state } = useTransferStore()
-const { handleSearchToken, options } = useToken()
+
+const { handleSearchToken, options, tokenBalance } = useToken()
+
+const balance = computed(() => formatBalance(tokenBalance(state.token.label)))
 
 function setToken(t: SwapData) {
   state.token = t
@@ -29,14 +32,14 @@ function swapSubmit() {
         <div class="swap-field">
           <div class="swap-field__info">
             <div class="row items-end">
-              <div class="col swap-field__label">
+              <div class="col-3 swap-field__label">
                 FROM:
               </div>
-              <div class="col swap-field__label">
-                AMOUNT:
+              <div class="col-2 swap-field__label">
+                AMOUNT
               </div>
               <div class="col swap-field__balance">
-                Balance: {{ state.balance }}
+                Balance: {{ balance }}
               </div>
             </div>
           </div>
@@ -49,7 +52,7 @@ function swapSubmit() {
             >
               <!-- @keyup="changeValue" -->
               <template #append>
-                <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMax(state.balance)">
+                <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMax(tokenBalance)">
                   MAX
                 </q-btn>
               </template>

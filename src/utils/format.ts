@@ -3,3 +3,7 @@ export const formatPct = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2,
   maximumFractionDigits: 5,
 })
+
+export function formatBalance(balance: number, precision = 2) {
+  return balance > 0 ? balance.toFixed(precision) : 0
+}

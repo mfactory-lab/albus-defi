@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { onlyNumber } from '@/utils'
+import { formatBalance, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { SwapData } from '@/stores/swap'
 
 const { state, changeDirection, openSlippage, closeSlippage } = useSwapStore()
-const { handleSearchToken, options } = useToken()
+const { handleSearchToken, options, tokenBalance } = useToken()
 
 const changeButtonRotate = ref(0)
 
 const rotateBtnStyle = computed(() => `transform: rotate(${changeButtonRotate.value * 180}deg)`)
+
+const balanceFrom = computed(() => formatBalance(tokenBalance(state.from.label)))
+const balanceTo = computed(() => formatBalance(tokenBalance(state.to.label)))
 
 function handleChangeDirection() {
   changeDirection()
@@ -43,7 +46,7 @@ function swapSubmit() {
                 FROM:
               </div>
               <div class="col swap-field__balance">
-                Balance: 1
+                Balance: {{ balanceFrom }}
               </div>
             </div>
           </div>
@@ -74,7 +77,7 @@ function swapSubmit() {
                 TO:
               </div>
               <div class="col swap-field__balance">
-                Balance: 12
+                Balance: {{ balanceTo }}
               </div>
             </div>
           </div>

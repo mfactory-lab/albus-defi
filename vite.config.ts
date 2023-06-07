@@ -101,6 +101,10 @@ export default defineConfig(({ mode }) => {
       // '@solana/buffer-layout',
       // ],
     },
+    define: {
+      'process.env': process.env,
+      // global: 'globalThis',
+    },
     css: {
       preprocessorOptions: {
         scss: {

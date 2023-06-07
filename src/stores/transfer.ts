@@ -7,7 +7,6 @@ export const useTransferStore = defineStore('transfer', () => {
 
   const state = reactive<TransferState>({
     address: '',
-    balance: 0,
     value: undefined,
     loading: false,
     active: false,
@@ -21,7 +20,6 @@ export const useTransferStore = defineStore('transfer', () => {
 
 interface TransferState {
   address: string
-  balance: number
   value?: number
   loading: boolean
   active: boolean
