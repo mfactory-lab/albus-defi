@@ -2,9 +2,9 @@ import { defineStore } from 'pinia'
 import solToken from '@/assets/img/tokens/sol.png'
 import usdcToken from '@/assets/img/tokens/usdc.png'
 
-export const useSwap = defineStore('swap', () => {
-  const fromToken = reactive<SwapData>({ symbol: 'SOL', image: solToken, value: 0 })
-  const toToken = reactive<SwapData>({ symbol: 'USDC', image: usdcToken, value: 0 })
+export const useSwapStore = defineStore('swap', () => {
+  const fromToken = reactive<SwapData>({ image: solToken, value: 'sol', label: 'sol' })
+  const toToken = reactive<SwapData>({ image: usdcToken, value: 'usd-coin', label: 'usdc' })
 
   const state = reactive<SwapState>({
     from: fromToken,
@@ -13,6 +13,7 @@ export const useSwap = defineStore('swap', () => {
     active: false,
     loading: false,
     slippage: 0.01,
+    slippageDialog: false,
   })
 
   function changeDirection() {
@@ -20,9 +21,19 @@ export const useSwap = defineStore('swap', () => {
     state.to = from
     state.from = to
   }
+
+  function openSlippage() {
+    state.slippageDialog = true
+  }
+
+  function closeSlippage() {
+    state.slippageDialog = false
+  }
   return {
     state,
     changeDirection,
+    openSlippage,
+    closeSlippage,
   }
 })
 
@@ -33,11 +44,13 @@ export interface SwapState {
   active: boolean
   loading: boolean
   slippage: number
+  slippageDialog: boolean
 }
 
 export interface SwapData {
   value?: number | string
-  symbol: string
   image: string
   balance?: number
+  label: string
+  amount?: number
 }

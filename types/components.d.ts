@@ -23,6 +23,7 @@ declare module '@vue/runtime-core' {
     MobileMenu: typeof import('./../src/components/Menu/MobileMenu.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SelectToken: typeof import('./../src/components/SelectToken.vue')['default']
     Sidebar: typeof import('./../src/components/Sidebar/Sidebar.vue')['default']
     SidebarCopyrights: typeof import('./../src/components/Sidebar/SidebarCopyrights.vue')['default']
     SidebarFooter: typeof import('./../src/components/Sidebar/SidebarFooter.vue')['default']

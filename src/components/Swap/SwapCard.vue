@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
+import type { SwapData } from '@/stores/swap'
 
-const { state, changeDirection } = useSwap()
+const { state, changeDirection, openSlippage, closeSlippage } = useSwapStore()
+const { handleSearchToken, options } = useToken()
 
 const changeButtonRotate = ref(0)
-
-const slippageDialog = ref(false)
 
 const rotateBtnStyle = computed(() => `transform: rotate(${changeButtonRotate.value * 180}deg)`)
 
@@ -15,11 +15,8 @@ function handleChangeDirection() {
   changeButtonRotate.value++
 }
 
-function openSlippage() {
-  slippageDialog.value = true
-}
-function closeSlippage() {
-  slippageDialog.value = false
+function setToken(t: SwapData, direction: true) {
+  state[direction ? 'to' : 'from'] = t
 }
 
 function setMax(from: any) {
@@ -32,7 +29,7 @@ function swapSubmit() {
 </script>
 
 <template>
-  <q-card class="swap-card">
+  <q-card class="swap-card swap-widget">
     <q-card-section class="swap-card__header">
       Swap
     </q-card-section>
@@ -51,20 +48,17 @@ function swapSubmit() {
             </div>
           </div>
           <q-input
-            v-model="state.from.value" :maxlength="14" outlined placeholder="0.0" class="swap-input"
+            v-model="state.from.amount" :maxlength="14" outlined placeholder="0.0" class="swap-input"
             @keypress="onlyNumber"
           >
-            <!-- @keyup="changeValue" -->
             <template #append>
               <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMax(state.from)">
                 MAX
               </q-btn>
-              <div class="swap-input__icon">
-                <img :src="state.from.image" alt="">
-              </div>
-              <div class="swap-input__symbol">
-                {{ state.from.symbol }}
-              </div>
+              <select-token
+                :options="options" :token="state.from" @handle-search-token="handleSearchToken"
+                @set-token="setToken"
+              />
             </template>
           </q-input>
         </div>
@@ -84,20 +78,12 @@ function swapSubmit() {
               </div>
             </div>
           </div>
-          <q-input
-            v-model="state.to.value" readonly :maxlength="14" outlined placeholder="0.0"
-            class="swap-input"
-          >
+          <q-input v-model="state.to.amount" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
             <template #append>
-              <!--              <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMax(state.to)"> -->
-              <!--                MAX -->
-              <!--              </q-btn> -->
-              <div class="swap-input__icon">
-                <img :src="state.to.image" alt="">
-              </div>
-              <div class="swap-input__symbol">
-                {{ state.to.symbol }}
-              </div>
+              <select-token
+                :options="options" :direction="true" :token="state.to"
+                @handle-search-token="handleSearchToken" @set-token="setToken"
+              />
             </template>
           </q-input>
         </div>
@@ -124,7 +110,7 @@ function swapSubmit() {
 
       <div class="swap-submit">
         <q-btn :loading="state.swapping" :disable="!state.active" rounded :ripple="false" @click="swapSubmit">
-          Swap {{ state.from.symbol }} / {{ state.to.symbol }}
+          Swap {{ state.from.label }} / {{ state.to.label }}
         </q-btn>
       </div>
 
@@ -135,7 +121,7 @@ function swapSubmit() {
 
     <q-inner-loading :showing="state.loading" class="swap-loading" color="grey" />
   </q-card>
-  <q-dialog v-model="slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
+  <q-dialog v-model="state.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
     <q-card>
       <q-card-section>
         <q-btn-toggle

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { DISCORD_URL, TELEGRAM_URL, TWITTER_URL } from '@/config/common'
 
-const { state } = useQuasarTheme()
+const { state } = useQuasarThemeStore()
 </script>
 
 <template>

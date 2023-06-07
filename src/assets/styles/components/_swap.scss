@@ -46,7 +46,6 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
     margin: 40px 0 56px;
   }
 
-
   &__header {
     height: 48px;
     padding: 0;
@@ -64,6 +63,24 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
 
   &__body {
     padding: 20px;
+  }
+}
+
+.swap-widget {
+  .token-select {
+    margin-right: -12px;
+
+    .q-field__native {
+      cursor: pointer;
+      width: 50px;
+      justify-content: center;
+    }
+    .q-field__control {
+      &::before,
+      &::after {
+        border: none !important;
+      }
+    }
   }
 }
 
@@ -247,56 +264,55 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
   margin: 1rem 0 0;
 }
 
-
 .swap-content {
   position: relative;
   padding: 10px 0 60px;
 
   @media (max-width: $breakpoint-md) {
-      width: 95%;
+    width: 95%;
   }
 
   @media (max-width: $breakpoint-sm) {
-      width: 92%;
+    width: 92%;
   }
 
   @media (max-width: $breakpoint-xs) {
-      width: 90%;
-      margin: 0 auto;
+    width: 90%;
+    margin: 0 auto;
   }
 
   &::before {
-      content: '';
-      height: 1px;
-      position: absolute;
-      top: -5px;
+    content: "";
+    height: 1px;
+    position: absolute;
+    top: -5px;
+    width: 100%;
+    background-color: #aabec8;
+
+    @media (max-width: $breakpoint-md) {
+      width: 98%;
+    }
+
+    @media (max-width: $breakpoint-xs) {
       width: 100%;
-      background-color: #AABEC8;
-
-      @media (max-width: $breakpoint-md) {
-          width: 98%;
-      }
-
-      @media (max-width: $breakpoint-xs) {
-          width: 100%;
-      }
+    }
   }
 
   &__title {
-      padding: 20px 0;
-      font-weight: 600;
-      font-size: 15px;
-      line-height: 16px;
+    padding: 20px 0;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 16px;
   }
 
   &__details {
-      font-weight: 400;
-      font-size: 12px;
-      line-height: 16px;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
 
-      p {
-          margin: 0;
-      }
+    p {
+      margin: 0;
+    }
   }
 }
 

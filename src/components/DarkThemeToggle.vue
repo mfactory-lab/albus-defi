@@ -2,7 +2,7 @@
 defineProps({
   propClass: String,
 })
-const { state, toggle } = useQuasarTheme()
+const { state, toggle } = useQuasarThemeStore()
 </script>
 
 <template>

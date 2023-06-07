@@ -1,38 +1,21 @@
 import { defineStore } from 'pinia'
+import type { SwapData } from './swap'
 import solToken from '@/assets/img/tokens/sol.png'
-import usdcToken from '@/assets/img/tokens/usdc.png'
-import usdtToken from '@/assets/img/tokens/usdt.png'
 
-export const useTransfer = defineStore('transfer', () => {
+export const useTransferStore = defineStore('transfer', () => {
+  const token = reactive<SwapData>({ image: solToken, value: 'sol', label: 'sol', amount: 0 })
+
   const state = reactive<TransferState>({
     address: '',
     balance: 0,
     value: undefined,
     loading: false,
     active: false,
+    token,
   })
-
-  const tokens = [
-    {
-      symbol: 'sol',
-      name: 'sol',
-      img: solToken,
-    },
-    {
-      symbol: 'usd-coin',
-      name: 'usdc',
-      img: usdcToken,
-    },
-    {
-      symbol: 'ether',
-      name: 'usdt',
-      img: usdtToken,
-    },
-  ]
 
   return {
     state,
-    tokens,
   }
 })
 
@@ -42,4 +25,5 @@ interface TransferState {
   value?: number
   loading: boolean
   active: boolean
+  token: SwapData
 }

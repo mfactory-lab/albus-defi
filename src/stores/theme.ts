@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useQuasarTheme = defineStore('theme', () => {
+export const useQuasarThemeStore = defineStore('theme', () => {
   const q = useQuasar()
 
   const state = reactive({

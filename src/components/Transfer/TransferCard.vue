@@ -1,7 +1,13 @@
 <script setup lang="ts">
+import type { SwapData } from '@/stores/swap'
 import { onlyNumber } from '@/utils'
 
-const { state, tokens } = useTransfer()
+const { state } = useTransferStore()
+const { handleSearchToken, options } = useToken()
+
+function setToken(t: SwapData) {
+  state.token = t
+}
 
 function setMax(from: any) {
   console.log(from)
@@ -10,16 +16,6 @@ function setMax(from: any) {
 function swapSubmit() {
   console.log('swapSubmit')
 }
-
-const options = computed(() => tokens.map(t => ({
-  label: t.name,
-  value: t.symbol,
-  img: t.img,
-})))
-
-const model = ref(options.value[0])
-
-const denseOpts = ref(false)
 </script>
 
 <template>
@@ -45,33 +41,11 @@ const denseOpts = ref(false)
             </div>
           </div>
           <div class="row justify-between" style="gap: 10px">
-            <div class="col-4 transfer-select">
-              <q-select
-                v-model="model" outlined :options="options" dense
-                :options-dense="denseOpts"
-              >
-                <template #prepend>
-                  <q-avatar>
-                    <img :src="model.img">
-                  </q-avatar>
-                </template>
-                <template #option="scope">
-                  <q-item v-bind="scope.itemProps" class="transfer-select__token">
-                    <q-item-section avatar class="transfer-select__token--item">
-                      <q-avatar>
-                        <img :src="scope.opt.img">
-                      </q-avatar>
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label>{{ scope.opt.label }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </div>
+            <select-token :options="options" @handle-search-token="handleSearchToken" @set-token="setToken" />
+
             <q-input
-              v-model="state.value" :maxlength="14" outlined placeholder="0.0"
-              class="swap-input col" @keypress="onlyNumber"
+              v-model="state.value" :maxlength="14" outlined placeholder="0.0" class="swap-input col"
+              @keypress="onlyNumber"
             >
               <!-- @keyup="changeValue" -->
               <template #append>
@@ -88,10 +62,7 @@ const denseOpts = ref(false)
         <div class="col transfer-address__label">
           Address
         </div>
-        <q-input
-          v-model="state.address" :maxlength="14" outlined
-          class="swap-input col"
-        />
+        <q-input v-model="state.address" :maxlength="14" outlined class="swap-input col" />
       </div>
 
       <div class="swap-info">

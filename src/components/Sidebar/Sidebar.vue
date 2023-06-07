@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import arrowIcon from '@/assets/img/icons/arrow.png'
 
-const { state } = useQuasarTheme()
+const { state } = useQuasarThemeStore()
 
 const isMinimize = ref(false)
 

@@ -1,6 +1,10 @@
 body.body--dark {
     background: $primary;
 
+    .app-header__buttons .connect-button {
+        background-color: $secondary;
+    }
+
     aside {
         background: $secondary;
     }
@@ -19,8 +23,19 @@ body.body--dark {
 
     .swap-field__label,
     .swap-field__balance,
-    .transfer-address__label {
+    .transfer-address__label,
+    .token-select .q-field__control-container span {
         color: #fff;
+    }
+
+    .token-search {
+        &.q-field--focused {
+            .q-field__control {
+                &::after {
+                    border-color: $light-gray-middle !important;
+                }
+            }
+        }
     }
 
     .swap-info {
@@ -42,8 +57,8 @@ body.body--dark {
         color: #ddeff8;
     }
 
-    .transfer-select {
-            .q-field--focused {
+    .token-select {
+        .q-field--focused {
             .q-field__control {
                 &::after {
                     border-color: $light-gray-middle !important;

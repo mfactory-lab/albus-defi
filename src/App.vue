@@ -3,7 +3,7 @@ import faviconDark from '@/assets/img/favicon/favicon-dark.png'
 import faviconlight from '@/assets/img/favicon/favicon-light.png'
 import './assets/styles/main.scss'
 
-const { state } = useQuasarTheme()
+const { state } = useQuasarThemeStore()
 
 useHead({
   title: import.meta.env.VITE_APP_TITLE,
