@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { evaClose } from '@quasar/extras/eva-icons'
+import type { PropType } from 'vue'
+import { lowerCase } from 'lodash-es'
+import type { SwapData } from '@/stores/swap'
+
+interface OptionsInactive extends SwapData {
+  inactive: boolean
+}
 
 const props = defineProps({
   options: Object as any,
@@ -8,7 +15,8 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  token: Object as any,
+  token: Object as PropType<SwapData>,
+  swapToken: String,
 })
 
 const emits = defineEmits(['handleSearchToken', 'setToken'])
@@ -25,6 +33,9 @@ function clearSearch() {
   searchToken.value = ''
 }
 
+const checkedTokens = computed(() =>
+  props.options.map((o: OptionsInactive) => ({ ...o, inactive: lowerCase(String(o.value)) === lowerCase(props.swapToken) })))
+
 watch(searchToken, (s) => {
   emits('handleSearchToken', s)
 })
@@ -37,8 +48,8 @@ watch(model, (m) => {
 <template>
   <div class="token-select">
     <q-select
-      v-model="model" popup-content-class="transition-duration" outlined :options="options" dense
-      :options-dense="false" @popup-hide="clearSearch"
+      v-model="model" option-disable="inactive" popup-content-class="transition-duration" outlined
+      :options="checkedTokens" dense :options-dense="false" @popup-hide="clearSearch"
     >
       <template #prepend>
         <q-avatar>
@@ -48,10 +59,7 @@ watch(model, (m) => {
       <template #before-options>
         <q-input v-model="searchToken" :maxlength="8" outlined class="token-search" placeholder="search">
           <template #append>
-            <q-icon
-              v-if="searchToken" :name="evaClose" class="cursor-pointer token-search__close"
-              @click="clearSearch"
-            />
+            <q-icon v-if="searchToken" :name="evaClose" class="cursor-pointer token-search__close" @click="clearSearch" />
           </template>
         </q-input>
       </template>

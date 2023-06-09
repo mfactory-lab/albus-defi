@@ -59,8 +59,8 @@ function swapSubmit() {
                 MAX
               </q-btn>
               <select-token
-                :options="options" :token="state.from" @handle-search-token="handleSearchToken"
-                @set-token="setToken"
+                :options="options" :token="state.from" :swap-token="state.to.value"
+                @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
           </q-input>
@@ -84,6 +84,7 @@ function swapSubmit() {
           <q-input v-model="state.to.amount" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
             <template #append>
               <select-token
+                :swap-token="state.from.value"
                 :options="options" :direction="true" :token="state.to"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
