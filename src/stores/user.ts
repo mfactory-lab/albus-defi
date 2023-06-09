@@ -10,16 +10,18 @@ enum Tokens {
 export const useUserStore = defineStore('user', () => {
   const state = reactive<UserState>({
     tokens: [],
+    loading: false,
   })
 
-  const { connection } = useConnectionStore()
+  const connectionStore = useConnectionStore()
 
   const { publicKey, connected } = useWallet()
 
-  watch(connected, async (c) => {
-    if (c && state.tokens.length === 0) {
-      const tokens = await getTokenAccounts(publicKey.value?.toBase58() as PublicKeyInitData, connection)
-      const solBalance = await getSolanaBalance(publicKey.value?.toBase58() as PublicKeyInitData, connection)
+  async function getTokens() {
+    try {
+      state.loading = true
+      const tokens = await getTokenAccounts(publicKey.value?.toBase58() as PublicKeyInitData, connectionStore.connection)
+      const solBalance = await getSolanaBalance(publicKey.value?.toBase58() as PublicKeyInitData, connectionStore.connection)
       const solToken = {
         name: Tokens.NATIVE,
         symbol: Tokens.NATIVE,
@@ -27,17 +29,27 @@ export const useUserStore = defineStore('user', () => {
       }
 
       state.tokens = [...tokens, solToken]
+    } finally {
+      state.loading = false
+    }
+  }
+
+  watch(connected, async (c) => {
+    if (c && state.tokens.length === 0) {
+      await getTokens()
     } else {
       state.tokens = []
     }
   }, { immediate: true })
   return {
     state,
+    getTokens,
   }
 })
 
 interface UserState {
   tokens: IUserToken[]
+  loading: boolean
 }
 
 export interface IUserToken {

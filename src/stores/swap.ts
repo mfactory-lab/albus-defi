@@ -29,8 +29,19 @@ export const useSwapStore = defineStore('swap', () => {
   function closeSlippage() {
     state.slippageDialog = false
   }
+
+  function setMax(amount: number) {
+    state.from.amount = amount
+  }
+
+  watch(() => state.to, (s) => {
+    if (s.amount) {
+      s.amount = undefined
+    }
+  })
   return {
     state,
+    setMax,
     changeDirection,
     openSlippage,
     closeSlippage,

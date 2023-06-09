@@ -1,17 +1,18 @@
 <script setup lang="ts">
+import { Notify } from 'quasar'
 import { formatBalance, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { SwapData } from '@/stores/swap'
 
-const { state, changeDirection, openSlippage, closeSlippage } = useSwapStore()
+const { state, changeDirection, openSlippage, closeSlippage, setMax } = useSwapStore()
 const { handleSearchToken, options, tokenBalance } = useToken()
 
 const changeButtonRotate = ref(0)
 
 const rotateBtnStyle = computed(() => `transform: rotate(${changeButtonRotate.value * 180}deg)`)
 
-const balanceFrom = computed(() => formatBalance(tokenBalance(state.from.label)))
-const balanceTo = computed(() => formatBalance(tokenBalance(state.to.label)))
+const balanceFrom = computed(() => tokenBalance(state.from.label))
+const balanceTo = computed(() => tokenBalance(state.to.label))
 
 function handleChangeDirection() {
   changeDirection()
@@ -22,13 +23,25 @@ function setToken(t: SwapData, direction: true) {
   state[direction ? 'to' : 'from'] = t
 }
 
-function setMax(from: any) {
-  console.log(from)
+function setMaxAmount() {
+  setMax(balanceFrom.value)
 }
 
 function swapSubmit() {
   console.log('swapSubmit')
 }
+
+watch(() => state.from.amount, (a) => {
+  state.active = Number(a) > 0
+  if (Number(a) > balanceFrom.value) {
+    state.from.amount = balanceFrom.value
+    Notify.create({
+      type: 'warning',
+      timeout: 1500,
+      message: 'Insufficient funds!',
+    })
+  }
+})
 </script>
 
 <template>
@@ -46,7 +59,7 @@ function swapSubmit() {
                 FROM:
               </div>
               <div class="col swap-field__balance">
-                Balance: {{ balanceFrom }}
+                Balance: {{ formatBalance(balanceFrom) }}
               </div>
             </div>
           </div>
@@ -55,7 +68,7 @@ function swapSubmit() {
             @keypress="onlyNumber"
           >
             <template #append>
-              <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMax(state.from)">
+              <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount">
                 MAX
               </q-btn>
               <select-token
@@ -77,7 +90,7 @@ function swapSubmit() {
                 TO:
               </div>
               <div class="col swap-field__balance">
-                Balance: {{ balanceTo }}
+                Balance: {{ formatBalance(balanceTo) }}
               </div>
             </div>
           </div>

@@ -56,7 +56,7 @@ export function useMonitorTransaction() {
     }
 
     // https://solscan.io/tx/{id}
-    const explorerUrl = `https://explorer.solana.com/tx/${signature}?cluster=${cluster.value}`
+    const explorerUrl = `https://solscan.io/tx/${signature}?cluster=${cluster.value}`
 
     const exploreAction = {
       label: 'Explore',

@@ -1,24 +1,38 @@
 <script setup lang="ts">
-import type { SwapData } from '@/stores/swap'
+import { Notify } from 'quasar'
 import { formatBalance, onlyNumber } from '@/utils'
 
-const { state } = useTransferStore()
-
+const { state, setMax, transferSOL, setToken } = useTransferStore()
+const { state: userState } = useUserStore()
 const { handleSearchToken, options, tokenBalance } = useToken()
 
-const balance = computed(() => formatBalance(tokenBalance(state.token.label)))
+const balance = computed(() => tokenBalance(state.token.label))
 
-function setToken(t: SwapData) {
-  state.token = t
+const emptyBalance = computed(() => balance.value === 0)
+
+async function transferSubmit() {
+  if (!state.valid) {
+    return Notify.create({
+      type: 'negative',
+      timeout: 2000,
+      message: 'Not valid address',
+    })
+  }
+  transferSOL()
 }
 
-function setMax(from: any) {
-  console.log(from)
-}
+const active = computed(() => Number(state.value) > 0 && state.address.length >= 44)
 
-function swapSubmit() {
-  console.log('swapSubmit')
-}
+watch(() => state.value, (a) => {
+  if (Number(a) > balance.value) {
+    state.value = balance.value
+    Notify.create({
+      type: 'warning',
+      timeout: 1500,
+      message: 'Insufficient funds!',
+    })
+  }
+})
 </script>
 
 <template>
@@ -39,7 +53,7 @@ function swapSubmit() {
                 AMOUNT
               </div>
               <div class="col swap-field__balance">
-                Balance: {{ balance }}
+                Balance: {{ formatBalance(balance) }}
               </div>
             </div>
           </div>
@@ -48,11 +62,11 @@ function swapSubmit() {
 
             <q-input
               v-model="state.value" :maxlength="14" outlined placeholder="0.0" class="swap-input col"
-              @keypress="onlyNumber"
+              :disable="emptyBalance" @keypress="onlyNumber"
             >
               <!-- @keyup="changeValue" -->
               <template #append>
-                <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMax(tokenBalance)">
+                <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMax(balance)">
                   MAX
                 </q-btn>
               </template>
@@ -65,23 +79,23 @@ function swapSubmit() {
         <div class="col transfer-address__label">
           Address
         </div>
-        <q-input v-model="state.address" :maxlength="14" outlined class="swap-input col" />
+        <q-input v-model="state.address" :disable="emptyBalance" :maxlength="50" outlined class="swap-input col" />
       </div>
 
       <div class="swap-info">
         <dl>
-          <dt>Swap fee:</dt>
-          <dd><!-- {{ formatPercent(state.fees.trade) }} -->0.05 SOL</dd>
+          <dt>Transfer fee:</dt>
+          <dd>{{ state.fee }}</dd>
         </dl>
       </div>
 
       <div class="swap-submit transfer-submit">
-        <q-btn :loading="state.loading" :disable="!state.active" rounded :ripple="false" @click="swapSubmit">
+        <q-btn :loading="state.loading" :disable="!active" rounded :ripple="false" @click="transferSubmit">
           Send
         </q-btn>
       </div>
     </q-card-section>
 
-    <q-inner-loading :showing="state.loading" class="swap-loading" color="grey" />
+    <q-inner-loading :showing="userState.loading" class="swap-loading" color="grey" />
   </q-card>
 </template>
