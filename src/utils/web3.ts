@@ -4,7 +4,8 @@ import type { ConfirmOptions, Connection, PublicKeyInitData, Signer, Transaction
 import { LAMPORTS_PER_SOL, PublicKey, Transaction } from '@solana/web3.js'
 
 import { PROGRAM_ID as METADATA_PROGRAM_ID, Metadata } from '@metaplex-foundation/mpl-token-metadata'
-import type { AnchorWallet } from 'solana-wallets-vue'
+import { type AnchorWallet } from 'solana-wallets-vue'
+import * as anchor from '@project-serum/anchor'
 import type { IUserToken } from '@/stores/user'
 
 export function shortenAddress(address: string, chars = 4): string {
@@ -136,4 +137,14 @@ export async function transactionFee(transaction: Transaction, connection: Conne
     'confirmed',
   )
   return Number(value) / LAMPORTS_PER_SOL
+}
+
+export function newProvider(wallet: AnchorWallet, connection: Connection) {
+  const opts = anchor.AnchorProvider.defaultOptions()
+  return {
+    opts,
+    wallet,
+    publicKey: wallet.publicKey,
+    connection,
+  }
 }
