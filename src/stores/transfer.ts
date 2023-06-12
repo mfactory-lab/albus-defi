@@ -2,7 +2,8 @@ import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import { VerifiedTransferClient } from 'albus/packages/verified-transfer-sdk/src/client'
-import { AlbusClient } from 'albus/packages/albus-sdk/src/client'
+
+// import { AlbusClient } from 'albus/packages/albus-sdk/src/client'
 import type { AnchorWallet } from 'solana-wallets-vue'
 import type { AnchorProvider } from '@project-serum/anchor'
 import type { SwapData } from './swap'
@@ -29,15 +30,15 @@ export const useTransferStore = defineStore('transfer', () => {
     valid: false,
   })
 
-  let client
+  // let client
   let verifiedTransferClient
 
   watch(useAnchorWallet(), (w) => {
     if (w) {
       const provider = newProvider(w, connectionStore.connection) as AnchorProvider
-      client = new AlbusClient(provider)
+      // client = new AlbusClient(provider)
       verifiedTransferClient = new VerifiedTransferClient(provider)
-      console.log(client)
+      // console.log(client)
       console.log(verifiedTransferClient)
     }
   }, { deep: true })
