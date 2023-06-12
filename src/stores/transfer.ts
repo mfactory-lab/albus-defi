@@ -2,6 +2,9 @@ import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import type { AnchorWallet } from 'solana-wallets-vue'
+import type { AnchorProvider } from '@project-serum/anchor'
+import { VerifiedTransferClient } from 'albus/packages/verified-transfer-sdk/src/client'
+import * as anchor from '@project-serum/anchor'
 import type { SwapData } from './swap'
 import solToken from '@/assets/img/tokens/sol.png'
 import { sendTransaction, transactionFee, validateAddress } from '@/utils'
@@ -25,6 +28,20 @@ export const useTransferStore = defineStore('transfer', () => {
     fee: defaultFee,
     valid: false,
   })
+
+  let client
+
+  watch(useAnchorWallet(), (w) => {
+    if (w) {
+      const opts = anchor.AnchorProvider.defaultOptions()
+      client = new VerifiedTransferClient({
+        opts,
+        wallet: w,
+        publicKey: w.publicKey,
+        connection: connectionStore.connection,
+      } as AnchorProvider)
+    }
+  }, { deep: true })
 
   function setMax(amount: number) {
     state.value = amount

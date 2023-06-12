@@ -13,5 +13,17 @@
             color: $secondary;
         }
     }
+}
 
+.transfer-card {
+    .swap-field__balance {
+        @media (max-width: $breakpoint-xs) {
+            flex-direction: column-reverse;
+        }
+    }
+    .insufficient-error {
+        @media (max-width: $breakpoint-xs) {
+            padding: 0;
+        }
+    }
 }

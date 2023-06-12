@@ -19,6 +19,7 @@
     "@solana/spl-token": "^0.3.8",
     "@solana/wallet-adapter-wallets": "^0.19.16",
     "@solana/web3.js": "^1.77.3",
+    "albus": "github:mfactory-lab/albus",
     "axios": "^1.4.0",
     "decimal.js": "^10.4.3",
     "lodash-es": "^4.17.21",

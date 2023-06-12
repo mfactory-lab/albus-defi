@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Notify } from 'quasar'
+import { evaClose } from '@quasar/extras/eva-icons'
 import { formatBalance, onlyNumber } from '@/utils'
 
 const { state, setMax, transferSOL, setToken } = useTransferStore()
@@ -10,33 +11,37 @@ const balance = computed(() => tokenBalance(state.token.label))
 
 const emptyBalance = computed(() => balance.value === 0)
 
+const insufficientError = computed(() => Number(state.value) > balance.value)
+
 async function transferSubmit() {
-  if (!state.valid) {
+  const message = insufficientError.value ? 'Insufficient funds' : 'Not valid address'
+  if (!state.valid || insufficientError.value) {
     return Notify.create({
       type: 'negative',
       timeout: 2000,
-      message: 'Not valid address',
+      message,
     })
   }
   transferSOL()
 }
 
-const active = computed(() => Number(state.value) > 0 && state.address.length >= 44)
-
-watch(() => state.value, (a) => {
-  if (Number(a) > balance.value) {
-    state.value = balance.value
+function setMaxCurrency() {
+  setMax(balance.value)
+  if (state.token.value === 'sol') {
     Notify.create({
-      type: 'warning',
-      timeout: 1500,
-      message: 'Insufficient funds!',
+      type: 'negative',
+      timeout: 0,
+      message: 'When transferring all funds, you will no longer be able to sign transactions! Leave not a lot of SOL on the account',
+      actions: [{ icon: evaClose, color: 'white' }],
     })
   }
-})
+}
+
+const active = computed(() => Number(state.value) > 0 && state.address.length >= 44)
 </script>
 
 <template>
-  <q-card class="swap-card">
+  <q-card class="swap-card transfer-card">
     <q-card-section class="swap-card__header">
       Transfer
     </q-card-section>
@@ -45,32 +50,34 @@ watch(() => state.value, (a) => {
       <div class="swap-form">
         <div class="swap-field">
           <div class="swap-field__info">
-            <div class="row items-end">
-              <div class="col-3 swap-field__label">
-                FROM:
-              </div>
+            <div class="row">
               <div class="col-2 swap-field__label">
                 AMOUNT
               </div>
-              <div class="col swap-field__balance">
+              <div class="col row justify-end swap-field__balance q-pr-sm">
+                <div v-if="insufficientError" class="insufficient-error">
+                  Insufficient funds
+                </div>
                 Balance: {{ formatBalance(balance) }}
+              </div>
+              <div class="col-3  swap-field__label q-pl-sm">
+                ASSET
               </div>
             </div>
           </div>
           <div class="row justify-between" style="gap: 10px">
-            <select-token :options="options" @handle-search-token="handleSearchToken" @set-token="setToken" />
-
             <q-input
               v-model="state.value" :maxlength="14" outlined placeholder="0.0" class="swap-input col"
               :disable="emptyBalance" @keypress="onlyNumber"
             >
-              <!-- @keyup="changeValue" -->
               <template #append>
-                <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMax(balance)">
+                <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxCurrency">
                   MAX
                 </q-btn>
               </template>
             </q-input>
+
+            <select-token :options="options" @handle-search-token="handleSearchToken" @set-token="setToken" />
           </div>
         </div>
       </div>

@@ -37,8 +37,7 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
 .swap-card {
   overflow: hidden;
   border: 1px solid $swap-card-border-color;
-  max-width: 400px;
-  max-height: 417px;
+  max-width: 460px;
   box-shadow: $swap-shadow;
   margin: 80px auto 66px;
 
@@ -101,16 +100,22 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
     align-items: center;
     justify-content: center;
     transition: 0.5s;
-
+    background: $primary;
+    border-radius: 50%;
+    
     @media (max-width: $breakpoint-xs) {
       width: 56px;
       height: 56px;
-
-      top: 2px;
+      top: -12px;
     }
 
     i {
       height: 68px;
+
+
+      circle {
+        fill: transparent;
+      }
 
       @media (max-width: $breakpoint-xs) {
         width: 56px;
@@ -130,13 +135,13 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
 }
 
 .swap-field {
-  height: 66px;
+  min-height: 66px;
   &:last-child {
     margin: 0;
   }
 
   &__info {
-    padding: 0 10px;
+    padding: 0 5px;
     color: $secondary;
   }
 
@@ -155,6 +160,16 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
     font-size: 11px;
     text-transform: uppercase;
     color: $secondary;
+    flex-wrap: nowrap;
+
+    .insufficient-error {
+      font-weight: 400;
+      font-size: 13px;
+      line-height: 15px;
+      color: $negative;
+      padding-right: 15px;
+      text-transform: initial;
+    }
   }
 }
 

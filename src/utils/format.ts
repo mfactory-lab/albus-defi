@@ -4,6 +4,6 @@ export const formatPct = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 5,
 })
 
-export function formatBalance(balance: number, precision = 2) {
+export function formatBalance(balance: number, precision = 5) {
   return balance > 0 ? balance.toFixed(precision) : 0
 }

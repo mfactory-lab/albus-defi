@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Notify } from 'quasar'
 import { formatBalance, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { SwapData } from '@/stores/swap'
@@ -31,16 +30,10 @@ function swapSubmit() {
   console.log('swapSubmit')
 }
 
+const insufficientError = computed(() => Number(state.from.amount) > balanceFrom.value)
+
 watch(() => state.from.amount, (a) => {
-  state.active = Number(a) > 0
-  if (Number(a) > balanceFrom.value) {
-    state.from.amount = balanceFrom.value
-    Notify.create({
-      type: 'warning',
-      timeout: 1500,
-      message: 'Insufficient funds!',
-    })
-  }
+  state.active = Number(a) > 0 && !insufficientError.value
 })
 </script>
 
@@ -58,7 +51,10 @@ watch(() => state.from.amount, (a) => {
               <div class="col swap-field__label">
                 FROM:
               </div>
-              <div class="col swap-field__balance">
+              <div class="col-8 col-xs-10 row justify-end swap-field__balance">
+                <div v-if="insufficientError" class="insufficient-error">
+                  Insufficient funds
+                </div>
                 Balance: {{ formatBalance(balanceFrom) }}
               </div>
             </div>

@@ -15,6 +15,7 @@ specifiers:
   '@vitejs/plugin-vue': ^4.1.0
   '@vueuse/core': ^10.1.2
   '@vueuse/head': ^1.1.26
+  albus: github:mfactory-lab/albus
   axios: ^1.4.0
   buffer: ^6.0.3
   decimal.js: ^10.4.3
@@ -43,6 +44,7 @@ dependencies:
   '@solana/spl-token': 0.3.8_@solana+web3.js@1.77.3
   '@solana/wallet-adapter-wallets': 0.19.16_@solana+web3.js@1.77.3
   '@solana/web3.js': 1.77.3
+  albus: github.com/mfactory-lab/albus/b6a702a79c9b2929ec0eb1c0fe084c9ace70d6dd
   axios: 1.4.0
   decimal.js: 10.4.3
   lodash-es: 4.17.21
@@ -6816,3 +6818,9 @@ packages:
   /zhead/2.0.4:
     resolution: {integrity: sha512-V4R94t3ifk9AURym6OskbKcnowzgp5Z88tkoL/NF67vyryNxC62u6mx5F1Ux4oh4+YN7FFmKYEyWy6m5kfPH6g==}
     dev: true
+
+  github.com/mfactory-lab/albus/b6a702a79c9b2929ec0eb1c0fe084c9ace70d6dd:
+    resolution: {tarball: https://codeload.github.com/mfactory-lab/albus/tar.gz/b6a702a79c9b2929ec0eb1c0fe084c9ace70d6dd}
+    name: albus
+    version: 0.0.0
+    dev: false
