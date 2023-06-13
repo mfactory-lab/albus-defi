@@ -5,7 +5,8 @@ import { LAMPORTS_PER_SOL, PublicKey, Transaction } from '@solana/web3.js'
 
 import { PROGRAM_ID as METADATA_PROGRAM_ID, Metadata } from '@metaplex-foundation/mpl-token-metadata'
 import { type AnchorWallet } from 'solana-wallets-vue'
-import * as anchor from '@project-serum/anchor'
+import type { Metaplex } from '@metaplex-foundation/js'
+import { AnchorProvider } from '@project-serum/anchor'
 import type { IUserToken } from '@/stores/user'
 
 export function shortenAddress(address: string, chars = 4): string {
@@ -55,9 +56,7 @@ export async function getTokenAccounts(wallet: PublicKeyInitData, solanaConnecti
       const data: any = account.data
       const balance = Number(data.parsed.info.tokenAmount.uiAmount)
       const isNFT = data.parsed.info.tokenAmount.decimals === 0
-      if (isNFT) {
-        return
-      }
+
       const metadata = await Metadata.fromAccountAddress(solanaConnection, getMetadataPDA(data.parsed.info.mint))
       const symbol = sanitizeString(metadata.data.symbol)
       let name = sanitizeString(metadata.data.name)
@@ -67,6 +66,7 @@ export async function getTokenAccounts(wallet: PublicKeyInitData, solanaConnecti
         symbol,
         name,
         balance,
+        mint: isNFT && data.parsed.info.mint,
       }
     }),
   ) as { status: 'fulfilled' | 'rejected'; value: IUserToken }[]
@@ -74,6 +74,7 @@ export async function getTokenAccounts(wallet: PublicKeyInitData, solanaConnecti
   const onlyFulfilled = (await result).filter(({ status, value }) => status === 'fulfilled' && value).map(({ value }) => value)
   return onlyFulfilled
 }
+
 /**
  * Remove all empty space, new line, etc. symbols
  * In some reason such symbols parsed back from Buffer looks weird
@@ -140,11 +141,23 @@ export async function transactionFee(transaction: Transaction, connection: Conne
 }
 
 export function newProvider(wallet: AnchorWallet, connection: Connection) {
-  const opts = anchor.AnchorProvider.defaultOptions()
-  return {
-    opts,
-    wallet,
-    publicKey: wallet.publicKey,
+  const opts = AnchorProvider.defaultOptions()
+  return new AnchorProvider(
     connection,
-  }
+    wallet,
+    opts,
+  )
+}
+
+/**
+ * mint proof NFT
+ */
+export async function mintNFT(metaplex: Metaplex, symbol: string) {
+  const { nft } = await metaplex.nfts().create({
+    uri: 'http://localhost/metadata.json',
+    name: 'ALBUS NFT',
+    symbol,
+    sellerFeeBasisPoints: 500,
+  })
+  return nft
 }

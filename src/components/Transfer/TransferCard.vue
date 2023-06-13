@@ -3,7 +3,7 @@ import { Notify } from 'quasar'
 import { evaClose } from '@quasar/extras/eva-icons'
 import { formatBalance, onlyNumber } from '@/utils'
 
-const { state, setMax, transferSOL, setToken } = useTransferStore()
+const { state, setMax, setToken, verifieTransfer } = useTransferStore()
 const { state: userState } = useUserStore()
 const { handleSearchToken, options, tokenBalance } = useToken()
 
@@ -22,7 +22,7 @@ async function transferSubmit() {
       message,
     })
   }
-  transferSOL()
+  verifieTransfer()
 }
 
 function setMaxCurrency() {

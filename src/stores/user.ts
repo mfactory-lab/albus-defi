@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { useWallet } from 'solana-wallets-vue'
-import type { PublicKeyInitData } from '@solana/web3.js'
+import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
 import { getSolanaBalance, getTokenAccounts } from '@/utils'
 
 enum Tokens {
@@ -10,6 +10,7 @@ enum Tokens {
 export const useUserStore = defineStore('user', () => {
   const state = reactive<UserState>({
     tokens: [],
+    proofNfts: [],
     loading: false,
   })
 
@@ -28,7 +29,8 @@ export const useUserStore = defineStore('user', () => {
         balance: solBalance,
       }
 
-      state.tokens = [...tokens, solToken]
+      state.tokens = [...tokens.filter(t => !t.mint), solToken]
+      state.proofNfts = [...tokens.filter(t => t.symbol === 'ALBUS-P')]
     } finally {
       state.loading = false
     }
@@ -50,10 +52,12 @@ export const useUserStore = defineStore('user', () => {
 interface UserState {
   tokens: IUserToken[]
   loading: boolean
+  proofNfts: IUserToken[]
 }
 
 export interface IUserToken {
   symbol: string
   name: string
   balance: number
+  mint?: PublicKey
 }
