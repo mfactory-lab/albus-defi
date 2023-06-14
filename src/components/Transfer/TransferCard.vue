@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { Notify } from 'quasar'
 import { evaClose } from '@quasar/extras/eva-icons'
+import { ZKPRequestStatus } from 'albus/packages/albus-sdk/src/generated'
+
 import { formatBalance, onlyNumber } from '@/utils'
 
 const { state, setMax, setToken, verifieTransfer } = useTransferStore()
 const { state: userState } = useUserStore()
 const { handleSearchToken, options, tokenBalance } = useToken()
+
+const dialog = ref(false)
 
 const balance = computed(() => tokenBalance(state.token.label))
 
@@ -38,6 +42,15 @@ function setMaxCurrency() {
 }
 
 const active = computed(() => Number(state.value) > 0 && state.address.length >= 44)
+
+watch(() => state.status, (s) => {
+  if (typeof s !== 'number') {
+    return
+  }
+  if (s !== ZKPRequestStatus.Verified) {
+    dialog.value = true
+  }
+})
 </script>
 
 <template>
@@ -67,8 +80,8 @@ const active = computed(() => Number(state.value) > 0 && state.address.length >=
           </div>
           <div class="row justify-between" style="gap: 10px">
             <q-input
-              v-model="state.value" :maxlength="14" outlined placeholder="0.0" class="swap-input col"
-              :disable="emptyBalance" @keypress="onlyNumber"
+              v-model="state.value" :disable="emptyBalance" :maxlength="14" outlined placeholder="0.0" class="swap-input col"
+              @keypress="onlyNumber"
             >
               <template #append>
                 <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxCurrency">
@@ -92,7 +105,7 @@ const active = computed(() => Number(state.value) > 0 && state.address.length >=
       <div class="swap-info">
         <dl>
           <dt>Transfer fee:</dt>
-          <dd>{{ state.fee }}</dd>
+          <dd>{{ formatBalance(state.fee, 6) }}</dd>
         </dl>
       </div>
 
@@ -105,4 +118,6 @@ const active = computed(() => Number(state.value) > 0 && state.address.length >=
 
     <q-inner-loading :showing="userState.loading" class="swap-loading" color="grey" />
   </q-card>
+
+  <zkp-request-dialog v-model="dialog" :zkp-status="state.status" @clear-zkp-status="state.status = undefined" />
 </template>

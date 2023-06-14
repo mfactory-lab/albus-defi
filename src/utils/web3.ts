@@ -1,7 +1,7 @@
 /* eslint-disable n/prefer-global/buffer */
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import type { ConfirmOptions, Connection, PublicKeyInitData, Signer, TransactionInstruction } from '@solana/web3.js'
-import { LAMPORTS_PER_SOL, PublicKey, Transaction } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 
 import { PROGRAM_ID as METADATA_PROGRAM_ID, Metadata } from '@metaplex-foundation/mpl-token-metadata'
 import { type AnchorWallet } from 'solana-wallets-vue'
@@ -55,7 +55,7 @@ export async function getTokenAccounts(wallet: PublicKeyInitData, solanaConnecti
     accounts.map(async ({ account }) => {
       const data: any = account.data
       const balance = Number(data.parsed.info.tokenAmount.uiAmount)
-      const isNFT = data.parsed.info.tokenAmount.decimals === 0
+      const decimals = data.parsed.info.tokenAmount.decimals
 
       const metadata = await Metadata.fromAccountAddress(solanaConnection, getMetadataPDA(data.parsed.info.mint))
       const symbol = sanitizeString(metadata.data.symbol)
@@ -66,7 +66,8 @@ export async function getTokenAccounts(wallet: PublicKeyInitData, solanaConnecti
         symbol,
         name,
         balance,
-        mint: isNFT && data.parsed.info.mint,
+        decimals,
+        mint: data.parsed.info.mint,
       }
     }),
   ) as { status: 'fulfilled' | 'rejected'; value: IUserToken }[]
@@ -160,4 +161,27 @@ export async function mintNFT(metaplex: Metaplex, symbol: string) {
     sellerFeeBasisPoints: 500,
   })
   return nft
+}
+
+export async function createTransaction(
+  pubkey: PublicKeyInitData,
+  address: PublicKeyInitData,
+  value: number,
+  connection: Connection): Promise<Transaction> {
+  const provider = new PublicKey(pubkey)
+  const recieverWallet = new PublicKey(address)
+
+  const transaction = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: provider,
+      toPubkey: recieverWallet,
+      lamports: Number(value) * LAMPORTS_PER_SOL,
+    }),
+  )
+
+  const blockhash = (await connection.getLatestBlockhash('finalized')).blockhash
+  transaction.recentBlockhash = blockhash
+  transaction.feePayer = new PublicKey(pubkey)
+
+  return transaction
 }

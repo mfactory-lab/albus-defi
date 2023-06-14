@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import solToken from '@/assets/img/tokens/sol.png'
 import usdcToken from '@/assets/img/tokens/usdc.png'
+import type { ZKPRequestWithEmpty } from '@/stores/transfer'
 
 export const useSwapStore = defineStore('swap', () => {
   const fromToken = reactive<SwapData>({ image: solToken, value: 'sol', label: 'sol' })
@@ -14,7 +15,15 @@ export const useSwapStore = defineStore('swap', () => {
     loading: false,
     slippage: 0.01,
     slippageDialog: false,
+    status: undefined,
   })
+
+  const { verifieStatus, verifiedTransferToken } = useClientStore()
+
+  async function verifieSwap() {
+    state.status = await verifieStatus()
+    // verifiedTransferToken()
+  }
 
   function changeDirection() {
     const { from, to } = state
@@ -45,6 +54,7 @@ export const useSwapStore = defineStore('swap', () => {
     changeDirection,
     openSlippage,
     closeSlippage,
+    verifieSwap,
   }
 })
 
@@ -56,6 +66,7 @@ export interface SwapState {
   loading: boolean
   slippage: number
   slippageDialog: boolean
+  status?: ZKPRequestWithEmpty
 }
 
 export interface SwapData {

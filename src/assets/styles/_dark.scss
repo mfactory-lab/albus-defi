@@ -93,4 +93,17 @@ body.body--dark {
             color: $light-gray-middle;
         }
     }
+
+    .zkp-dialog {
+        .q-btn {
+            color: #ececec;
+
+            a {
+                color: #ececec;
+            }
+        }
+        .prove-link {
+            color: #fff;
+        }
+    }
 }

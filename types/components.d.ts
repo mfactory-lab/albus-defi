@@ -33,5 +33,7 @@ declare module '@vue/runtime-core' {
     SwapContent: typeof import('./../src/components/Swap/SwapContent.vue')['default']
     TransferCard: typeof import('./../src/components/Transfer/TransferCard.vue')['default']
     TransferContent: typeof import('./../src/components/Transfer/TransferContent.vue')['default']
+    ZkpRequestDialog: typeof import('./../src/components/ZkpRequestDialog.vue')['default']
+    ZkpRequestModal: typeof import('./../src/components/ZkpRequestModal.vue')['default']
   }
 }

@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { ZKPRequestStatus } from 'albus/packages/albus-sdk/src/generated'
 import { formatBalance, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { SwapData } from '@/stores/swap'
 
-const { state, changeDirection, openSlippage, closeSlippage, setMax } = useSwapStore()
+const { state, changeDirection, openSlippage, closeSlippage, setMax, verifieSwap } = useSwapStore()
 const { handleSearchToken, options, tokenBalance } = useToken()
+
+const dialog = ref(false)
 
 const changeButtonRotate = ref(0)
 
@@ -26,14 +29,19 @@ function setMaxAmount() {
   setMax(balanceFrom.value)
 }
 
-function swapSubmit() {
-  console.log('swapSubmit')
-}
-
 const insufficientError = computed(() => Number(state.from.amount) > balanceFrom.value)
 
 watch(() => state.from.amount, (a) => {
   state.active = Number(a) > 0 && !insufficientError.value
+})
+
+watch(() => state.status, (s) => {
+  if (typeof s !== 'number') {
+    return
+  }
+  if (s !== ZKPRequestStatus.Verified) {
+    dialog.value = true
+  }
 })
 </script>
 
@@ -122,7 +130,7 @@ watch(() => state.from.amount, (a) => {
       </div>
 
       <div class="swap-submit">
-        <q-btn :loading="state.swapping" :disable="!state.active" rounded :ripple="false" @click="swapSubmit">
+        <q-btn :loading="state.swapping" :disable="!state.active" rounded :ripple="false" @click="verifieSwap">
           Swap {{ state.from.label }} / {{ state.to.label }}
         </q-btn>
       </div>
@@ -149,4 +157,6 @@ watch(() => state.from.amount, (a) => {
       </q-card-section>
     </q-card>
   </q-dialog>
+
+  <zkp-request-dialog v-model="dialog" :zkp-status="state.status" @clear-zkp-status="state.status = undefined" />
 </template>

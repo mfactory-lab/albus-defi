@@ -1,4 +1,4 @@
-import type { Commitment } from '@solana/web3.js'
+import { type Commitment, clusterApiUrl } from '@solana/web3.js'
 
 // import { clusterApiUrl } from '@solana/web3.js'
 import type { Endpoint } from '@/stores'
@@ -37,13 +37,13 @@ export const ENDPOINTS: Endpoint[] = [
     id: 'testnet',
     name: 'TestNet',
     cluster: 'testnet',
-    url: 'https://testnet.rpcpool.com/',
+    url: clusterApiUrl('testnet'),
   },
   {
     id: 'devnet',
     name: 'DevNet',
     cluster: 'devnet',
-    url: 'https://devnet.rpcpool.com/',
+    url: clusterApiUrl('devnet'),
   },
 ]
 

@@ -1,27 +1,29 @@
 import { defineStore } from 'pinia'
-import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
-import type { PublicKeyInitData } from '@solana/web3.js'
-import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
-import { VerifiedTransferClient } from 'albus/packages/verified-transfer-sdk/src/client'
-import { AlbusClient } from 'albus/packages/albus-sdk/src/client'
-import { ZKPRequestStatus } from 'albus/packages/albus-sdk/src/generated/types'
-import type { WalletAdapter } from '@metaplex-foundation/js'
-import { Metaplex, walletAdapterIdentity } from '@metaplex-foundation/js'
+import { useWallet } from 'solana-wallets-vue'
+import { ZKPRequestStatus } from 'albus/packages/albus-sdk/src/generated'
+import { lowerCase } from 'lodash-es'
+import type { PublicKey } from '@solana/web3.js'
 import type { SwapData } from './swap'
 import solToken from '@/assets/img/tokens/sol.png'
-import { mintNFT, newProvider, transactionFee, validateAddress } from '@/utils'
+import { createTransaction, getMetadataPDA, transactionFee, validateAddress } from '@/utils'
+
+enum NoZKPRequests {
+  Empty = 4,
+}
+
+export const ZKPRequestStatusWithEmpty = { ...ZKPRequestStatus, ...NoZKPRequests }
+
+export type ZKPRequestWithEmpty = NoZKPRequests | ZKPRequestStatus
 
 export const useTransferStore = defineStore('transfer', () => {
   const { monitorTransaction } = useMonitorTransaction()
   const connectionStore = useConnectionStore()
-  const { getTokens } = useUserStore()
-
-  const userStore = useUserStore()
+  const { verifieStatus, verifieTransferSOL } = useClientStore()
+  const { state: tokenState } = useUserStore()
 
   const defaultFee = 0.00
 
   const wallet = useWallet()
-  const anchorWallet = useAnchorWallet()
 
   const token = reactive<SwapData>({ image: solToken, value: 'sol', label: 'sol' })
 
@@ -32,87 +34,14 @@ export const useTransferStore = defineStore('transfer', () => {
     token,
     fee: defaultFee,
     valid: false,
+    status: undefined,
   })
 
-  const serviceCode = 'test'
-  const testCircuit = 'EByLSRhVR2JhpVwj1CsRNKJ5DVpG8Nu4oDByu2aW8PMv'
-
-  let client: AlbusClient
-  let verifiedTransferClient: VerifiedTransferClient
-
-  watch(anchorWallet, (w) => {
-    if (w) {
-      const provider = newProvider(w, connectionStore.connection)
-      client = new AlbusClient(provider)
-      verifiedTransferClient = new VerifiedTransferClient(provider)
-    }
-  }, { deep: true, immediate: true })
-
   async function verifieTransfer() {
-    const pubkey = wallet.publicKey.value as PublicKey
-    const circuit = new PublicKey(testCircuit)
-
-    const [serviceProvider] = client.getServiceProviderPDA(serviceCode)
-    const [zkpRequest] = client.getZKPRequestPDA(serviceProvider, circuit, pubkey)
-
-    try {
-      const zkp = await client.loadZKPRequest(zkpRequest)
-      const zkpStatus = zkp.status
-      console.log('ZKP Request: ', zkpRequest.toBase58())
-      console.log('ZKP Status: ', ZKPRequestStatus[zkpStatus])
-
-      if (zkpStatus === ZKPRequestStatus.Pending) {
-        let proofNft: any = { address: '' }
-        if (userStore.state.proofNfts.length !== 0) {
-          proofNft.address = userStore.state.proofNfts[0].mint
-        } else {
-          proofNft = await mintProofNft()
-        }
-        console.log(proofNft)
-        await proovZKPRequest(zkpRequest, proofNft.address)
-      } else if (zkpStatus === ZKPRequestStatus.Proved) {
-        console.log('PROVED============')
-        await verifiedZKPRequest(zkpRequest)
-        /* const res = await verifieTransferSOL(zkpRequest)
-        console.log('Transfer: ', res) */
-      }
-    } catch (e) {
-      // createZKPRequest()
-      console.log(e)
+    state.status = await verifieStatus()
+    if (state.status === ZKPRequestStatus.Verified) {
+      // verifieTransferSOL()
     }
-  }
-
-  /*   async function verifieTransferSOL(ZKPRequestAddress: PublicKey) {
-    await verifiedTransferClient.transfer({
-      amount: new BN(Number(state.value) * LAMPORTS_PER_SOL),
-      receiver: new PublicKey(state.address),
-      zkpRequest: ZKPRequestAddress,
-    })
-  } */
-
-  async function mintProofNft() {
-    const metaplex = Metaplex.make(connectionStore.connection).use(walletAdapterIdentity(anchorWallet.value as WalletAdapter))
-    return await mintNFT(metaplex, 'ALBUS-P')
-  }
-
-  async function createZKPRequest() {
-    await client.createZKPRequest({
-      circuit: testCircuit,
-      serviceCode,
-    })
-  }
-
-  async function verifiedZKPRequest(ZKPRequestAddress: PublicKeyInitData) {
-    return await client.verify({
-      zkpRequest: ZKPRequestAddress,
-    })
-  }
-
-  async function proovZKPRequest(ZKPRequestAddress: PublicKeyInitData, proofNft: PublicKeyInitData) {
-    return await client.prove({
-      zkpRequest: ZKPRequestAddress,
-      proofMint: proofNft,
-    })
   }
 
   function setMax(amount: number) {
@@ -145,7 +74,7 @@ export const useTransferStore = defineStore('transfer', () => {
     }
   })
 
-  async function createTransaction() {
+  /* async function createTransaction() {
     const provider = new PublicKey(wallet.publicKey.value as PublicKey)
     const recieverWallet = new PublicKey(state.address)
 
@@ -162,11 +91,27 @@ export const useTransferStore = defineStore('transfer', () => {
     transaction.feePayer = new PublicKey(String(wallet.publicKey.value))
 
     return transaction
+  } */
+
+  async function getTokenAccount() {
+    const symbol = state.token.label
+    const token = tokenState.tokens.find(t => lowerCase(t.symbol) === lowerCase(symbol))
+    if (symbol === 'sol') {
+      return true
+    } else if (!token || !token.mint) {
+      return false
+    } else {
+      return !!getMetadataPDA(token.mint)
+    }
   }
 
   async function getTransactionFee() {
-    const transaction = await createTransaction()
-    state.fee = await transactionFee(transaction, connectionStore.connection)
+    const isAccountExist = await getTokenAccount()
+    const transaction = await createTransaction(
+      wallet.publicKey.value as PublicKey, state.address, Number(state.value), connectionStore.connection)
+
+    const fee = await transactionFee(transaction, connectionStore.connection)
+    state.fee = !isAccountExist ? fee + 0.02 : fee
   }
 
   /* async function transferSOL() {
@@ -212,4 +157,5 @@ interface TransferState {
   token: SwapData
   fee: number
   valid: boolean
+  status?: ZKPRequestWithEmpty
 }

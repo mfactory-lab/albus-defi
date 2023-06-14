@@ -27,9 +27,10 @@ export const useUserStore = defineStore('user', () => {
         name: Tokens.NATIVE,
         symbol: Tokens.NATIVE,
         balance: solBalance,
+        decimals: 6,
       }
 
-      state.tokens = [...tokens.filter(t => !t.mint), solToken]
+      state.tokens = [...tokens.filter(t => t.decimals > 0), solToken]
       state.proofNfts = [...tokens.filter(t => t.symbol === 'ALBUS-P')]
     } finally {
       state.loading = false
@@ -60,4 +61,5 @@ export interface IUserToken {
   name: string
   balance: number
   mint?: PublicKey
+  decimals: number
 }
