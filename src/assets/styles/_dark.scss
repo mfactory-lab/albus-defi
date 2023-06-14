@@ -95,11 +95,14 @@ body.body--dark {
     }
 
     .zkp-dialog {
+        &__header {
+            color: $light-gray-half;
+        }
         .q-btn {
-            color: #ececec;
+            color: $light-gray-half;
 
             a {
-                color: #ececec;
+                color: $light-gray-half;
             }
         }
         .prove-link {
