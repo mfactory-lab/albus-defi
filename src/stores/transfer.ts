@@ -58,7 +58,7 @@ export const useTransferStore = defineStore('transfer', () => {
     try {
       const zkp = await client.loadZKPRequest(zkpRequest)
       const zkpStatus = zkp.status
-      console.log('ZKP Request: ', zkpRequest)
+      console.log('ZKP Request: ', zkpRequest.toBase58())
       console.log('ZKP Status: ', ZKPRequestStatus[zkpStatus])
 
       if (zkpStatus === ZKPRequestStatus.Pending) {

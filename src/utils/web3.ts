@@ -6,7 +6,7 @@ import { LAMPORTS_PER_SOL, PublicKey, Transaction } from '@solana/web3.js'
 import { PROGRAM_ID as METADATA_PROGRAM_ID, Metadata } from '@metaplex-foundation/mpl-token-metadata'
 import { type AnchorWallet } from 'solana-wallets-vue'
 import type { Metaplex } from '@metaplex-foundation/js'
-import { AnchorProvider } from '@project-serum/anchor'
+import { AnchorProvider } from '@coral-xyz/anchor'
 import type { IUserToken } from '@/stores/user'
 
 export function shortenAddress(address: string, chars = 4): string {
