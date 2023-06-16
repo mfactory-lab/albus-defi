@@ -17,6 +17,10 @@ const props = defineProps({
   },
   token: Object as PropType<SwapData>,
   swapToken: String,
+  disable: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emits = defineEmits(['handleSearchToken', 'setToken'])
@@ -49,7 +53,8 @@ watch(model, (m) => {
   <div class="token-select">
     <q-select
       v-model="model" option-disable="inactive" popup-content-class="transition-duration" outlined
-      :options="checkedTokens" dense :options-dense="false" @popup-hide="clearSearch"
+      :options="checkedTokens" dense :options-dense="false" :disable="disable"
+      @popup-hide="clearSearch"
     >
       <template #prepend>
         <q-avatar>

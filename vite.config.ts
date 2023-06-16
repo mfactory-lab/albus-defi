@@ -29,9 +29,6 @@ export default defineConfig(({ mode }) => {
         inject({ Buffer: ['buffer', 'Buffer'] }),
         nodePolyfills,
       ],
-      external: [
-        '@albus/core',
-      ],
     },
   }
 

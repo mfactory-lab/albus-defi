@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { ZKPRequestStatus } from 'albus/packages/albus-sdk/src/generated'
-import { formatBalance, onlyNumber } from '@/utils'
+// import { ZKPRequestStatus } from '@albus/monorepo/packages/albus-sdk/src/generated'
+import { formatBalance, formatPct, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { SwapData } from '@/stores/swap'
 
-const { state, changeDirection, openSlippage, closeSlippage, setMax, verifieSwap } = useSwapStore()
-const { handleSearchToken, options, tokenBalance } = useToken()
+const { state, swapState, changeDirection, openSlippage, closeSlippage, setMax, verifieSwap, changeValue } = useSwap()
+const { handleSearchToken, options } = useToken()
+const { tokenBalance } = useUserStore()
+
+// console.log(Uint8Array.from('38f57pVjJEb9wGuzAmonU2k76ctmrDWBVyn9v5hMMURLVqYC5xWwd31UhHAWmNkTwvh1r8d1SgNoLKTiDUDnTo1u'))
+const formatPercent = (n: number) => formatPct.format(n)
 
 const dialog = ref(false)
 
@@ -13,8 +17,12 @@ const changeButtonRotate = ref(0)
 
 const rotateBtnStyle = computed(() => `transform: rotate(${changeButtonRotate.value * 180}deg)`)
 
-const balanceFrom = computed(() => tokenBalance(state.from.label))
-const balanceTo = computed(() => tokenBalance(state.to.label))
+const symbolFrom = computed(() => state.from.label)
+const symbolTo = computed(() => state.to.label)
+const balanceFrom = computed(() => tokenBalance(symbolFrom.value))
+const balanceTo = computed(() => tokenBalance(symbolTo.value))
+
+const swapFee = computed(() => state.fees.host + state.fees.trade)
 
 function handleChangeDirection() {
   changeDirection()
@@ -29,19 +37,29 @@ function setMaxAmount() {
   setMax(balanceFrom.value)
 }
 
-const insufficientError = computed(() => Number(state.from.amount) > balanceFrom.value)
-
-watch(() => state.from.amount, (a) => {
-  state.active = Number(a) > 0 && !insufficientError.value
+const insufficientError = computed(() => {
+  const insufficient = Number(state.from.amount) > balanceFrom.value
+  const minimum = Number(state.from.amount) < 1
+  if (insufficient) {
+    return 'Insufficient funds'
+  } else if (minimum) {
+    return 'Minimum Received 1'
+  } else {
+    return false
+  }
 })
 
-watch(() => state.status, (s) => {
-  if (typeof s !== 'number') {
-    return
-  }
-  if (s !== ZKPRequestStatus.Verified) {
-    dialog.value = true
-  }
+watch(() => state.from.amount, (a) => {
+  state.active = Number(a) >= 1 && !insufficientError.value
+})
+
+watch(() => swapState.status, (s) => {
+  /*   if (typeof s !== 'number') {
+      return
+    }
+    if (s !== ZKPRequestStatus.Verified) {
+      dialog.value = true
+    } */
 })
 </script>
 
@@ -61,15 +79,15 @@ watch(() => state.status, (s) => {
               </div>
               <div class="col-8 col-xs-10 row justify-end swap-field__balance">
                 <div v-if="insufficientError" class="insufficient-error">
-                  Insufficient funds
+                  {{ insufficientError }}
                 </div>
-                Balance: {{ formatBalance(balanceFrom) }}
+                Balance: {{ formatBalance(balanceFrom) }} {{ symbolFrom }}
               </div>
             </div>
           </div>
           <q-input
             v-model="state.from.amount" :maxlength="14" outlined placeholder="0.0" class="swap-input"
-            @keypress="onlyNumber"
+            @keypress="onlyNumber" @keyup="changeValue"
           >
             <template #append>
               <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount">
@@ -94,15 +112,14 @@ watch(() => state.status, (s) => {
                 TO:
               </div>
               <div class="col swap-field__balance">
-                Balance: {{ formatBalance(balanceTo) }}
+                Balance: {{ formatBalance(balanceTo) }} {{ symbolTo }}
               </div>
             </div>
           </div>
           <q-input v-model="state.to.amount" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
             <template #append>
               <select-token
-                :swap-token="state.from.value"
-                :options="options" :direction="true" :token="state.to"
+                :swap-token="state.from.value" :options="options" :direction="true" :token="state.to"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -114,18 +131,18 @@ watch(() => state.status, (s) => {
         <dl>
           <dt>Minimum Received::</dt>
           <dd>
-            <!-- {{ formatPercent(state.priceImpact) }} -->1 SOL
+            1 {{ symbolFrom.toUpperCase() }}
           </dd>
         </dl>
         <dl>
           <dt>Slippage Tolerance:</dt>
           <dd>
-            <a href="#" @click="openSlippage"><!-- {{ formatPercent(state.slippage) }} -->0 SOL</a>
+            <a href="#" @click="openSlippage">{{ formatPercent(state.slippage) }}</a>
           </dd>
         </dl>
         <dl>
           <dt>Swap fee:</dt>
-          <dd><!-- {{ formatPercent(state.fees.trade) }} -->1 SOL</dd>
+          <dd>{{ formatPercent(swapFee) }} SOL</dd>
         </dl>
       </div>
 
@@ -140,9 +157,9 @@ watch(() => state.status, (s) => {
       </div>
     </q-card-section>
 
-    <q-inner-loading :showing="state.loading" class="swap-loading" color="grey" />
+    <q-inner-loading :showing="swapState.loading" class="swap-loading" color="grey" />
   </q-card>
-  <q-dialog v-model="state.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
+  <q-dialog v-model="swapState.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
     <q-card>
       <q-card-section>
         <q-btn-toggle
@@ -158,5 +175,5 @@ watch(() => state.status, (s) => {
     </q-card>
   </q-dialog>
 
-  <zkp-request-dialog v-model="dialog" :zkp-status="state.status" @clear-zkp-status="state.status = undefined" />
+  <zkp-request-dialog v-model="dialog" :zkp-status="swapState.status" @clear-zkp-status="swapState.status = undefined" />
 </template>

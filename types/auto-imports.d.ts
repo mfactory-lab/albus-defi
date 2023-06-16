@@ -251,7 +251,7 @@ declare global {
   const useStorageAsync: typeof import('@vueuse/core')['useStorageAsync']
   const useStyleTag: typeof import('@vueuse/core')['useStyleTag']
   const useSupported: typeof import('@vueuse/core')['useSupported']
-  const useSwap: typeof import('../src/stores/swap')['useSwap']
+  const useSwap: typeof import('../src/hooks/swap')['useSwap']
   const useSwapStore: typeof import('../src/stores/swap')['useSwapStore']
   const useSwipe: typeof import('@vueuse/core')['useSwipe']
   const useTemplateRefsList: typeof import('@vueuse/core')['useTemplateRefsList']

@@ -1,12 +1,15 @@
 import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
-import { AlbusClient } from 'albus/packages/albus-sdk/src/client'
-import { VerifiedTransferClient } from 'albus/packages/verified-transfer-sdk/src/client'
+
 import type { PublicKeyInitData } from '@solana/web3.js'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
-import { ZKPRequestStatus } from 'albus/packages/albus-sdk/src/generated'
+
+// import { ZKPRequestStatus } from '@albus/monorepo/packages/albus-sdk/src/generated'
+// import { AlbusClient } from '@albus/monorepo/packages/albus-sdk/src'
+// import { VerifiedTransferClient } from '@albus/monorepo/packages/verified-transfer-sdk'
 import { BN } from '@coral-xyz/anchor'
-import { newProvider } from '@/utils'
+
+// import { newProvider } from '@/utils'
 
 export const useClientStore = defineStore('client', () => {
   const { monitorTransaction } = useMonitorTransaction()
@@ -21,11 +24,11 @@ export const useClientStore = defineStore('client', () => {
   const testCircuit = 'EByLSRhVR2JhpVwj1CsRNKJ5DVpG8Nu4oDByu2aW8PMv'
 
   watch(anchorWallet, (w) => {
-    if (w) {
+    /*  if (w) {
       const provider = newProvider(w, connectionStore.connection)
       client = new AlbusClient(provider)
       verifiedTransferClient = new VerifiedTransferClient(provider)
-    }
+    } */
   }, { deep: true, immediate: true })
 
   const loadZKPRequest = async () => {
@@ -41,13 +44,13 @@ export const useClientStore = defineStore('client', () => {
     const zkpRequest = await loadZKPRequest()
     const zkp = await client.loadZKPRequest(zkpRequest)
     const zkpStatus = zkp.status
-    console.log('ZKP Status: ', ZKPRequestStatus[zkpStatus])
+    // console.log('ZKP Status: ', ZKPRequestStatus[zkpStatus])
     console.log('ZKP Request: ', zkpRequest.toBase58())
     return zkp.status
   }
 
   async function verifieStatus() {
-    try {
+    /* try {
       const zkpStatus = await loadZKPRequestStatus()
       if (zkpStatus === ZKPRequestStatus.Pending) {
         console.log('PENDING============')
@@ -63,7 +66,7 @@ export const useClientStore = defineStore('client', () => {
       if (String(e).includes('Unable to find ZKPRequest')) {
         return ZKPRequestStatusWithEmpty.Empty
       }
-    }
+    } */
   }
 
   async function createZKPRequest() {

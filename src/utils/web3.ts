@@ -1,12 +1,19 @@
 /* eslint-disable n/prefer-global/buffer */
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import type { ConfirmOptions, Connection, PublicKeyInitData, Signer, TransactionInstruction } from '@solana/web3.js'
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 
 import { PROGRAM_ID as METADATA_PROGRAM_ID, Metadata } from '@metaplex-foundation/mpl-token-metadata'
 import { type AnchorWallet } from 'solana-wallets-vue'
 import type { Metaplex } from '@metaplex-foundation/js'
+import type { Address } from '@coral-xyz/anchor'
 import { AnchorProvider } from '@coral-xyz/anchor'
+import {
+  TOKEN_PROGRAM_ID,
+  TokenAccountNotFoundError,
+  TokenInvalidAccountOwnerError,
+  createAssociatedTokenAccountInstruction,
+  getAccount, getAssociatedTokenAddress,
+} from '@solana/spl-token'
 import type { IUserToken } from '@/stores/user'
 
 export function shortenAddress(address: string, chars = 4): string {
@@ -184,4 +191,53 @@ export async function createTransaction(
   transaction.feePayer = new PublicKey(pubkey)
 
   return transaction
+}
+
+export async function getTokensByOwner(connection: Connection, owner: PublicKey, mints?: Address[]): Promise<Array<{
+  address: PublicKey
+  mint: PublicKey
+  amount: number
+}>> {
+  const tokens = await connection.getParsedTokenAccountsByOwner(owner, {
+    programId: TOKEN_PROGRAM_ID,
+  })
+
+  mints = mints?.map(a => String(a))
+  return tokens.value.reduce((acc, t) => {
+    const { tokenAmount, mint } = t.account.data.parsed?.info
+    if (mints && !mints.includes(String(mint))) {
+      return acc
+    }
+    acc.push({
+      address: new PublicKey(t.pubkey),
+      amount: Number.parseInt(tokenAmount?.amount ?? 0, 10),
+      mint: new PublicKey(mint),
+    })
+    return acc
+  }, [] as any)
+}
+
+export async function getOrInitAssociatedTokenAddress(
+  connection: Connection,
+  transaction: Transaction,
+  mint: PublicKey,
+  owner: PublicKey,
+  payer?: PublicKey,
+) {
+  const associatedToken = await getAssociatedTokenAddress(mint, owner)
+  try {
+    await getAccount(connection, associatedToken)
+  } catch (error: unknown) {
+    if (error instanceof TokenAccountNotFoundError || error instanceof TokenInvalidAccountOwnerError) {
+      transaction.add(
+        createAssociatedTokenAccountInstruction(
+          payer ?? owner,
+          associatedToken,
+          owner,
+          mint,
+        ),
+      )
+    }
+  }
+  return associatedToken
 }

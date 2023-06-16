@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { useWallet } from 'solana-wallets-vue'
 import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
+import { lowerCase } from 'lodash-es'
 import { getSolanaBalance, getTokenAccounts } from '@/utils'
 
 enum Tokens {
@@ -27,7 +28,8 @@ export const useUserStore = defineStore('user', () => {
         name: Tokens.NATIVE,
         symbol: Tokens.NATIVE,
         balance: solBalance,
-        decimals: 6,
+        decimals: 9,
+        mint: 'So11111111111111111111111111111111111111111',
       }
 
       state.tokens = [...tokens.filter(t => t.decimals > 0), solToken]
@@ -35,6 +37,10 @@ export const useUserStore = defineStore('user', () => {
     } finally {
       state.loading = false
     }
+  }
+
+  const tokenBalance = (token: string) => {
+    return state.tokens.find(t => [lowerCase(t.symbol), lowerCase(t.name)].includes(lowerCase(token)))?.balance ?? 0
   }
 
   watch(connected, async (c) => {
@@ -47,6 +53,7 @@ export const useUserStore = defineStore('user', () => {
   return {
     state,
     getTokens,
+    tokenBalance,
   }
 })
 
@@ -60,6 +67,6 @@ export interface IUserToken {
   symbol: string
   name: string
   balance: number
-  mint?: PublicKey
+  mint: PublicKey | PublicKeyInitData
   decimals: number
 }

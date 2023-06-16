@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { useWallet } from 'solana-wallets-vue'
-import { ZKPRequestStatus } from 'albus/packages/albus-sdk/src/generated'
+
+// import { ZKPRequestStatus } from '@albus/monorepo/packages/albus-sdk/src/generated'
 import { lowerCase } from 'lodash-es'
 import type { PublicKey } from '@solana/web3.js'
 import type { SwapData } from './swap'
@@ -11,9 +12,9 @@ enum NoZKPRequests {
   Empty = 4,
 }
 
-export const ZKPRequestStatusWithEmpty = { ...ZKPRequestStatus, ...NoZKPRequests }
+export const ZKPRequestStatusWithEmpty = { /* ...ZKPRequestStatus, */ ...NoZKPRequests }
 
-export type ZKPRequestWithEmpty = NoZKPRequests | ZKPRequestStatus
+export type ZKPRequestWithEmpty = NoZKPRequests /* | ZKPRequestStatus */
 
 export const useTransferStore = defineStore('transfer', () => {
   const { monitorTransaction } = useMonitorTransaction()
@@ -39,9 +40,9 @@ export const useTransferStore = defineStore('transfer', () => {
 
   async function verifieTransfer() {
     state.status = await verifieStatus()
-    if (state.status === ZKPRequestStatus.Verified) {
-      // verifieTransferSOL()
-    }
+    // if (state.status === ZKPRequestStatus.Verified) {
+    //    verifieTransferSOL()
+    // }
   }
 
   function setMax(amount: number) {

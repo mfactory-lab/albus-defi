@@ -1,13 +1,24 @@
 <script setup lang="ts">
 import { Notify } from 'quasar'
 import { evaClose } from '@quasar/extras/eva-icons'
-import { ZKPRequestStatus } from 'albus/packages/albus-sdk/src/generated'
 
+// import { ZKPRequestStatus } from '@albus/sdk'
+
+import { useWallet } from 'solana-wallets-vue'
+import { lowerCase } from 'lodash-es'
 import { formatBalance, onlyNumber } from '@/utils'
 
 const { state, setMax, setToken, verifieTransfer } = useTransferStore()
-const { state: userState } = useUserStore()
-const { handleSearchToken, options, tokenBalance } = useToken()
+const { state: userState, tokenBalance } = useUserStore()
+const { handleSearchToken, options } = useToken()
+
+const filterTokenExist = computed(() => {
+  const tokens = options.value.filter(token => userState.tokens.find(t => token.label === lowerCase(t.symbol)))
+  return tokens.length !== 0 ? tokens : [options.value.find(t => t.value === 'sol')]
+},
+)
+
+const { connected } = useWallet()
 
 const dialog = ref(false)
 
@@ -44,12 +55,12 @@ function setMaxCurrency() {
 const active = computed(() => Number(state.value) > 0 && state.address.length >= 44)
 
 watch(() => state.status, (s) => {
-  if (typeof s !== 'number') {
-    return
-  }
-  if (s !== ZKPRequestStatus.Verified) {
-    dialog.value = true
-  }
+  // if (typeof s !== 'number') {
+  //   return
+  // }
+  // if (s !== ZKPRequestStatus.Verified) {
+  //   dialog.value = true
+  // }
 })
 </script>
 
@@ -80,8 +91,8 @@ watch(() => state.status, (s) => {
           </div>
           <div class="row justify-between" style="gap: 10px">
             <q-input
-              v-model="state.value" :disable="emptyBalance" :maxlength="14" outlined placeholder="0.0" class="swap-input col"
-              @keypress="onlyNumber"
+              v-model="state.value" :disable="emptyBalance" :maxlength="14" outlined placeholder="0.0"
+              class="swap-input col" @keypress="onlyNumber"
             >
               <template #append>
                 <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxCurrency">
@@ -90,7 +101,10 @@ watch(() => state.status, (s) => {
               </template>
             </q-input>
 
-            <select-token :options="options" @handle-search-token="handleSearchToken" @set-token="setToken" />
+            <select-token
+              :disable="!connected" :options="filterTokenExist" @handle-search-token="handleSearchToken"
+              @set-token="setToken"
+            />
           </div>
         </div>
       </div>

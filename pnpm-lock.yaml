@@ -12,11 +12,17 @@ dependencies:
     specifier: ^0.19.4
     version: 0.19.4
   '@metaplex-foundation/mpl-token-metadata':
-    specifier: ^2.8.3
+    specifier: ^2.12.0
     version: 2.12.0
   '@rollup/plugin-inject':
     specifier: ^5.0.3
     version: 5.0.3
+  '@solana/buffer-layout':
+    specifier: ^4.0.1
+    version: 4.0.1
+  '@solana/buffer-layout-utils':
+    specifier: ^0.2.0
+    version: 0.2.0
   '@solana/spl-token':
     specifier: ^0.3.8
     version: 0.3.8(@solana/web3.js@1.77.3)
@@ -26,9 +32,6 @@ dependencies:
   '@solana/web3.js':
     specifier: ^1.77.3
     version: 1.77.3
-  albus:
-    specifier: github:mfactory-lab/albus
-    version: github.com/mfactory-lab/albus/48955f78e7048a26e876b8a262f22ea2a775c444
   axios:
     specifier: ^1.4.0
     version: 1.4.0
@@ -46,9 +49,9 @@ dependencies:
     version: 2.1.3(typescript@5.0.4)(vue@3.3.4)
   solana-wallets-vue:
     specifier: ^0.6.0
-    version: 0.6.0(@solana/web3.js@1.77.3)(bs58@4.0.1)(react-native@0.71.10)(vue@3.3.4)
+    version: 0.6.0(@solana/web3.js@1.77.3)(bs58@4.0.1)(react-native@0.71.11)(vue@3.3.4)
   vue:
-    specifier: ^3.2.47
+    specifier: ^3.3.4
     version: 3.3.4
   vue-router:
     specifier: ^4.2.2
@@ -67,6 +70,9 @@ devDependencies:
   '@quasar/vite-plugin':
     specifier: ^1.3.3
     version: 1.3.3(@vitejs/plugin-vue@4.2.3)(quasar@2.12.0)(vite@4.3.9)(vue@3.3.4)
+  '@types/bn.js':
+    specifier: ^5.1.1
+    version: 5.1.1
   '@types/lodash-es':
     specifier: ^4.17.7
     version: 4.17.7
@@ -74,7 +80,7 @@ devDependencies:
     specifier: ^20.2.5
     version: 20.2.5
   '@vitejs/plugin-vue':
-    specifier: ^4.1.0
+    specifier: ^4.2.3
     version: 4.2.3(vite@4.3.9)(vue@3.3.4)
   '@vueuse/core':
     specifier: ^10.1.2
@@ -85,6 +91,9 @@ devDependencies:
   assert:
     specifier: ^2.0.0
     version: 2.0.0
+  bn.js:
+    specifier: ^5.2.1
+    version: 5.2.1
   buffer:
     specifier: ^6.0.3
     version: 6.0.3
@@ -104,7 +113,7 @@ devDependencies:
     specifier: 1.32.12
     version: 1.32.12
   typescript:
-    specifier: ^5.0.2
+    specifier: ^5.0.4
     version: 5.0.4
   unplugin-auto-import:
     specifier: ^0.16.4
@@ -2886,7 +2895,7 @@ packages:
     dependencies:
       '@ngraveio/bc-ur': 1.1.6
       bs58check: 2.1.2
-      tslib: 2.5.2
+      tslib: 2.5.3
     dev: false
 
   /@keystonehq/sdk@0.13.1:
@@ -3265,13 +3274,13 @@ packages:
       '@randlabs/communication-bridge': 1.0.1
     dev: false
 
-  /@react-native-async-storage/async-storage@1.18.1(react-native@0.71.10):
+  /@react-native-async-storage/async-storage@1.18.1(react-native@0.71.11):
     resolution: {integrity: sha512-70aFW8fVCKl+oA1AKPFDpE6s4t9pulj2QeLX+MabEmzfT3urd/3cckv45WJvtocdoIH/oXA3Y+YcCRJCcNa8mA==}
     peerDependencies:
       react-native: ^0.0.0-0 || 0.60 - 0.72 || 1000.0.0
     dependencies:
       merge-options: 3.0.4
-      react-native: 0.71.10(@babel/core@7.22.5)(@babel/preset-env@7.22.5)(react@18.2.0)
+      react-native: 0.71.11(@babel/core@7.22.5)(@babel/preset-env@7.22.5)(react@18.2.0)
     dev: false
 
   /@react-native-community/cli-clean@10.1.1:
@@ -3353,19 +3362,6 @@ packages:
       - encoding
     dev: false
 
-  /@react-native-community/cli-platform-ios@10.2.1:
-    resolution: {integrity: sha512-hz4zu4Y6eyj7D0lnZx8Mf2c2si8y+zh/zUTgCTaPPLzQD8jSZNNBtUUiA1cARm2razpe8marCZ1QbTMAGbf3mg==}
-    dependencies:
-      '@react-native-community/cli-tools': 10.1.1
-      chalk: 4.1.2
-      execa: 1.0.0
-      fast-xml-parser: 4.2.4
-      glob: 7.2.3
-      ora: 5.4.1
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
   /@react-native-community/cli-platform-ios@10.2.4:
     resolution: {integrity: sha512-/6K+jeRhcGojFIJMWMXV2eY5n/In+YUzBr/DKWQOeHBOHkESRNheG310xSAIjgB46YniSSUKhSyeuhalTbm9OQ==}
     dependencies:
@@ -3442,8 +3438,8 @@ packages:
       joi: 17.9.2
     dev: false
 
-  /@react-native-community/cli@10.2.2(@babel/core@7.22.5):
-    resolution: {integrity: sha512-aZVcVIqj+OG6CrliR/Yn8wHxrvyzbFBY9cj7n0MvRw/P54QUru2nNqUTSSbqv0Qaa297yHJbe6kFDojDMSTM8Q==}
+  /@react-native-community/cli@10.2.4(@babel/core@7.22.5):
+    resolution: {integrity: sha512-E9BUDHfLEsnjkjeJqECuCjl4E/1Ox9Nl6hkQBhEqjZm4AaQxgU7M6AyFfOgaXn5v3am16/R4ZOUTrJnGJWS3GA==}
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
@@ -3564,12 +3560,12 @@ packages:
     resolution: {integrity: sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg==}
     dev: false
 
-  /@solana-mobile/mobile-wallet-adapter-protocol-web3js@1.0.0(@solana/web3.js@1.77.3)(react-native@0.71.10):
+  /@solana-mobile/mobile-wallet-adapter-protocol-web3js@1.0.0(@solana/web3.js@1.77.3)(react-native@0.71.11):
     resolution: {integrity: sha512-dqFMDH+bqP4IL32cVh5TKXBO1pM6jloPEfCdvWJigtwTfBMYKL9G9itDSFs3PdUKgpVP3x6UQ2sm1FCZ7kWDgw==}
     peerDependencies:
       '@solana/web3.js': ^1.58.0
     dependencies:
-      '@solana-mobile/mobile-wallet-adapter-protocol': 1.0.0(react-native@0.71.10)
+      '@solana-mobile/mobile-wallet-adapter-protocol': 1.0.0(react-native@0.71.11)
       '@solana/web3.js': 1.77.3
       bs58: 5.0.0
       js-base64: 3.7.5
@@ -3577,21 +3573,21 @@ packages:
       - react-native
     dev: false
 
-  /@solana-mobile/mobile-wallet-adapter-protocol@1.0.0(react-native@0.71.10):
+  /@solana-mobile/mobile-wallet-adapter-protocol@1.0.0(react-native@0.71.11):
     resolution: {integrity: sha512-IU80gOfGHeHoCs5sqDYZx4xmXzDxtJorWFEitjvK3MOl44p6r+ZEWeIhFhGQwXxsDeIOSEhaqlGdwWEbaDjK7g==}
     peerDependencies:
       react-native: '>0.69'
     dependencies:
-      react-native: 0.71.10(@babel/core@7.22.5)(@babel/preset-env@7.22.5)(react@18.2.0)
+      react-native: 0.71.11(@babel/core@7.22.5)(@babel/preset-env@7.22.5)(react@18.2.0)
     dev: false
 
-  /@solana-mobile/wallet-adapter-mobile@1.0.0(@solana/web3.js@1.77.3)(react-native@0.71.10):
+  /@solana-mobile/wallet-adapter-mobile@1.0.0(@solana/web3.js@1.77.3)(react-native@0.71.11):
     resolution: {integrity: sha512-JRjQc3gB6DJWH/Tq0XoOJfUk8VONkDXmBnpCzbrBrrn3pi7jluqiXipiXpJiMCwRgoCCGN5n1OaTm4fyAas5Xg==}
     peerDependencies:
       '@solana/web3.js': ^1.58.0
     dependencies:
-      '@react-native-async-storage/async-storage': 1.18.1(react-native@0.71.10)
-      '@solana-mobile/mobile-wallet-adapter-protocol-web3js': 1.0.0(@solana/web3.js@1.77.3)(react-native@0.71.10)
+      '@react-native-async-storage/async-storage': 1.18.1(react-native@0.71.11)
+      '@solana-mobile/mobile-wallet-adapter-protocol-web3js': 1.0.0(@solana/web3.js@1.77.3)(react-native@0.71.11)
       '@solana/wallet-adapter-base': 0.9.22(@solana/web3.js@1.77.3)
       '@solana/web3.js': 1.77.3
       js-base64: 3.7.5
@@ -4653,7 +4649,6 @@ packages:
     resolution: {integrity: sha512-qNrYbZqMx0uJAfKnKclPh+dTwK33KfLHYqtyODwd5HnXOjnkhc4qgn3BrK6RWyGZm5+sIFE7Q7Vz6QQtJB7w7g==}
     dependencies:
       '@types/node': 20.2.5
-    dev: false
 
   /@types/connect@3.4.35:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
@@ -5743,7 +5738,7 @@ packages:
   /async-mutex@0.4.0:
     resolution: {integrity: sha512-eJFZ1YhRR8UN8eBLoNzcDPcy/jqjsg6I1AP+KvWQX80BqOSW1oJPJXDylPUEeMr2ZQvHgnQ//Lp6f3RQ1zI7HA==}
     dependencies:
-      tslib: 2.5.2
+      tslib: 2.5.3
     dev: false
 
   /async-retry@1.3.3:
@@ -6102,7 +6097,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001503
-      electron-to-chromium: 1.4.430
+      electron-to-chromium: 1.4.431
       node-releases: 2.0.12
       update-browserslist-db: 1.0.11(browserslist@4.21.8)
     dev: false
@@ -6893,7 +6888,7 @@ packages:
     resolution: {integrity: sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w==}
     dependencies:
       no-case: 3.0.4
-      tslib: 2.5.2
+      tslib: 2.5.3
     dev: false
 
   /dotenv@10.0.0:
@@ -6924,8 +6919,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /electron-to-chromium@1.4.430:
-    resolution: {integrity: sha512-FytjTbGwz///F+ToZ5XSeXbbSaXalsVRXsz2mHityI5gfxft7ieW3HqFLkU5V1aIrY42aflICqbmFoDxW10etg==}
+  /electron-to-chromium@1.4.431:
+    resolution: {integrity: sha512-m232JTVmCawA2vG+1azVxhKZ9Sv1Q//xxNv5PkP5rWxGgQE8c3CiZFrh8Xnp+d1NmNxlu3QQrGIfdeW5TtXX5w==}
     dev: false
 
   /elliptic@6.5.4:
@@ -9220,7 +9215,7 @@ packages:
   /lower-case@2.0.2:
     resolution: {integrity: sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==}
     dependencies:
-      tslib: 2.5.2
+      tslib: 2.5.3
     dev: false
 
   /lru-cache@5.1.1:
@@ -9339,17 +9334,6 @@ packages:
       '@babel/core': 7.22.5
       hermes-parser: 0.8.0
       metro-source-map: 0.73.10
-      nullthrows: 1.1.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
-  /metro-babel-transformer@0.73.9:
-    resolution: {integrity: sha512-DlYwg9wwYIZTHtic7dyD4BP0SDftoltZ3clma76nHu43blMWsCnrImHeHsAVne3XsQ+RJaSRxhN5nkG2VyVHwA==}
-    dependencies:
-      '@babel/core': 7.22.5
-      hermes-parser: 0.8.0
-      metro-source-map: 0.73.9
       nullthrows: 1.1.1
     transitivePeerDependencies:
       - supports-color
@@ -9488,53 +9472,6 @@ packages:
       - supports-color
     dev: false
 
-  /metro-react-native-babel-preset@0.73.9(@babel/core@7.22.5):
-    resolution: {integrity: sha512-AoD7v132iYDV4K78yN2OLgTPwtAKn0XlD2pOhzyBxiI8PeXzozhbKyPV7zUOJUPETj+pcEVfuYj5ZN/8+bhbCw==}
-    peerDependencies:
-      '@babel/core': '*'
-    dependencies:
-      '@babel/core': 7.22.5
-      '@babel/plugin-proposal-async-generator-functions': 7.20.7(@babel/core@7.22.5)
-      '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.22.5)
-      '@babel/plugin-proposal-export-default-from': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.22.5)
-      '@babel/plugin-proposal-object-rest-spread': 7.20.7(@babel/core@7.22.5)
-      '@babel/plugin-proposal-optional-catch-binding': 7.18.6(@babel/core@7.22.5)
-      '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.22.5)
-      '@babel/plugin-syntax-dynamic-import': 7.8.3(@babel/core@7.22.5)
-      '@babel/plugin-syntax-export-default-from': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3(@babel/core@7.22.5)
-      '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.22.5)
-      '@babel/plugin-transform-arrow-functions': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-async-to-generator': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-block-scoping': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-classes': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-computed-properties': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-destructuring': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-flow-strip-types': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-function-name': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-literals': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-modules-commonjs': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-named-capturing-groups-regex': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-parameters': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-react-display-name': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-react-jsx-self': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-react-jsx-source': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-runtime': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-shorthand-properties': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-spread': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-sticky-regex': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-template-literals': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-typescript': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-unicode-regex': 7.22.5(@babel/core@7.22.5)
-      '@babel/template': 7.22.5
-      react-refresh: 0.4.3
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /metro-react-native-babel-transformer@0.73.10(@babel/core@7.22.5):
     resolution: {integrity: sha512-4G/upwqKdmKEjmsNa92/NEgsOxUWOygBVs+FXWfXWKgybrmcjh3NoqdRYrROo9ZRA/sB9Y/ZXKVkWOGKHtGzgg==}
     peerDependencies:
@@ -9551,22 +9488,6 @@ packages:
       - supports-color
     dev: false
 
-  /metro-react-native-babel-transformer@0.73.9(@babel/core@7.22.5):
-    resolution: {integrity: sha512-DSdrEHuQ22ixY7DyipyKkIcqhOJrt5s6h6X7BYJCP9AMUfXOwLe2biY3BcgJz5GOXv8/Akry4vTCvQscVS1otQ==}
-    peerDependencies:
-      '@babel/core': '*'
-    dependencies:
-      '@babel/core': 7.22.5
-      babel-preset-fbjs: 3.4.0(@babel/core@7.22.5)
-      hermes-parser: 0.8.0
-      metro-babel-transformer: 0.73.9
-      metro-react-native-babel-preset: 0.73.9(@babel/core@7.22.5)
-      metro-source-map: 0.73.9
-      nullthrows: 1.1.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /metro-resolver@0.73.10:
     resolution: {integrity: sha512-HeXbs+0wjakaaVQ5BI7eT7uqxlZTc9rnyw6cdBWWMgUWB++KpoI0Ge7Hi6eQAOoVAzXC3m26mPFYLejpzTWjng==}
     dependencies:
@@ -9575,13 +9496,6 @@ packages:
 
   /metro-runtime@0.73.10:
     resolution: {integrity: sha512-EpVKm4eN0Fgx2PEWpJ5NiMArV8zVoOin866jIIvzFLpmkZz1UEqgjf2JAfUJnjgv3fjSV3JqeGG2vZCaGQBTow==}
-    dependencies:
-      '@babel/runtime': 7.22.5
-      react-refresh: 0.4.3
-    dev: false
-
-  /metro-runtime@0.73.9:
-    resolution: {integrity: sha512-d5Hs83FpKB9r8q8Vb95+fa6ESpwysmPr4lL1I2rM2qXAFiO7OAPT9Bc23WmXgidkBtD0uUFdB2lG+H1ATz8rZg==}
     dependencies:
       '@babel/runtime': 7.22.5
       react-refresh: 0.4.3
@@ -9602,21 +9516,6 @@ packages:
       - supports-color
     dev: false
 
-  /metro-source-map@0.73.9:
-    resolution: {integrity: sha512-l4VZKzdqafipriETYR6lsrwtavCF1+CMhCOY9XbyWeTrpGSNgJQgdeJpttzEZTHQQTLR0csQo0nD1ef3zEP6IQ==}
-    dependencies:
-      '@babel/traverse': 7.22.5
-      '@babel/types': 7.22.5
-      invariant: 2.2.4
-      metro-symbolicate: 0.73.9
-      nullthrows: 1.1.1
-      ob1: 0.73.9
-      source-map: 0.5.7
-      vlq: 1.0.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /metro-symbolicate@0.73.10:
     resolution: {integrity: sha512-PmCe3TOe1c/NVwMlB+B17me951kfkB3Wve5RqJn+ErPAj93od1nxicp6OJe7JT4QBRnpUP8p9tw2sHKqceIzkA==}
     engines: {node: '>=8.3'}
@@ -9624,21 +9523,6 @@ packages:
     dependencies:
       invariant: 2.2.4
       metro-source-map: 0.73.10
-      nullthrows: 1.1.1
-      source-map: 0.5.7
-      through2: 2.0.5
-      vlq: 1.0.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
-  /metro-symbolicate@0.73.9:
-    resolution: {integrity: sha512-4TUOwxRHHqbEHxRqRJ3wZY5TA8xq7AHMtXrXcjegMH9FscgYztsrIG9aNBUBS+VLB6g1qc6BYbfIgoAnLjCDyw==}
-    engines: {node: '>=8.3'}
-    hasBin: true
-    dependencies:
-      invariant: 2.2.4
-      metro-source-map: 0.73.9
       nullthrows: 1.1.1
       source-map: 0.5.7
       through2: 2.0.5
@@ -9999,7 +9883,7 @@ packages:
     resolution: {integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg==}
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.5.2
+      tslib: 2.5.3
     dev: false
 
   /nocache@3.0.4:
@@ -10101,10 +9985,6 @@ packages:
 
   /ob1@0.73.10:
     resolution: {integrity: sha512-aO6EYC+QRRCkZxVJhCWhLKgVjhNuD6Gu1riGjxrIm89CqLsmKgxzYDDEsktmKsoDeRdWGQM5EdMzXDl5xcVfsw==}
-    dev: false
-
-  /ob1@0.73.9:
-    resolution: {integrity: sha512-kHOzCOFXmAM26fy7V/YuXNKne2TyRiXbFAvPBIbuedJCZZWQZHLdPzMeXJI4Egt6IcfDttRzN3jQ90wOwq1iNw==}
     dev: false
 
   /object-assign@4.1.1:
@@ -10740,17 +10620,17 @@ packages:
     resolution: {integrity: sha512-1dVk9NwhoyKHCSxcrM6vY6cxmojeATsBobDicX0ZKr7DgUF2cBQRTKsimQFvzH8XhOVXyH8p4HyDSZNIFI8OlQ==}
     dev: false
 
-  /react-native@0.71.10(@babel/core@7.22.5)(@babel/preset-env@7.22.5)(react@18.2.0):
-    resolution: {integrity: sha512-O+sWH9ln7euxhHdooVL8is2FiVc7CfAp2zsKgIRhbq/8lGbJr5ZyT6QkCQK0M8Sx1zNe9puebr+BE8uBFsartg==}
+  /react-native@0.71.11(@babel/core@7.22.5)(@babel/preset-env@7.22.5)(react@18.2.0):
+    resolution: {integrity: sha512-++8IxgUe4Ev+bTiFlLfJCdSoE5cReVP1DTpVJ8f/QtzaxA3h1008Y3Xah1Q5vsR4rZcYMO7Pn3af+wOshdQFug==}
     engines: {node: '>=14'}
     hasBin: true
     peerDependencies:
       react: 18.2.0
     dependencies:
       '@jest/create-cache-key-function': 29.5.0
-      '@react-native-community/cli': 10.2.2(@babel/core@7.22.5)
+      '@react-native-community/cli': 10.2.4(@babel/core@7.22.5)
       '@react-native-community/cli-platform-android': 10.2.0
-      '@react-native-community/cli-platform-ios': 10.2.1
+      '@react-native-community/cli-platform-ios': 10.2.4
       '@react-native/assets': 1.0.0
       '@react-native/normalize-color': 2.1.0
       '@react-native/polyfills': 2.0.0
@@ -10763,9 +10643,9 @@ packages:
       jest-environment-node: 29.5.0
       jsc-android: 250231.0.0
       memoize-one: 5.2.1
-      metro-react-native-babel-transformer: 0.73.9(@babel/core@7.22.5)
-      metro-runtime: 0.73.9
-      metro-source-map: 0.73.9
+      metro-react-native-babel-transformer: 0.73.10(@babel/core@7.22.5)
+      metro-runtime: 0.73.10
+      metro-source-map: 0.73.10
       mkdirp: 0.5.6
       nullthrows: 1.1.1
       pretty-format: 26.6.2
@@ -11144,7 +11024,7 @@ packages:
   /rxjs@7.8.1:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
     dependencies:
-      tslib: 2.5.2
+      tslib: 2.5.3
     dev: false
 
   /safe-buffer@5.1.2:
@@ -11388,7 +11268,7 @@ packages:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.5.2
+      tslib: 2.5.3
     dev: false
 
   /snapdragon-node@2.1.1:
@@ -11447,13 +11327,13 @@ packages:
       - supports-color
     dev: false
 
-  /solana-wallets-vue@0.6.0(@solana/web3.js@1.77.3)(bs58@4.0.1)(react-native@0.71.10)(vue@3.3.4):
+  /solana-wallets-vue@0.6.0(@solana/web3.js@1.77.3)(bs58@4.0.1)(react-native@0.71.11)(vue@3.3.4):
     resolution: {integrity: sha512-oTC/X0tvl/ZWhwJkqAnCTej3qkMNohaagmz1AG2gU5tDBSixQ84HK1zQ2HoC9n9qFRcLqM7F8ECCExIhy5IucQ==}
     peerDependencies:
       '@solana/web3.js': ^1.61.0
       vue: ^3.2.25
     dependencies:
-      '@solana-mobile/wallet-adapter-mobile': 1.0.0(@solana/web3.js@1.77.3)(react-native@0.71.10)
+      '@solana-mobile/wallet-adapter-mobile': 1.0.0(@solana/web3.js@1.77.3)(react-native@0.71.11)
       '@solana/wallet-adapter-base': 0.9.22(@solana/web3.js@1.77.3)
       '@solana/wallet-standard-wallet-adapter-base': 1.0.2(@solana/web3.js@1.77.3)(bs58@4.0.1)
       '@solana/web3.js': 1.77.3
@@ -11919,10 +11799,6 @@ packages:
 
   /tslib@1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
-
-  /tslib@2.5.2:
-    resolution: {integrity: sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==}
-    dev: false
 
   /tslib@2.5.3:
     resolution: {integrity: sha512-mSxlJJwl3BMEQCUNnxXBU9jP4JBktcEGhURcPR6VQVlnP0FdDEsIaz0C35dXNGLyRfrATNofF0F5p2KPxQgB+w==}
@@ -12791,10 +12667,4 @@ packages:
     name: avsc
     version: 5.4.7
     engines: {node: '>=0.11'}
-    dev: false
-
-  github.com/mfactory-lab/albus/48955f78e7048a26e876b8a262f22ea2a775c444:
-    resolution: {tarball: https://codeload.github.com/mfactory-lab/albus/tar.gz/48955f78e7048a26e876b8a262f22ea2a775c444}
-    name: '@albus/monorepo'
-    version: 0.0.0
     dev: false
