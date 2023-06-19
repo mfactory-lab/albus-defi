@@ -4,7 +4,6 @@ import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana
 
 import { PROGRAM_ID as METADATA_PROGRAM_ID, Metadata } from '@metaplex-foundation/mpl-token-metadata'
 import { type AnchorWallet } from 'solana-wallets-vue'
-import type { Metaplex } from '@metaplex-foundation/js'
 import type { Address } from '@coral-xyz/anchor'
 import { AnchorProvider } from '@coral-xyz/anchor'
 import {
@@ -155,19 +154,6 @@ export function newProvider(wallet: AnchorWallet, connection: Connection) {
     wallet,
     opts,
   )
-}
-
-/**
- * mint proof NFT
- */
-export async function mintNFT(metaplex: Metaplex, symbol: string) {
-  const { nft } = await metaplex.nfts().create({
-    uri: 'http://localhost/metadata.json',
-    name: 'ALBUS NFT',
-    symbol,
-    sellerFeeBasisPoints: 500,
-  })
-  return nft
 }
 
 export async function createTransaction(

@@ -1,15 +1,25 @@
-import Decimal from 'decimal.js'
 import BN from 'bn.js'
-import { lamportsToSol, solToLamports } from '@/utils'
+import { useAnchorWallet } from 'solana-wallets-vue'
+import { LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
+import { getOrInitAssociatedTokenAddress, lamportsToSol, sendTransaction, solToLamports } from '@/utils'
 import solToken from '@/assets/img/tokens/sol.png'
 import usdcToken from '@/assets/img/tokens/usdc.png'
 
-export function useSwap() {
-//   const { verifieStatus, verifiedTransferToken } = useClientStore()
-  const { state: swapState, depositSingleTokenType, withdrawSingleTokenTypeExactOut, tokenSwap } = useSwapStore()
+enum SwapDirection {
+  ASC,
+  DESC,
+}
 
-  const fromToken = reactive<SwapData>({ image: solToken, value: 'sol', label: 'sol' })
-  const toToken = reactive<SwapData>({ image: usdcToken, value: 'usd-coin', label: 'usdc' })
+export function useSwap() {
+  //   const { verifieStatus, verifiedTransferToken } = useClientStore()
+  const swapStore = useSwapStore()
+  const wallet = useAnchorWallet()
+  const connectionStore = useConnectionStore()
+  const { monitorTransaction } = useMonitorTransaction()
+  const { notify } = useQuasar()
+
+  const fromToken = reactive<SwapData>({ image: solToken, value: PoolTokenSymbol.TOKEN_A, label: PoolTokenSymbol.TOKEN_A })
+  const toToken = reactive<SwapData>({ image: usdcToken, value: PoolTokenSymbol.TOKEN_B, label: PoolTokenSymbol.TOKEN_B })
 
   const state = reactive({
     from: fromToken,
@@ -18,24 +28,100 @@ export function useSwap() {
     active: false,
     slippage: 0.01,
     fees: { host: 0, trade: 0 },
+    direction: SwapDirection.ASC,
   })
 
   const changeValue = () => {
     const amountIn = solToLamports(state.from.amount ?? 0)
+
     if (amountIn === 0 || Number.isNaN(amountIn)) {
       state.to.value = undefined
       return
     }
-    let amountOut
-    if (state.from.value === PoolTokenSymbol.SOL) {
-      amountOut = depositSingleTokenType(amountIn)
-    } else {
-      const _amountOut = new Decimal(amountIn).div(swapState.rate)
-      amountOut = (new Decimal(amountIn).div(withdrawSingleTokenTypeExactOut(_amountOut.toNumber())))
-        .mul(_amountOut)
-        .toNumber()
+
+    const amountOut = swapStore.depositSingleTokenType(amountIn)
+    state.to.amount = lamportsToSol(amountOut)
+  }
+
+  async function swapSubmit() {
+    const tokenSwap = swapStore.tokenSwap
+
+    if (!tokenSwap) {
+      console.log('TokenSwap is not initialized...')
+      return
     }
-    state.to.value = lamportsToSol(amountOut)
+
+    const authority = wallet.value!.publicKey
+
+    if (!authority) {
+      notify({ type: 'info', message: 'Please connect your wallet first' })
+    }
+
+    const fromAmount = Number(solToLamports(state.from.amount ?? 0))
+    const fromBalance = Number(swapStore.state.userBalance[state.from.label] ?? 0)
+
+    if (fromAmount > fromBalance) {
+      notify({ type: 'negative', message: 'Insufficient balance.' })
+      return
+    }
+
+    try {
+      state.swapping = true
+      const tx = new Transaction()
+
+      const {
+        userSourceMint,
+        userDestinationMint,
+        poolSourceAddress,
+        poolDestinationAddress,
+      } = swapDataByDirection()
+
+      const userSource = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, userSourceMint, wallet.value!.publicKey)
+      const userDestination = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, userDestinationMint, wallet.value!.publicKey)
+      const poolSource = poolSourceAddress
+      const poolDestination = poolDestinationAddress
+      const hostFeeAccount = null
+      const userTransferAuthority = wallet.value!.publicKey
+      const amountIn = Number(state.from.amount) * LAMPORTS_PER_SOL
+
+      const minimumPoolTokenAmount = Math.floor(amountIn - (amountIn * state.slippage))
+
+      const instruction = tokenSwap.swap(
+        userSource,
+        poolSource,
+        poolDestination,
+        userDestination,
+        hostFeeAccount,
+        userTransferAuthority,
+        amountIn,
+        minimumPoolTokenAmount,
+      )
+
+      tx.add(instruction)
+
+      await monitorTransaction(
+        sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
+        {
+          commitment: 'finalized',
+          onSuccess: reload,
+        },
+      )
+    } catch (e) {
+      console.log(e)
+    } finally {
+      state.swapping = false
+    }
+  }
+
+  function swapDataByDirection() {
+    const tokenSwap = swapStore.tokenSwap!
+    const direction = state.direction
+    return {
+      userSourceMint: direction === SwapDirection.ASC ? tokenSwap.mintA : tokenSwap.mintB,
+      userDestinationMint: direction === SwapDirection.ASC ? tokenSwap.mintB : tokenSwap.mintA,
+      poolSourceAddress: direction === SwapDirection.ASC ? tokenSwap.tokenAccountA : tokenSwap.tokenAccountB,
+      poolDestinationAddress: direction === SwapDirection.ASC ? tokenSwap.tokenAccountB : tokenSwap.tokenAccountA,
+    }
   }
 
   async function verifieSwap() {
@@ -45,20 +131,27 @@ export function useSwap() {
 
   function changeDirection() {
     const { from, to } = state
-    state.to = from
-    state.from = to
+    state.to = { ...from, amount: undefined }
+    state.from = { ...to, amount: undefined }
+    state.direction = state.direction === SwapDirection.ASC ? SwapDirection.DESC : SwapDirection.ASC
   }
 
   function openSlippage() {
-    swapState.slippageDialog = true
+    swapStore.state.slippageDialog = true
   }
 
   function closeSlippage() {
-    swapState.slippageDialog = false
+    swapStore.state.slippageDialog = false
   }
 
   function setMax(amount: number) {
     state.from.amount = amount
+  }
+
+  function reload() {
+    swapStore.loadUserTokenAccounts()
+    state.from.amount = undefined
+    state.to.amount = undefined
   }
 
   watch(() => state.to, (s) => {
@@ -67,7 +160,7 @@ export function useSwap() {
     }
   })
 
-  watch(() => tokenSwap, (ts) => {
+  watch(() => swapStore.tokenSwap, (ts) => {
     if (!ts) {
       return
     }
@@ -76,14 +169,15 @@ export function useSwap() {
   })
   return {
     state,
-    tokenSwap,
-    swapState,
+    tokenSwap: swapStore.tokenSwap,
+    swapState: swapStore.state,
     setMax,
     closeSlippage,
     openSlippage,
     changeDirection,
     verifieSwap,
     changeValue,
+    swapSubmit,
   }
 }
 

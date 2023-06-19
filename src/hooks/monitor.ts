@@ -11,7 +11,7 @@ export function useMonitorTransaction() {
   const sending = ref(false)
 
   async function monitorTransaction(
-    signatureOrPromise: Promise<{ signature: string }> | { signature: string },
+    signatureOrPromise: Promise<{ signature: string }> | Promise<string>,
     {
       onSuccess,
       onError,

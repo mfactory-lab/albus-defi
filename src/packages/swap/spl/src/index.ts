@@ -296,7 +296,7 @@ export class TokenSwap {
     poolDestination: PublicKey,
     userDestination: PublicKey,
     hostFeeAccount: PublicKey | null,
-    userTransferAuthority: Keypair,
+    userTransferAuthority: PublicKey,
     amountIn: number | string | bigint | BN,
     minimumAmountOut: number | string | bigint | BN,
   ) {
@@ -304,7 +304,7 @@ export class TokenSwap {
       TokenSwap.swapInstruction(
         this.tokenSwap,
         this.authority,
-        userTransferAuthority.publicKey,
+        userTransferAuthority,
         userSource,
         poolSource,
         poolDestination,

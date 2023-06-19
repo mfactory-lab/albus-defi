@@ -3,23 +3,16 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import Decimal from 'decimal.js'
 import { getMint } from '@solana/spl-token'
 import { useAnchorWallet } from 'solana-wallets-vue'
-import { TokenSwap } from '@/spl/src'
+import { TokenSwap } from '@/packages/swap/spl/src'
 import { getTokensByOwner, lamportsToSol } from '@/utils'
-import { mintToken } from '@/utils/pool'
 
-const POOL_ADDRESS = new PublicKey('4MZyn54Mh2FRW4tDaU2Au3GQHm4JNakSseMGUijWaQJP')
+const POOL_ADDRESS = new PublicKey('6jhzJxJJjxQnRjaqz63ErJyKfkH5JKDb9Bv57S7km58g')
 
 export enum PoolTokenSymbol {
   TOKEN_A = 'TOKEN_A',
   TOKEN_B = 'TOKEN_B',
-  JPLU = 'JPLU',
 }
 
-interface SwapStoreBalance {
-  SOL: number | undefined
-  USDC: number | undefined
-  JPLU: number | undefined
-}
 interface SwapStoreState {
   loading: boolean
   poolTokenSupply: number
@@ -50,8 +43,7 @@ export const useSwapStore = defineStore('swap', () => {
     if (w) {
       await loadUserTokenAccounts()
       // initPool(connectionStore.connection, w)
-
-      await mintToken(connectionStore.connection, w, new PublicKey('2ZyXW3h7dyByYR6upHKGG9FntgGBJmj5PV3wRGUSooAV'))
+      // await mintToken(connectionStore.connection, w, new PublicKey('2ZyXW3h7dyByYR6upHKGG9FntgGBJmj5PV3wRGUSooAV'))
     }
   }, { deep: true, immediate: true })
 
@@ -104,7 +96,7 @@ export const useSwapStore = defineStore('swap', () => {
       tokenSwap.value.mintB,
     ])
 
-    const balances = { TOKEN_A: 0, TOKEN_B: 0, JPLU: 0 }
+    const balances = { TOKEN_A: 0, TOKEN_B: 0 }
     for (const acc of accs) {
       const s = getSymbolByMint(acc.mint)
       if (s) {
@@ -112,7 +104,8 @@ export const useSwapStore = defineStore('swap', () => {
       }
     }
     state.userBalance = balances
-    console.log(state.userBalance)
+    console.log('[Pool Balance]', state.poolBalance)
+    console.log('[User Balance]', state.userBalance)
   }
 
   function getRate(): number {
@@ -126,7 +119,6 @@ export const useSwapStore = defineStore('swap', () => {
     switch (String(mint)) {
       case String(tokenSwap.value.mintA): return PoolTokenSymbol.TOKEN_A
       case String(tokenSwap.value.mintB): return PoolTokenSymbol.TOKEN_B
-      case String(tokenSwap.value.poolToken): return PoolTokenSymbol.JPLU
     }
   }
 
@@ -137,7 +129,7 @@ export const useSwapStore = defineStore('swap', () => {
    * @param {number} amountIn In lamports
    */
   function depositSingleTokenType(amountIn: string | number) {
-    const swapSourceAmount = new Decimal(state.poolBalance.SOL ?? 0)
+    const swapSourceAmount = new Decimal(state.poolBalance.TOKEN_A ?? 0)
     const ratio = new Decimal(amountIn).div(swapSourceAmount)
 
     const one = new Decimal(1)
@@ -154,7 +146,7 @@ export const useSwapStore = defineStore('swap', () => {
    * @param {number} amountIn In lamports
    */
   function withdrawSingleTokenTypeExactOut(amountIn: string | number) {
-    const swapSourceAmount = new Decimal(state.poolBalance.SOL ?? 0)
+    const swapSourceAmount = new Decimal(state.poolBalance.TOKEN_A ?? 0)
     const ratio = new Decimal(amountIn).div(swapSourceAmount)
     const one = new Decimal(1)
     const base = one.sub(ratio)
@@ -170,6 +162,7 @@ export const useSwapStore = defineStore('swap', () => {
   return {
     state,
     tokenSwap,
+    loadUserTokenAccounts,
     depositSingleTokenType,
     withdrawSingleTokenTypeExactOut,
   }

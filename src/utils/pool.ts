@@ -5,8 +5,10 @@ import type { Connection } from '@solana/web3.js'
 import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import type { AnchorWallet } from 'solana-wallets-vue'
 
-import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet'
-import { TOKEN_SWAP_PROGRAM_ID, TokenSwap } from '@/spl/src'
+import { TOKEN_SWAP_PROGRAM_ID, TokenSwap } from '@/packages/swap/spl/src'
+
+const keypair
+  = Uint8Array.from([])
 
 const decimals = 9
 
@@ -25,7 +27,6 @@ function newProvider(connection: Connection, wallet: AnchorWallet) {
 export async function initPool(
   connection: Connection,
   wallet: AnchorWallet,
-  keypair: Uint8Array,
 ) {
   const tokenSwapAccount = Keypair.generate()
 
@@ -173,12 +174,7 @@ export async function initPool(
 
 export async function mintToken(connection: Connection, wallet: AnchorWallet, mint: PublicKey) {
   const keypair = Keypair.fromSecretKey(
-    Uint8Array.from([158, 194, 226, 38, 190, 227, 227, 166, 87, 110, 113, 219, 65, 127, 162, 189, 137, 120, 203, 34, 96, 99, 81, 145, 178, 115, 144, 129, 154, 237, 141, 124, 125, 130, 224, 168, 53, 71, 159, 165, 51, 52, 102, 146, 244, 230, 187, 10, 187, 24, 247, 208, 5, 247, 178, 62, 222, 16, 147, 72, 0, 117, 83, 81]),
-  )
-  const provider = new AnchorProvider(
-    connection,
-    new NodeWallet(keypair),
-    AnchorProvider.defaultOptions(),
+    Uint8Array.from([]),
   )
 
   const sourceToken = await getOrCreateAssociatedTokenAccount(
@@ -189,5 +185,5 @@ export async function mintToken(connection: Connection, wallet: AnchorWallet, mi
     true,
   )
 
-  await mintTo(connection, keypair, mint, sourceToken.address, wallet.publicKey, 1 * LAMPORTS_PER_SOL)
+  await mintTo(connection, keypair, mint, sourceToken.address, wallet.publicKey, 50 * LAMPORTS_PER_SOL)
 }

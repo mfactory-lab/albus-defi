@@ -1,14 +1,19 @@
 <script setup lang="ts">
 // import { ZKPRequestStatus } from '@albus/monorepo/packages/albus-sdk/src/generated'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { formatBalance, formatPct, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { SwapData } from '@/stores/swap'
 
-const { state, swapState, changeDirection, openSlippage, closeSlippage, setMax, verifieSwap, changeValue } = useSwap()
+const { state, swapState, changeDirection, openSlippage, closeSlippage, setMax, changeValue, swapSubmit } = useSwap()
 const { handleSearchToken, options } = useToken()
-const { tokenBalance } = useUserStore()
 
-// console.log(Uint8Array.from('38f57pVjJEb9wGuzAmonU2k76ctmrDWBVyn9v5hMMURLVqYC5xWwd31UhHAWmNkTwvh1r8d1SgNoLKTiDUDnTo1u'))
+const filterTokens = computed(() => [...options.value].splice(-2))
+
+function tokenBalance(symbol: string) {
+  return swapState.userBalance[symbol] / LAMPORTS_PER_SOL
+}
+
 const formatPercent = (n: number) => formatPct.format(n)
 
 const dialog = ref(false)
@@ -94,7 +99,7 @@ watch(() => swapState.status, (s) => {
                 MAX
               </q-btn>
               <select-token
-                :options="options" :token="state.from" :swap-token="state.to.value"
+                :options="filterTokens" :token="state.from" :swap-token="state.to.value"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -119,7 +124,7 @@ watch(() => swapState.status, (s) => {
           <q-input v-model="state.to.amount" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
             <template #append>
               <select-token
-                :swap-token="state.from.value" :options="options" :direction="true" :token="state.to"
+                :swap-token="state.from.value" :options="filterTokens" :direction="true" :token="state.to"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -147,7 +152,7 @@ watch(() => swapState.status, (s) => {
       </div>
 
       <div class="swap-submit">
-        <q-btn :loading="state.swapping" :disable="!state.active" rounded :ripple="false" @click="verifieSwap">
+        <q-btn :loading="state.swapping" :disable="!state.active" rounded :ripple="false" @click="swapSubmit">
           Swap {{ state.from.label }} / {{ state.to.label }}
         </q-btn>
       </div>
