@@ -5,9 +5,10 @@ import type { PublicKeyInitData } from '@solana/web3.js'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 
 // import { ZKPRequestStatus } from '@albus/monorepo/packages/albus-sdk/src/generated'
-// import { AlbusClient } from '@albus/monorepo/packages/albus-sdk/src'
-// import { VerifiedTransferClient } from '@albus/monorepo/packages/verified-transfer-sdk'
+import { AlbusClient } from '@albus/monorepo/packages/albus-sdk/src'
+import { VerifiedTransferClient } from '@albus/monorepo/packages/verified-transfer-sdk'
 import { BN } from '@coral-xyz/anchor'
+import { newProvider } from '@/utils'
 
 // import { newProvider } from '@/utils'
 
@@ -24,11 +25,13 @@ export const useClientStore = defineStore('client', () => {
   const testCircuit = 'EByLSRhVR2JhpVwj1CsRNKJ5DVpG8Nu4oDByu2aW8PMv'
 
   watch(anchorWallet, (w) => {
-    /*  if (w) {
+    if (w) {
       const provider = newProvider(w, connectionStore.connection)
       client = new AlbusClient(provider)
       verifiedTransferClient = new VerifiedTransferClient(provider)
-    } */
+      console.log(client)
+      console.log(verifiedTransferClient)
+    }
   }, { deep: true, immediate: true })
 
   const loadZKPRequest = async () => {

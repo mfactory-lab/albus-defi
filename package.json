@@ -13,6 +13,7 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@albus/monorepo": "github:mfactory-lab/albus",
     "@coral-xyz/anchor": "^0.28.0",
     "@metaplex-foundation/beet": "^0.7.1",
     "@metaplex-foundation/js": "^0.19.4",
