@@ -1,6 +1,7 @@
 import BN from 'bn.js'
 import { useAnchorWallet } from 'solana-wallets-vue'
-import { LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
+import type { PublicKey } from '@solana/web3.js'
+import { Transaction } from '@solana/web3.js'
 import { getOrInitAssociatedTokenAddress, lamportsToSol, sendTransaction, solToLamports } from '@/utils'
 import solToken from '@/assets/img/tokens/sol.png'
 import usdcToken from '@/assets/img/tokens/usdc.png'
@@ -39,7 +40,7 @@ export function useSwap() {
       return
     }
 
-    const amountOut = swapStore.depositSingleTokenType(amountIn)
+    const amountOut = swapStore.withdrawSingleTokenTypeExactOut(amountIn, state.from.label)
     state.to.amount = lamportsToSol(amountOut)
   }
 
@@ -59,6 +60,7 @@ export function useSwap() {
 
     const fromAmount = Number(solToLamports(state.from.amount ?? 0))
     const fromBalance = Number(swapStore.state.userBalance[state.from.label] ?? 0)
+    const toAmount = Number(solToLamports(state.to.amount ?? 0))
 
     if (fromAmount > fromBalance) {
       notify({ type: 'negative', message: 'Insufficient balance.' })
@@ -82,9 +84,13 @@ export function useSwap() {
       const poolDestination = poolDestinationAddress
       const hostFeeAccount = null
       const userTransferAuthority = wallet.value!.publicKey
-      const amountIn = Number(state.from.amount) * LAMPORTS_PER_SOL
 
-      const minimumPoolTokenAmount = Math.floor(amountIn - (amountIn * state.slippage))
+      const sourceTokenAmount = fromAmount
+      const minimumPoolTokenAmount = Math.floor(toAmount - (toAmount * state.slippage))
+
+      console.log(state.direction)
+      console.log('minimumPoolTokenAmount => ', minimumPoolTokenAmount)
+      console.log('toAmount => ', toAmount)
 
       const instruction = tokenSwap.swap(
         userSource,
@@ -93,7 +99,7 @@ export function useSwap() {
         userDestination,
         hostFeeAccount,
         userTransferAuthority,
-        amountIn,
+        sourceTokenAmount,
         minimumPoolTokenAmount,
       )
 
@@ -122,6 +128,30 @@ export function useSwap() {
       poolSourceAddress: direction === SwapDirection.ASC ? tokenSwap.tokenAccountA : tokenSwap.tokenAccountB,
       poolDestinationAddress: direction === SwapDirection.ASC ? tokenSwap.tokenAccountB : tokenSwap.tokenAccountA,
     }
+  }
+
+  async function depositToken(tokenMint: PublicKey) {
+    const tx = new Transaction()
+
+    const userAccount = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, tokenMint, wallet.value!.publicKey)
+    const poolAccount = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, swapStore.tokenSwap!.poolToken, wallet.value!.publicKey)
+
+    const amountIn = solToLamports(5)
+    const minimumPoolTokenAmount = Math.floor(amountIn - (amountIn * state.slippage))
+
+    const instructions = swapStore.tokenSwap!.depositSingleTokenTypeExactAmountIn(
+      userAccount,
+      poolAccount,
+      wallet.value!.publicKey,
+      amountIn,
+      minimumPoolTokenAmount,
+    )
+
+    tx.add(instructions)
+
+    await monitorTransaction(
+      sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
+    )
   }
 
   async function verifieSwap() {
@@ -178,6 +208,7 @@ export function useSwap() {
     verifieSwap,
     changeValue,
     swapSubmit,
+    depositToken,
   }
 }
 

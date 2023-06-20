@@ -562,7 +562,7 @@ export class TokenSwap {
   depositSingleTokenTypeExactAmountIn(
     userAccount: PublicKey,
     poolAccount: PublicKey,
-    userTransferAuthority: Keypair,
+    userTransferAuthority: PublicKey,
     sourceTokenAmount: number | BN,
     minimumPoolTokenAmount: number | BN,
   ) {
@@ -570,7 +570,7 @@ export class TokenSwap {
       TokenSwap.depositSingleTokenTypeExactAmountInInstruction(
         this.tokenSwap,
         this.authority,
-        userTransferAuthority.publicKey,
+        userTransferAuthority,
         userAccount,
         this.tokenAccountA,
         this.tokenAccountB,

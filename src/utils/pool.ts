@@ -50,7 +50,7 @@ export async function initPool(
     _wallet,
     _wallet.publicKey,
     null,
-    6,
+    decimals,
   )
 
   // PDA of tokenSwapAccount for token swap program
@@ -172,7 +172,7 @@ export async function initPool(
   }
 }
 
-export async function mintToken(connection: Connection, wallet: AnchorWallet, mint: PublicKey) {
+export async function mintToken(connection: Connection, wallet: AnchorWallet, mint: PublicKey, decimals = 9) {
   const keypair = Keypair.fromSecretKey(
     Uint8Array.from([]),
   )
@@ -185,5 +185,5 @@ export async function mintToken(connection: Connection, wallet: AnchorWallet, mi
     true,
   )
 
-  await mintTo(connection, keypair, mint, sourceToken.address, wallet.publicKey, 50 * LAMPORTS_PER_SOL)
+  await mintTo(connection, keypair, mint, sourceToken.address, wallet.publicKey, 10 * (10 ** decimals))
 }

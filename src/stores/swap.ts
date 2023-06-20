@@ -6,7 +6,7 @@ import { useAnchorWallet } from 'solana-wallets-vue'
 import { TokenSwap } from '@/packages/swap/spl/src'
 import { getTokensByOwner, lamportsToSol } from '@/utils'
 
-const POOL_ADDRESS = new PublicKey('6jhzJxJJjxQnRjaqz63ErJyKfkH5JKDb9Bv57S7km58g')
+const POOL_ADDRESS = new PublicKey('EjCM3aozA6sFUzQQ7vXg2uTtjRydyuHSWRwvQX16pAS9')
 
 export enum PoolTokenSymbol {
   TOKEN_A = 'TOKEN_A',
@@ -43,7 +43,7 @@ export const useSwapStore = defineStore('swap', () => {
     if (w) {
       await loadUserTokenAccounts()
       // initPool(connectionStore.connection, w)
-      // await mintToken(connectionStore.connection, w, new PublicKey('2ZyXW3h7dyByYR6upHKGG9FntgGBJmj5PV3wRGUSooAV'))
+      // await mintToken(connectionStore.connection, w, new PublicKey('FHZhZwGBCYPwC9mG5ZpQ2aKyepzCMZht7eEw2K4rBp38'))
     }
   }, { deep: true, immediate: true })
 
@@ -129,7 +129,7 @@ export const useSwapStore = defineStore('swap', () => {
    * @param {number} amountIn In lamports
    */
   function depositSingleTokenType(amountIn: string | number) {
-    const swapSourceAmount = new Decimal(state.poolBalance.TOKEN_A ?? 0)
+    const swapSourceAmount = new Decimal(state.poolBalance.TOKEN_A ?? state.poolBalance.TOKEN_B)
     const ratio = new Decimal(amountIn).div(swapSourceAmount)
 
     const one = new Decimal(1)
@@ -145,8 +145,8 @@ export const useSwapStore = defineStore('swap', () => {
    *
    * @param {number} amountIn In lamports
    */
-  function withdrawSingleTokenTypeExactOut(amountIn: string | number) {
-    const swapSourceAmount = new Decimal(state.poolBalance.TOKEN_A ?? 0)
+  function withdrawSingleTokenTypeExactOut(amountIn: string | number, symbol: string) {
+    const swapSourceAmount = new Decimal(state.poolBalance[symbol] ?? 0)
     const ratio = new Decimal(amountIn).div(swapSourceAmount)
     const one = new Decimal(1)
     const base = one.sub(ratio)
