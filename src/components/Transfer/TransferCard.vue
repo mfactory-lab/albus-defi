@@ -2,8 +2,6 @@
 import { Notify } from 'quasar'
 import { evaClose } from '@quasar/extras/eva-icons'
 
-// import { ZKPRequestStatus } from '@albus/sdk'
-
 import { useWallet } from 'solana-wallets-vue'
 import { lowerCase } from 'lodash-es'
 import { formatBalance, onlyNumber } from '@/utils'
@@ -55,12 +53,12 @@ function setMaxCurrency() {
 const active = computed(() => Number(state.value) > 0 && state.address.length >= 44)
 
 watch(() => state.status, (s) => {
-  // if (typeof s !== 'number') {
-  //   return
-  // }
-  // if (s !== ZKPRequestStatus.Verified) {
-  //   dialog.value = true
-  // }
+  if (typeof s !== 'number') {
+    return
+  }
+  if (s !== ProofRequestStatusWithEmpty.Proved) {
+    dialog.value = true
+  }
 })
 </script>
 
@@ -133,5 +131,5 @@ watch(() => state.status, (s) => {
     <q-inner-loading :showing="userState.loading" class="swap-loading" color="grey" />
   </q-card>
 
-  <zkp-request-dialog v-model="dialog" :zkp-status="state.status" @clear-zkp-status="state.status = undefined" />
+  <zkp-request-dialog v-model="dialog" :zkp-status="state.status" @clear-zkp-status="state.status" />
 </template>

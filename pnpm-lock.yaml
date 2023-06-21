@@ -7,7 +7,7 @@ settings:
 dependencies:
   '@albus/monorepo':
     specifier: github:mfactory-lab/albus
-    version: github.com/mfactory-lab/albus/dc265e56032e02ecc692a446cc68847a3bd01b87
+    version: github.com/mfactory-lab/albus/29282777db15d409f6c8a7469089f8b582d6a4bb
   '@coral-xyz/anchor':
     specifier: ^0.28.0
     version: 0.28.0
@@ -12695,8 +12695,9 @@ packages:
     engines: {node: '>=0.11'}
     dev: false
 
-  github.com/mfactory-lab/albus/dc265e56032e02ecc692a446cc68847a3bd01b87:
-    resolution: {tarball: https://codeload.github.com/mfactory-lab/albus/tar.gz/dc265e56032e02ecc692a446cc68847a3bd01b87}
+  github.com/mfactory-lab/albus/29282777db15d409f6c8a7469089f8b582d6a4bb:
+    resolution: {tarball: https://codeload.github.com/mfactory-lab/albus/tar.gz/29282777db15d409f6c8a7469089f8b582d6a4bb}
     name: '@albus/monorepo'
     version: 0.0.0
+    engines: {node: '>=16', pnpm: '>=8'}
     dev: false

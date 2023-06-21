@@ -1,18 +1,21 @@
 <script lang="ts" setup>
 import { evaClose } from '@quasar/extras/eva-icons'
-import { ZKPRequestStatusWithEmpty } from '@/stores/transfer'
 
-defineProps({
-  zkpStatus: Number,
+const props = defineProps({
+  zkpStatus: {
+    type: Number,
+    default: 4,
+  },
 })
-
 const emits = defineEmits(['clearZkpStatus'])
 
-const { createZKPRequest } = useClientStore()
+const { createProofRequest } = useClientStore()
 
 function handleClearStatus() {
   emits('clearZkpStatus')
 }
+
+const isZkpProve = computed(() => ProofRequestStatusWithEmpty.Proved === props.zkpStatus)
 </script>
 
 <template>
@@ -27,10 +30,10 @@ function handleClearStatus() {
       </q-card-section>
 
       <q-card-section class="q-pt-none zkp-dialog__body">
-        <div v-if="zkpStatus === ZKPRequestStatusWithEmpty.Empty">
+        <div v-if="!isZkpProve">
           To continue, you need to create a ZKP request
         </div>
-        <div v-if="zkpStatus === ZKPRequestStatusWithEmpty.Pending">
+        <div v-if="isZkpProve">
           To continue, you need to "approve" the request. Follow this link.
           <a class="prove-link" href="https://albus.finance/" target="_blank">__Albus account__</a>
         </div>
@@ -39,10 +42,10 @@ function handleClearStatus() {
       <q-card-actions align="right" class="zkp-dialog__actions">
         <q-btn v-close-popup flat label="Cancel" class="zkp-dialog__actions--cancel" />
         <q-btn
-          v-if="zkpStatus === ZKPRequestStatusWithEmpty.Empty" v-close-popup outline label="Create"
-          color="yellow" @click="createZKPRequest"
+          v-if="!isZkpProve" v-close-popup outline label="Create"
+          color="yellow" @click="createProofRequest"
         />
-        <q-btn v-if="zkpStatus === ZKPRequestStatusWithEmpty.Pending" v-close-popup color="yellow" outline>
+        <q-btn v-if="isZkpProve" v-close-popup color="yellow" outline>
           <a href="https://albus.finance/" target="_blank">Approve</a>
         </q-btn>
       </q-card-actions>

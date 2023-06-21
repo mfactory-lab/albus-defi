@@ -1,25 +1,20 @@
 import { defineStore } from 'pinia'
 import { useWallet } from 'solana-wallets-vue'
 
-// import { ZKPRequestStatus } from '@albus/monorepo/packages/albus-sdk/src/generated'
 import { lowerCase } from 'lodash-es'
-import type { PublicKey } from '@solana/web3.js'
+import type { PublicKeyInitData } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
+import { ProofRequestStatus } from '@albus/monorepo/packages/albus-sdk/src'
+import BN from 'bn.js'
 import type { SwapData } from './swap'
+import type { ProofRequestWithEmpty } from './client'
 import solToken from '@/assets/img/tokens/sol.png'
 import { createTransaction, getMetadataPDA, transactionFee, validateAddress } from '@/utils'
-
-enum NoZKPRequests {
-  Empty = 4,
-}
-
-export const ZKPRequestStatusWithEmpty = { /* ...ZKPRequestStatus, */ ...NoZKPRequests }
-
-export type ZKPRequestWithEmpty = NoZKPRequests /* | ZKPRequestStatus */
 
 export const useTransferStore = defineStore('transfer', () => {
   const { monitorTransaction } = useMonitorTransaction()
   const connectionStore = useConnectionStore()
-  const { verifieStatus, verifieTransferSOL } = useClientStore()
+  const clientStore = useClientStore()
   const { state: tokenState } = useUserStore()
 
   const defaultFee = 0.00
@@ -39,10 +34,38 @@ export const useTransferStore = defineStore('transfer', () => {
   })
 
   async function verifieTransfer() {
-    state.status = await verifieStatus()
-    // if (state.status === ZKPRequestStatus.Verified) {
-    //    verifieTransferSOL()
-    // }
+    state.status = await clientStore.verifieStatus()
+    if (state.status === ProofRequestStatus.Proved) {
+      // verifiedTransferSOL()
+    }
+  }
+
+  async function verifiedTransferSOL() {
+    const zkpRequest = clientStore.proofRequestAddress
+    const amount = new BN(Number(state.value) * LAMPORTS_PER_SOL)
+    const receiver = new PublicKey(state.address)
+    await clientStore.verifiedTransferClient!.transfer({
+      amount,
+      receiver,
+      zkpRequest,
+    })
+  }
+
+  async function verifiedTransferToken(
+    receiver: PublicKeyInitData,
+    source: PublicKeyInitData,
+    destination: PublicKeyInitData,
+    ZKPRequestAddress: PublicKey,
+    tokenMint: PublicKey,
+    amount: number) {
+    await clientStore.verifiedTransferClient!.splTransfer({
+      destination: new PublicKey(destination),
+      source: new PublicKey(source),
+      tokenMint,
+      amount: new BN(Number(amount) * LAMPORTS_PER_SOL),
+      receiver: new PublicKey(receiver),
+      zkpRequest: ZKPRequestAddress,
+    })
   }
 
   function setMax(amount: number) {
@@ -115,34 +138,6 @@ export const useTransferStore = defineStore('transfer', () => {
     state.fee = !isAccountExist ? fee + 0.02 : fee
   }
 
-  /* async function transferSOL() {
-    try {
-      state.loading = true
-      const transaction = await createTransaction()
-      const { instructions } = transaction
-
-      console.log('instructions => ', instructions)
-
-      await monitorTransaction(
-        sendTransaction(
-          connectionStore.connection,
-          wallet.value as unknown as AnchorWallet,
-          instructions,
-          [],
-        ),
-        {
-          onSuccess: async () => {
-            console.log('[Transaction] Success')
-            clearState()
-            getTokens()
-          },
-        },
-      )
-    } finally {
-      state.loading = false
-    }
-  } */
-
   return {
     state,
     setMax,
@@ -158,5 +153,5 @@ interface TransferState {
   token: SwapData
   fee: number
   valid: boolean
-  status?: ZKPRequestWithEmpty
+  status?: ProofRequestWithEmpty
 }
