@@ -12,8 +12,8 @@ import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import inject from '@rollup/plugin-inject'
 
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
-import nodePolyfills from 'rollup-plugin-node-polyfills'
+// import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
+// import nodePolyfills from 'rollup-plugin-node-polyfills'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
     rollupOptions: {
       plugins: [
         inject({ Buffer: ['buffer', 'Buffer'] }),
-        nodePolyfills,
+        // nodePolyfills,
       ],
     },
   }
@@ -126,9 +126,9 @@ export default defineConfig(({ mode }) => {
       },
     },
     optimizeDeps: {
-      esbuildOptions: {
-        plugins: [NodeGlobalsPolyfillPlugin({ buffer: true })],
-      },
+      // esbuildOptions: {
+      //   plugins: [NodeGlobalsPolyfillPlugin({ buffer: true })],
+      // },
     },
   }
 })

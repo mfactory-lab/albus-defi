@@ -8,7 +8,7 @@ defineProps({
 
 const emits = defineEmits(['clearZkpStatus'])
 
-const { createZKPRequest } = useClientStore()
+const { createProofRequest } = useClientStore()
 
 function handleClearStatus() {
   emits('clearZkpStatus')
@@ -40,7 +40,7 @@ function handleClearStatus() {
         <q-btn v-close-popup flat label="Cancel" class="zkp-dialog__actions--cancel" />
         <q-btn
           v-if="zkpStatus === ZKPRequestStatusWithEmpty.Empty" v-close-popup outline label="Create"
-          color="yellow" @click="createZKPRequest"
+          color="yellow" @click="createProofRequest"
         />
         <q-btn v-if="zkpStatus === ZKPRequestStatusWithEmpty.Pending" v-close-popup color="yellow" outline>
           <a href="https://albus.finance/" target="_blank">Approve</a>

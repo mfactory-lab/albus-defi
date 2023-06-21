@@ -10,7 +10,6 @@
     "jsx": "preserve",
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "noUnusedLocals": true,
     "strictNullChecks": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
