@@ -41,15 +41,17 @@ export const useSwapStore = defineStore('swap', () => {
 
   watch(wallet, async (w) => {
     if (w) {
-      await loadUserTokenAccounts()
+      init().then()
       // initPool(connectionStore.connection, w)
       // await mintToken(connectionStore.connection, w, new PublicKey('FHZhZwGBCYPwC9mG5ZpQ2aKyepzCMZht7eEw2K4rBp38'))
     }
-  }, { deep: true, immediate: true })
-
-  watch(() => connectionStore.cluster, async () => {
-    init().then()
   }, { immediate: true })
+
+  watch(tokenSwap, async (t) => {
+    if (t) {
+      await loadUserTokenAccounts()
+    }
+  })
 
   async function init() {
     state.loading = true

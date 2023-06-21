@@ -6,7 +6,8 @@ import { useWallet } from 'solana-wallets-vue'
 import { lowerCase } from 'lodash-es'
 import { formatBalance, onlyNumber } from '@/utils'
 
-const { state, setMax, setToken, verifieTransfer } = useTransferStore()
+const { state } = useTransferStore()
+const { setMax, setToken, verifieTransfer } = useTransfer()
 const { state: userState, tokenBalance } = useUserStore()
 const { handleSearchToken, options } = useToken()
 
@@ -17,8 +18,6 @@ const filterTokenExist = computed(() => {
 )
 
 const { connected } = useWallet()
-
-const dialog = ref(false)
 
 const balance = computed(() => tokenBalance(state.token.label))
 
@@ -51,15 +50,6 @@ function setMaxCurrency() {
 }
 
 const active = computed(() => Number(state.value) > 0 && state.address.length >= 44)
-
-watch(() => state.status, (s) => {
-  if (typeof s !== 'number') {
-    return
-  }
-  if (s !== ProofRequestStatusWithEmpty.Proved) {
-    dialog.value = true
-  }
-})
 </script>
 
 <template>
@@ -131,5 +121,5 @@ watch(() => state.status, (s) => {
     <q-inner-loading :showing="userState.loading" class="swap-loading" color="grey" />
   </q-card>
 
-  <zkp-request-dialog v-model="dialog" :zkp-status="state.status" @clear-zkp-status="state.status" />
+  <zkp-request-dialog />
 </template>

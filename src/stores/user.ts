@@ -11,7 +11,6 @@ enum Tokens {
 export const useUserStore = defineStore('user', () => {
   const state = reactive<UserState>({
     tokens: [],
-    proofNfts: [],
     loading: false,
   })
 
@@ -32,8 +31,7 @@ export const useUserStore = defineStore('user', () => {
         mint: 'So11111111111111111111111111111111111111111',
       }
 
-      state.tokens = [...tokens.filter(t => t.decimals > 0), solToken]
-      state.proofNfts = [...tokens.filter(t => t.symbol === 'ALBUS-P')]
+      state.tokens = [...tokens, solToken]
     } finally {
       state.loading = false
     }
@@ -41,6 +39,10 @@ export const useUserStore = defineStore('user', () => {
 
   const tokenBalance = (token: string) => {
     return state.tokens.find(t => [lowerCase(t.symbol), lowerCase(t.name)].includes(lowerCase(token)))?.balance ?? 0
+  }
+
+  const reloadUserTokens = () => {
+    getTokens()
   }
 
   watch(connected, async (c) => {
@@ -54,13 +56,13 @@ export const useUserStore = defineStore('user', () => {
     state,
     getTokens,
     tokenBalance,
+    reloadUserTokens,
   }
 })
 
 interface UserState {
   tokens: IUserToken[]
   loading: boolean
-  proofNfts: IUserToken[]
 }
 
 export interface IUserToken {

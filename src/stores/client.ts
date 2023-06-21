@@ -4,17 +4,17 @@ import { useAnchorWallet } from 'solana-wallets-vue'
 import type { PublicKeyInitData } from '@solana/web3.js'
 import { PublicKey } from '@solana/web3.js'
 
-import { AlbusClient, ProofRequestStatus } from '@albus/monorepo/packages/albus-sdk/src'
-import { VerifiedTransferClient } from '@albus/monorepo/packages/verified-transfer-sdk'
+import { AlbusClient } from '@albus/sdk'
+
 import { newProvider } from '@/utils'
 
-enum NoZKPRequests {
-  Empty = 4,
+export enum IProofRequestStatus {
+  Pending,
+  Proved,
+  Verified,
+  Rejected,
+  Empty,
 }
-
-export const ProofRequestStatusWithEmpty = { ...ProofRequestStatus, ...NoZKPRequests }
-
-export type ProofRequestWithEmpty = NoZKPRequests | ProofRequestStatus
 
 export const useClientStore = defineStore('client', () => {
   const { monitorTransaction } = useMonitorTransaction()
@@ -25,18 +25,32 @@ export const useClientStore = defineStore('client', () => {
   const proofRequestAddress = ref()
 
   const client = ref<AlbusClient>()
-  const verifiedTransferClient = ref<VerifiedTransferClient>()
+  const verifiedTransferClient = ref<any>()
+
+  const state = reactive<ClientState>({
+    requestStatus: undefined,
+    requests: undefined,
+  })
 
   const serviceCode = 'test'
   const testCircuit = 'SAZUWFDXQpiqjrkitDj3LxGoLHKY9pq1AuZzhRqMMAh'
 
-  watch(anchorWallet, (w) => {
+  watch(anchorWallet, async (w) => {
     if (w) {
       const provider = newProvider(w, connectionStore.connection)
       client.value = new AlbusClient(provider)
-      verifiedTransferClient.value = new VerifiedTransferClient(provider)
+      state.requests = await getAllRequests()
+      // verifiedTransferClient.value = new VerifiedTransferClient(provider)
     }
   }, { deep: true, immediate: true })
+
+  async function getAllRequests() {
+    return await client.value?.findProofRequests()
+  }
+
+  async function getVC(pabkey: PublicKey) {
+    return await client.value!.loadCredential(pabkey)
+  }
 
   const loadProofRequest = async () => {
     const pubkey = anchorWallet.value?.publicKey as PublicKey
@@ -58,19 +72,19 @@ export const useClientStore = defineStore('client', () => {
   }
 
   async function verifieStatus() {
-    const zkpStatus = await loadZKPRequestStatus()
-    if (zkpStatus === ProofRequestStatus.Pending) {
+    const zkpStatus: any = await loadZKPRequestStatus()
+    if (zkpStatus === IProofRequestStatus.Pending) {
       console.log('PENDING============')
-      return ProofRequestStatus.Pending
-    } else if (zkpStatus === ProofRequestStatus.Proved) {
+      return IProofRequestStatus.Pending
+    } else if (zkpStatus === IProofRequestStatus.Proved) {
       console.log('PROVED============')
-      return ProofRequestStatus.Proved
-    } else if (zkpStatus === ProofRequestStatus.Verified) {
+      return IProofRequestStatus.Proved
+    } else if (zkpStatus === IProofRequestStatus.Verified) {
       console.log('VERIFIED============')
-      return ProofRequestStatus.Verified
+      return IProofRequestStatus.Verified
     } else {
       console.log('EMPTY============')
-      return ProofRequestStatusWithEmpty.Empty
+      return IProofRequestStatus.Empty
     }
   }
 
@@ -80,12 +94,12 @@ export const useClientStore = defineStore('client', () => {
       proofRequestAddress.value = proofRequest
       const zkp = await client.value!.loadProofRequest(proofRequest.toBase58())
       const zkpStatus = zkp.status
-      console.log('ZKP Status: ', ProofRequestStatus[zkpStatus])
+      console.log('ZKP Status: ', IProofRequestStatus[zkpStatus])
       console.log('ZKP Request: ', proofRequest.toBase58())
-      return zkp.status
+      return zkpStatus
     } catch (e) {
       if (String(e).includes('Unable to find ZKPRequest')) {
-        return ProofRequestStatusWithEmpty.Empty
+        return IProofRequestStatus.Empty
       }
     }
   }
@@ -96,13 +110,15 @@ export const useClientStore = defineStore('client', () => {
     })
   }
 
-  async function proovZKPRequest(ZKPRequestAddress: PublicKeyInitData) {
-    /* return await client.prove({
+  async function proveRequest(ZKPRequestAddress: PublicKeyInitData) {
+    return await client.value!.prove({
       proofRequest: ZKPRequestAddress,
-    }) */
+      vc: '',
+    })
   }
 
   return {
+    state,
     client,
     verifiedTransferClient,
     proofRequestAddress,
@@ -111,3 +127,8 @@ export const useClientStore = defineStore('client', () => {
     createProofRequest,
   }
 })
+
+interface ClientState {
+  requestStatus?: IProofRequestStatus
+  requests?: Array<any>
+}

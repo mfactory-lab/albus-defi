@@ -12,7 +12,7 @@ enum SwapDirection {
 }
 
 export function useSwap() {
-  //   const { verifieStatus, verifiedTransferToken } = useClientStore()
+  const clientStore = useClientStore()
   const swapStore = useSwapStore()
   const wallet = useAnchorWallet()
   const connectionStore = useConnectionStore()
@@ -46,7 +46,11 @@ export function useSwap() {
 
   async function swapSubmit() {
     const tokenSwap = swapStore.tokenSwap
+    clientStore.state.requestStatus = await clientStore.verifieStatus()
 
+    if (clientStore.state.requestStatus !== IProofRequestStatus.Proved) {
+      return
+    }
     if (!tokenSwap) {
       console.log('TokenSwap is not initialized...')
       return
@@ -87,10 +91,6 @@ export function useSwap() {
 
       const sourceTokenAmount = fromAmount
       const minimumPoolTokenAmount = Math.floor(toAmount - (toAmount * state.slippage))
-
-      console.log(state.direction)
-      console.log('minimumPoolTokenAmount => ', minimumPoolTokenAmount)
-      console.log('toAmount => ', toAmount)
 
       const instruction = tokenSwap.swap(
         userSource,

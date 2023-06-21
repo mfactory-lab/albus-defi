@@ -1,5 +1,5 @@
 /* eslint-disable n/prefer-global/buffer */
-import type { ConfirmOptions, Connection, PublicKeyInitData, Signer, TransactionInstruction } from '@solana/web3.js'
+import type { ConfirmOptions, Connection, ParsedAccountData, PublicKeyInitData, Signer, TransactionInstruction } from '@solana/web3.js'
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 
 import { PROGRAM_ID as METADATA_PROGRAM_ID, Metadata } from '@metaplex-foundation/mpl-token-metadata'
@@ -63,7 +63,12 @@ export async function getTokenAccounts(wallet: PublicKeyInitData, solanaConnecti
       const balance = Number(data.parsed.info.tokenAmount.uiAmount)
       const decimals = data.parsed.info.tokenAmount.decimals
 
+      if (decimals === 0) {
+        return
+      }
+
       const metadata = await Metadata.fromAccountAddress(solanaConnection, getMetadataPDA(data.parsed.info.mint))
+
       const symbol = sanitizeString(metadata.data.symbol)
       let name = sanitizeString(metadata.data.name)
       name = nameMapping[name] ?? name
@@ -226,4 +231,10 @@ export async function getOrInitAssociatedTokenAddress(
     }
   }
   return associatedToken
+}
+
+export async function getNumberDecimals(connection: Connection, mintAddress: string): Promise<number> {
+  const info = await connection.getParsedAccountInfo(new PublicKey(mintAddress))
+  const result = (info.value?.data as ParsedAccountData).parsed.info.decimals as number
+  return result
 }

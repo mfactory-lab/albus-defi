@@ -99,7 +99,7 @@ watch(() => swapState.status, (s) => {
                 MAX
               </q-btn>
               <select-token
-                :options="filterTokens" :token="state.from" :swap-token="state.to.value"
+                :options="filterTokens" :token="state.from" :swap-token="String(state.to.value)"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -124,7 +124,7 @@ watch(() => swapState.status, (s) => {
           <q-input v-model="state.to.amount" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
             <template #append>
               <select-token
-                :swap-token="state.from.value" :options="filterTokens" :direction="true" :token="state.to"
+                :swap-token="String(state.from.value)" :options="filterTokens" :direction="true" :token="state.to"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -180,5 +180,5 @@ watch(() => swapState.status, (s) => {
     </q-card>
   </q-dialog>
 
-  <zkp-request-dialog v-model="dialog" :zkp-status="swapState.status" @clear-zkp-status="swapState.status = undefined" />
+  <zkp-request-dialog />
 </template>
