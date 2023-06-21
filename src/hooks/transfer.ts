@@ -1,7 +1,6 @@
 import type { PublicKeyInitData } from '@solana/web3.js'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { useAnchorWallet } from 'solana-wallets-vue'
-import { ProofRequestStatus } from '@albus/sdk'
 import BN from 'bn.js'
 import type { SwapData } from './swap'
 import { createTransaction, sendTransaction } from '@/utils'
@@ -19,7 +18,7 @@ export function useTransfer() {
 
   async function verifieTransfer() {
     clientStore.state.requestStatus = await clientStore.verifieStatus()
-    if (state.status === ProofRequestStatus.Proved) {
+    if (clientStore.state.requestStatus === IProofRequestStatus.Proved) {
       // verifiedTransferSOL()
       await transferSol()
     }
