@@ -15,7 +15,13 @@ declare module '@vue/runtime-core' {
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     CopyToClipboard: typeof import('./../src/components/CopyToClipboard.vue')['default']
     DarkThemeToggle: typeof import('./../src/components/DarkThemeToggle.vue')['default']
+    HeaderCredential: typeof import('./../src/components/Header/HeaderCredential.vue')['default']
+    HeaderNotifications: typeof import('./../src/components/Header/HeaderNotifications.vue')['default']
+    HeaderRequest: typeof import('./../src/components/Header/HeaderRequest.vue')['default']
     HomeNav: typeof import('./../src/components/Home/HomeNav.vue')['default']
+    IAppCertificate: typeof import('~icons/app/certificate')['default']
+    IAppCretificate: typeof import('~icons/app/cretificate')['default']
+    IAppCretificateIcon: typeof import('~icons/app/cretificate-icon')['default']
     IAppDiscord: typeof import('~icons/app/discord')['default']
     IAppTelegram: typeof import('~icons/app/telegram')['default']
     IAppTwitter: typeof import('~icons/app/twitter')['default']
@@ -34,6 +40,5 @@ declare module '@vue/runtime-core' {
     TransferCard: typeof import('./../src/components/Transfer/TransferCard.vue')['default']
     TransferContent: typeof import('./../src/components/Transfer/TransferContent.vue')['default']
     ZkpRequestDialog: typeof import('./../src/components/ZkpRequestDialog.vue')['default']
-    ZkpRequestModal: typeof import('./../src/components/ZkpRequestModal.vue')['default']
   }
 }

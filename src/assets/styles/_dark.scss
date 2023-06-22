@@ -1,8 +1,25 @@
 body.body--dark {
     background: $primary;
 
-    .app-header__buttons .connect-button {
-        background-color: $secondary;
+    .app-header {
+        &__title {
+            color: #fff;
+        }
+        &__buttons .connect-button {
+            background-color: $secondary;
+        }
+
+        .notification {
+            svg {
+                fill: $light-gray-middle;
+            }
+        }
+    }
+
+    .notification-list {
+        .q-item {
+            border-color: #e4e7eb4f;
+        }
     }
 
     aside {

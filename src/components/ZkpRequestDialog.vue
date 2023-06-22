@@ -3,6 +3,7 @@ import { evaClose } from '@quasar/extras/eva-icons'
 import { IProofRequestStatus } from '@/stores/client'
 
 const clientStore = useClientStore()
+const userStore = useUserStore()
 
 const dialog = ref(false)
 
@@ -40,7 +41,7 @@ watch(() => clientStore.state.requestStatus, (s) => {
           To continue, you need to create a ZKP request
         </div>
         <div v-if="pendingRequest">
-          To continue, you need to "approve" the request. Follow this link.
+          To continue, you need to "prove" the request. Follow this link.
           <a class="prove-link" href="https://albus.finance/" target="_blank">__Albus account__</a>
         </div>
       </q-card-section>
@@ -49,10 +50,10 @@ watch(() => clientStore.state.requestStatus, (s) => {
         <q-btn v-close-popup flat label="Cancel" class="zkp-dialog__actions--cancel" />
         <q-btn
           v-if="noRequest" v-close-popup outline label="Create"
-          color="yellow" @click="clientStore.createProofRequest"
+          color="yellow" @click="userStore.createProofRequest"
         />
         <q-btn v-if="pendingRequest" v-close-popup color="yellow" outline>
-          <a href="https://albus.finance/" target="_blank">Approve</a>
+          <a href="https://albus.finance/" target="_blank">prove</a>
         </q-btn>
       </q-card-actions>
     </q-card>

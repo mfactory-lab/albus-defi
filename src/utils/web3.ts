@@ -63,10 +63,6 @@ export async function getTokenAccounts(wallet: PublicKeyInitData, solanaConnecti
       const balance = Number(data.parsed.info.tokenAmount.uiAmount)
       const decimals = data.parsed.info.tokenAmount.decimals
 
-      if (decimals === 0) {
-        return
-      }
-
       const metadata = await Metadata.fromAccountAddress(solanaConnection, getMetadataPDA(data.parsed.info.mint))
 
       const symbol = sanitizeString(metadata.data.symbol)

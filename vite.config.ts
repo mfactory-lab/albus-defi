@@ -12,7 +12,8 @@ import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import inject from '@rollup/plugin-inject'
 
-// import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
+
 // import nodePolyfills from 'rollup-plugin-node-polyfills'
 
 // https://vitejs.dev/config/
@@ -98,12 +99,12 @@ export default defineConfig(({ mode }) => {
         // add buffer
         'node:buffer': 'buffer',
         // for metaplex
-        'stream': 'rollup-plugin-node-polyfills/polyfills/stream',
-        'events': 'rollup-plugin-node-polyfills/polyfills/events',
-        'assert': 'assert',
-        'crypto': 'crypto-browserify',
-        'util': 'util',
-        'near-api-js': 'near-api-js/dist/near-api-js.js',
+        // 'stream': 'rollup-plugin-node-polyfills/polyfills/stream',
+        // 'events': 'rollup-plugin-node-polyfills/polyfills/events',
+        // 'assert': 'assert',
+        // 'crypto': 'crypto-browserify',
+        // 'util': 'util',
+        // 'near-api-js': 'near-api-js/dist/near-api-js.js',
       },
       // dedupe: [
       //  'bn.js',
@@ -126,9 +127,9 @@ export default defineConfig(({ mode }) => {
       },
     },
     optimizeDeps: {
-      // esbuildOptions: {
-      //   plugins: [NodeGlobalsPolyfillPlugin({ buffer: true })],
-      // },
+      esbuildOptions: {
+        plugins: [NodeGlobalsPolyfillPlugin({ buffer: true })],
+      },
     },
   }
 })

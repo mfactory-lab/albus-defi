@@ -29,7 +29,6 @@ export const useClientStore = defineStore('client', () => {
 
   const state = reactive<ClientState>({
     requestStatus: undefined,
-    requests: undefined,
   })
 
   const serviceCode = 'test'
@@ -39,18 +38,9 @@ export const useClientStore = defineStore('client', () => {
     if (w) {
       const provider = newProvider(w, connectionStore.connection)
       client.value = new AlbusClient(provider)
-      state.requests = await getAllRequests()
       // verifiedTransferClient.value = new VerifiedTransferClient(provider)
     }
   }, { deep: true, immediate: true })
-
-  async function getAllRequests() {
-    return await client.value?.findProofRequests()
-  }
-
-  async function getVC(pabkey: PublicKey) {
-    return await client.value!.loadCredential(pabkey)
-  }
 
   const loadProofRequest = async () => {
     const pubkey = anchorWallet.value?.publicKey as PublicKey
@@ -104,16 +94,17 @@ export const useClientStore = defineStore('client', () => {
     }
   }
 
+  async function proveRequest(proofRequest: PublicKeyInitData, vc: PublicKeyInitData) {
+    try {
+      await monitorTransaction(client.value!.prove({ proofRequest, vc }))
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   async function verifiedZKPRequest(ZKPRequestAddress: PublicKeyInitData) {
     return await client.value!.verifyProofRequest({
       zkpRequest: ZKPRequestAddress,
-    })
-  }
-
-  async function proveRequest(ZKPRequestAddress: PublicKeyInitData) {
-    return await client.value!.prove({
-      proofRequest: ZKPRequestAddress,
-      vc: '',
     })
   }
 
@@ -122,6 +113,7 @@ export const useClientStore = defineStore('client', () => {
     client,
     verifiedTransferClient,
     proofRequestAddress,
+    proveRequest,
     verifieStatus,
     loadProofRequest,
     createProofRequest,
