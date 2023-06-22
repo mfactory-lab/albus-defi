@@ -1,18 +1,12 @@
 <script lang="ts" setup>
 import { evaBell, evaBellOutline } from '@quasar/extras/eva-icons'
-import type { PublicKey } from '@solana/web3.js'
 import type { ProofRequestArgs } from '@albus/sdk'
 import { shortenAddress } from '@/utils'
 
 const userStore = useUserStore()
 
 const requests = computed(() => {
-  const requestsData = userStore.state.requests?.map(({ pubkey, data }: { pubkey: PublicKey; data: ProofRequestArgs }) => {
-    return {
-      pubkey: pubkey.toBase58(),
-      proof: data.proof,
-    }
-  })
+  const requestsData = userStore.requests ? [userStore.requests] : []
   return requestsData?.filter((r: ProofRequestArgs) => !r.proof) ?? []
 })
 
@@ -23,7 +17,7 @@ const notificationIcon = computed(() => isProvedRequest.value ? evaBell : evaBel
 
 <template>
   <q-btn-dropdown
-    :label="isProvedRequest && requests.length" class="notification"
+    :label="isProvedRequest ? requests.length : ''" class="notification"
     :class="{ 'notification-animation': isProvedRequest }" rounded :dropdown-icon="notificationIcon" dense
     no-icon-animation flat menu-anchor="top middle" menu-self="bottom middle"
   >
