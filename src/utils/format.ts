@@ -10,6 +10,10 @@ export const formatPct = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 5,
 })
 
+export function formatDate(date: Date) {
+  return new Intl.DateTimeFormat().format(date)
+}
+
 export function formatBalance(balance: number, precision = 5) {
   return balance > 0 ? balance.toFixed(precision) : 0
 }

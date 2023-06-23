@@ -1,3 +1,4 @@
 <template>
-  stake
+  <stake-card />
+  <stake-content />
 </template>

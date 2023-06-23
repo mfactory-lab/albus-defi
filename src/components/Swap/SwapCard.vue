@@ -1,12 +1,15 @@
 <script setup lang="ts">
 // import { ZKPRequestStatus } from '@albus/monorepo/packages/albus-sdk/src/generated'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { useWallet } from 'solana-wallets-vue'
 import { formatBalance, formatPct, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { SwapData } from '@/stores/swap'
 
 const { state, swapState, changeDirection, openSlippage, closeSlippage, setMax, changeValue, swapSubmit } = useSwap()
 const { handleSearchToken, options } = useToken()
+
+const { connected } = useWallet()
 
 const filterTokens = computed(() => [...options.value].splice(-2))
 
@@ -91,7 +94,7 @@ watch(() => swapState.status, (s) => {
             </div>
           </div>
           <q-input
-            v-model="state.from.amount" :maxlength="14" outlined placeholder="0.0" class="swap-input"
+            v-model="state.from.amount" :maxlength="14" outlined placeholder="0.0" class="swap-input" :disable="!connected"
             @keypress="onlyNumber" @keyup="changeValue"
           >
             <template #append>
@@ -121,7 +124,7 @@ watch(() => swapState.status, (s) => {
               </div>
             </div>
           </div>
-          <q-input v-model="state.to.amount" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
+          <q-input v-model="state.to.amount" :disable="!connected" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
             <template #append>
               <select-token
                 :swap-token="String(state.from.value)" :options="filterTokens" :direction="true" :token="state.to"

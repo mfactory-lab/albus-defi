@@ -184,6 +184,12 @@ export function useSwap() {
     state.to.amount = undefined
   }
 
+  watch(() => wallet.value?.publicKey, (p) => {
+    if (!p) {
+      reload()
+    }
+  })
+
   watch(() => state.to, (s) => {
     if (s.amount) {
       s.amount = undefined

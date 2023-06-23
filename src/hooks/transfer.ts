@@ -17,10 +17,15 @@ export function useTransfer() {
   const wallet = useAnchorWallet()
 
   async function verifieTransfer() {
-    clientStore.state.requestStatus = await clientStore.verifieStatus()
-    if (clientStore.state.requestStatus === IProofRequestStatus.Proved) {
+    try {
+      state.loading = true
+      clientStore.state.requestStatus = await clientStore.verifieStatus()
+      if (clientStore.state.requestStatus === IProofRequestStatus.Proved) {
       // verifiedTransferSOL()
-      await transferSol()
+        await transferSol()
+      }
+    } finally {
+      state.loading = false
     }
   }
 

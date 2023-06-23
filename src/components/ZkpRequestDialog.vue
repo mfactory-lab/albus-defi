@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { evaClose } from '@quasar/extras/eva-icons'
 import { IProofRequestStatus } from '@/stores/client'
+import { ALBUS_APP_URL } from '@/config'
 
 const clientStore = useClientStore()
 const userStore = useUserStore()
@@ -42,7 +43,7 @@ watch(() => clientStore.state.requestStatus, (s) => {
         </div>
         <div v-if="pendingRequest">
           To continue, you need to "prove" the request. Follow this link.
-          <a class="prove-link" href="https://albus.finance/" target="_blank">__Albus account__</a>
+          <a class="prove-link" :href="ALBUS_APP_URL" target="_blank">__Albus account__</a>
         </div>
       </q-card-section>
 
@@ -53,7 +54,7 @@ watch(() => clientStore.state.requestStatus, (s) => {
           color="yellow" @click="userStore.createProofRequest"
         />
         <q-btn v-if="pendingRequest" v-close-popup color="yellow" outline>
-          <a href="https://albus.finance/" target="_blank">prove</a>
+          <a :href="ALBUS_APP_URL" target="_blank">prove</a>
         </q-btn>
       </q-card-actions>
     </q-card>

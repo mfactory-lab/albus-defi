@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { evaBell, evaBellOutline } from '@quasar/extras/eva-icons'
-import type { ProofRequestArgs } from '@albus/sdk'
 import { shortenAddress } from '@/utils'
+import { ALBUS_APP_URL } from '@/config'
 
 const userStore = useUserStore()
 
 const requests = computed(() => {
-  const requestsData = userStore.requests ? [userStore.requests] : []
-  return requestsData?.filter((r: ProofRequestArgs) => !r.proof) ?? []
+  const requestsData = userStore.certificate ? [userStore.certificate] : []
+  return requestsData?.filter(r => !r.data.proof) ?? []
 })
 
 const isProvedRequest = computed(() => requests.value.length !== 0)
@@ -33,7 +33,7 @@ const notificationIcon = computed(() => isProvedRequest.value ? evaBell : evaBel
           <q-item-label>
             <div class="notification-prove">
               <span>
-                {{ shortenAddress(request.pubkey, 3) }}
+                {{ shortenAddress(request.pubkey.toBase58(), 4) }}
                 <q-tooltip>
                   {{ request.pubkey }}
                 </q-tooltip>
@@ -48,7 +48,7 @@ const notificationIcon = computed(() => isProvedRequest.value ? evaBell : evaBel
         </q-item-section>
       </q-item>
 
-      <q-item v-close-popup clickable href="https://albus.finance" target="_blank" title="albus app">
+      <q-item v-close-popup clickable :href="ALBUS_APP_URL" target="_blank" title="albus app">
         <q-item-section>
           <q-item-label class="text-center">
             ALBUS
@@ -58,99 +58,3 @@ const notificationIcon = computed(() => isProvedRequest.value ? evaBell : evaBel
     </q-list>
   </q-btn-dropdown>
 </template>
-
-<style lang="scss">
-.notification {
-  margin-left: auto;
-  margin-right: 20px;
-
-  svg {
-    fill: $secondary;
-  }
-
-  .q-focus-helper,
-  .q-btn:before {
-    display: none;
-  }
-
-  .q-icon {
-    margin: 0 !important;
-  }
-
-  &-prove {
-    cursor: context-menu;
-
-    &__btn {
-      padding: 0 6px !important;
-      margin-left: 8px;
-    }
-  }
-}
-
-.notification-list {
-  .q-item {
-    min-height: 46px;
-
-    &:not(:last-child) {
-      border-bottom: 1px solid $light-gray-half;
-    }
-
-    &:last-child {
-      min-height:  30px;
-    }
-  }
-}
-
-.notification-animation {
-  padding: 0 8px !important;
-
-  svg {
-    fill: $red-5 !important;
-    animation: ring 2s ease-in-out;
-  }
-}
-
-@keyframes ring {
-
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-
-  5% {
-    transform: rotate(-30deg);
-  }
-
-  10% {
-    transform: rotate(25deg);
-  }
-
-  15% {
-    transform: rotate(-25deg);
-  }
-
-  20% {
-    transform: rotate(20deg);
-  }
-
-  25% {
-    transform: rotate(-20deg);
-  }
-
-  30% {
-    transform: rotate(15deg);
-  }
-
-  35% {
-    transform: rotate(-15deg);
-  }
-
-  40% {
-    transform: rotate(15deg);
-  }
-
-  45% {
-    transform: rotate(0deg);
-  }
-}
-</style>

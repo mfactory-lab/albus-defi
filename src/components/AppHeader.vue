@@ -1,7 +1,6 @@
 <template>
   <header class="app-header">
-    <header-credential />
-    <header-request />
+    <header-certificate />
     <header-notifications />
 
     <div class="app-header__buttons">

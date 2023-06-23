@@ -40,7 +40,7 @@ export function useMonitorTransaction() {
     let signature = ''
     try {
       const signaturePromise = await signatureOrPromise
-      signature = String(typeof signaturePromise === 'object' ? signaturePromise.signature : signatureOrPromise)
+      signature = String(typeof signaturePromise === 'object' ? await signaturePromise.signature : await signatureOrPromise)
     } catch (e: any) {
       sending.value = false
       dismiss()

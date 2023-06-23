@@ -331,6 +331,16 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
   }
 }
 
+.swap-card {
+  .token-select {
+    width: auto;
+
+    .q-field__native {
+      width: fit-content;
+    }
+  }
+}
+
 .swap-details {
   margin: 0;
   padding-left: 20px;

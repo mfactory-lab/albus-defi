@@ -4,7 +4,7 @@ import { useAnchorWallet } from 'solana-wallets-vue'
 import { lowerCase } from 'lodash-es'
 import type { PublicKey } from '@solana/web3.js'
 import type { SwapData } from './swap'
-import type { ProofRequestWithEmpty } from './client'
+import type { IProofRequestStatus } from './client'
 import solToken from '@/assets/img/tokens/sol.png'
 import { createTransaction, getMetadataPDA, transactionFee, validateAddress } from '@/utils'
 
@@ -49,6 +49,12 @@ export const useTransferStore = defineStore('transfer', () => {
     }
   })
 
+  watch(() => wallet.value?.publicKey, (p) => {
+    if (!p) {
+      clearState()
+    }
+  })
+
   async function getTokenAccount() {
     const symbol = state.token.label
     const token = tokenState.tokens.find(t => lowerCase(t.symbol) === lowerCase(symbol))
@@ -82,5 +88,5 @@ interface TransferState {
   token: SwapData
   fee: number
   valid: boolean
-  status?: ProofRequestWithEmpty
+  status?: IProofRequestStatus
 }

@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import { useWallet } from 'solana-wallets-vue'
 import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
 import { lowerCase } from 'lodash-es'
-import type { ProofRequestArgs } from '@albus/sdk'
 import { getSolanaBalance, getTokenAccounts } from '@/utils'
+import { ALBUS_APP_URL } from '@/config'
 
 enum Tokens {
   NATIVE = 'SOL',
@@ -23,7 +23,8 @@ export const useUserStore = defineStore('user', () => {
     tokens: [],
     vc: undefined,
     loading: false,
-    requests: undefined,
+    certificateLoading: true,
+    certificate: undefined,
   })
 
   const { publicKey, connected } = useWallet()
@@ -59,41 +60,45 @@ export const useUserStore = defineStore('user', () => {
   async function createProofRequest() {
     try {
       await clientStore.createProofRequest()
-      state.requests = await getAllRequests()
+      await getCertificate()
     } catch (e) {
       console.log(e)
     }
   }
 
-  async function getAllRequests() {
-    return await clientStore.client?.findProofRequests()
+  async function getCertificate() {
+    try {
+      state.certificateLoading = true
+      state.certificate = await clientStore.client?.findProofRequests()
+    } finally {
+      state.certificateLoading = false
+    }
   }
 
-  const requests = computed(() => {
-    const requestsData = state.requests?.map(({ pubkey, data }: { pubkey: PublicKey; data: ProofRequestArgs }) => {
-      return {
-        pubkey: pubkey.toBase58(),
-        proof: data.proof,
-      }
-    })
-    return requestsData?.find((r: any) => r)
+  const certificate = computed(() => {
+    const certificateData = state.certificate
+    return certificateData?.find((r: any) => r)
   })
 
-  async function proveRequest() {
+  async function proveRequest(e: any) {
+    if (!e.ctrlKey) {
+      window.open(ALBUS_APP_URL, '_blank')
+      return
+    }
     try {
       const vc = state.vc[0]?.mint
-      const proofRequest = requests.value.pubkey
+      const proofRequest = certificate.value.pubkey
       if (!vc) {
         notify({
           type: 'negative',
           html: true,
           message: `To continue, you need to create 
-          <a href="https://albus.finance" target="_blank" style="color: #fff">Verifiable Credential</a>`,
+          <a href="${ALBUS_APP_URL}" target="_blank" style="color: #fff">Verifiable Credential</a>`,
         })
         return
       }
       await clientStore.proveRequest(proofRequest, vc)
-      state.requests = await getAllRequests()
+      await getCertificate()
     } catch (e) {
       console.log(e)
     }
@@ -101,15 +106,15 @@ export const useUserStore = defineStore('user', () => {
 
   watch(connected, async (c) => {
     if (c && state.tokens.length === 0) {
-      await getTokens()
-      state.requests = await getAllRequests()
+      await reloadUserTokens()
+      await getCertificate()
     } else {
       state.tokens = []
     }
   }, { immediate: true })
   return {
     state,
-    requests,
+    certificate,
     getTokens,
     tokenBalance,
     reloadUserTokens,
@@ -122,7 +127,8 @@ interface UserState {
   tokens: IUserToken[]
   vc: any
   loading: boolean
-  requests?: any
+  certificate?: any
+  certificateLoading: boolean
 }
 
 export interface IUserToken {

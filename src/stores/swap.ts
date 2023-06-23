@@ -44,6 +44,8 @@ export const useSwapStore = defineStore('swap', () => {
       init().then()
       // initPool(connectionStore.connection, w)
       // await mintToken(connectionStore.connection, w, new PublicKey('FHZhZwGBCYPwC9mG5ZpQ2aKyepzCMZht7eEw2K4rBp38'))
+    } else {
+      resetStore()
     }
   }, { immediate: true })
 
@@ -131,7 +133,7 @@ export const useSwapStore = defineStore('swap', () => {
    * @param {number} amountIn In lamports
    */
   function depositSingleTokenType(amountIn: string | number) {
-    const swapSourceAmount = new Decimal(state.poolBalance.TOKEN_A ?? state.poolBalance.TOKEN_B)
+    const swapSourceAmount = new Decimal(state.poolBalance.TOKEN_B)
     const ratio = new Decimal(amountIn).div(swapSourceAmount)
 
     const one = new Decimal(1)
@@ -159,6 +161,16 @@ export const useSwapStore = defineStore('swap', () => {
     const res = new Decimal(state.poolTokenSupply).mul(root)
     // TODO: check ceiling
     return res.toNumber()
+  }
+
+  function resetStore() {
+    state.loading = false
+    state.slippageDialog = false
+    state.status = undefined
+    state.poolBalance = { TOKEN_A: undefined, TOKEN_B: undefined, JPLU: undefined }
+    state.userBalance = { TOKEN_A: undefined, TOKEN_B: undefined, JPLU: undefined }
+    state.poolTokenSupply = 0
+    state.rate = 0
   }
 
   return {
