@@ -32,7 +32,7 @@ export function useSwap() {
     direction: SwapDirection.ASC,
   })
 
-  const changeValue = () => {
+  const changeValue = async () => {
     const amountIn = solToLamports(state.from.amount ?? 0)
 
     if (amountIn === 0 || Number.isNaN(amountIn)) {
@@ -40,8 +40,10 @@ export function useSwap() {
       return
     }
 
-    const amountOut = swapStore.withdrawSingleTokenTypeExactOut(amountIn, state.from.label)
-    state.to.amount = lamportsToSol(amountOut)
+    // const amountOut = swapStore.withdrawSingleTokenTypeExactOut(amountIn, state.from.label)
+    const tokenMint = state.direction === SwapDirection.ASC ? swapStore.tokenSwap?.mintA : swapStore.tokenSwap?.mintB
+    const amountOut = await swapStore.calculateDependentAmount(String(tokenMint), Number(state.from.amount))
+    state.to.amount = Number(lamportsToSol(Number(amountOut)))
   }
 
   async function swapSubmit() {

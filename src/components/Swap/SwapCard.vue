@@ -19,8 +19,6 @@ function tokenBalance(symbol: string) {
 
 const formatPercent = (n: number) => formatPct.format(n)
 
-const dialog = ref(false)
-
 const changeButtonRotate = ref(0)
 
 const rotateBtnStyle = computed(() => `transform: rotate(${changeButtonRotate.value * 180}deg)`)

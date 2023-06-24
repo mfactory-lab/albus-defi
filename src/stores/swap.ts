@@ -4,7 +4,7 @@ import Decimal from 'decimal.js'
 import { getMint } from '@solana/spl-token'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { TokenSwap } from '@/packages/swap/spl/src'
-import { getTokensByOwner, lamportsToSol } from '@/utils'
+import { getNumberDecimals, getTokensByOwner, lamportsToSol } from '@/utils'
 
 const POOL_ADDRESS = new PublicKey('EjCM3aozA6sFUzQQ7vXg2uTtjRydyuHSWRwvQX16pAS9')
 
@@ -133,7 +133,7 @@ export const useSwapStore = defineStore('swap', () => {
    * @param {number} amountIn In lamports
    */
   function depositSingleTokenType(amountIn: string | number) {
-    const swapSourceAmount = new Decimal(state.poolBalance.TOKEN_B)
+    const swapSourceAmount = new Decimal(state.poolBalance.TOKEN_A)
     const ratio = new Decimal(amountIn).div(swapSourceAmount)
 
     const one = new Decimal(1)
@@ -163,6 +163,35 @@ export const useSwapStore = defineStore('swap', () => {
     return res.toNumber()
   }
 
+  async function calculateDependentAmount(
+    independent: string,
+    amount: number,
+  ): Promise<number | undefined> {
+    const mintA = tokenSwap.value?.mintA
+    const mintB = tokenSwap.value?.mintB
+
+    if (!mintA || !mintB) {
+      return
+    }
+
+    const isFirstIndependent = mintA.toBase58() === independent
+
+    const tokenADecimals = await getNumberDecimals(connectionStore.connection, mintA.toBase58())
+    const tokenBDecimals = await getNumberDecimals(connectionStore.connection, mintB.toBase58())
+
+    const depPrecision = 10 ** (isFirstIndependent ? tokenBDecimals : tokenADecimals)
+    const indPrecision = 10 ** (isFirstIndependent ? tokenADecimals : tokenBDecimals)
+    const adjAmount = amount * indPrecision
+
+    const dependentTokenAmount = isFirstIndependent
+      ? (state.userBalance.TOKEN_B / state.userBalance.TOKEN_A)
+        * adjAmount
+      : (state.userBalance.TOKEN_A / state.userBalance.TOKEN_B)
+        * adjAmount
+
+    return dependentTokenAmount / depPrecision
+  }
+
   function resetStore() {
     state.loading = false
     state.slippageDialog = false
@@ -179,6 +208,7 @@ export const useSwapStore = defineStore('swap', () => {
     loadUserTokenAccounts,
     depositSingleTokenType,
     withdrawSingleTokenTypeExactOut,
+    calculateDependentAmount,
   }
 })
 
