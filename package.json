@@ -13,10 +13,9 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "resolutions": {
-    "@albus/core": "mfactory-lab/albus#albus-core-v0.0.4-gitpkg"
+    "//@albus/core": "mfactory-lab/albus#albus-core-v0.0.4-gitpkg"
   },
   "dependencies": {
-    "@albus/sdk": "mfactory-lab/albus#albus-sdk-v0.0.7-gitpkg",
     "@coral-xyz/anchor": "^0.28.0",
     "@metaplex-foundation/beet": "^0.7.1",
     "@metaplex-foundation/js": "^0.19.4",

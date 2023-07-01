@@ -4,9 +4,7 @@ import { useAnchorWallet } from 'solana-wallets-vue'
 import type { PublicKeyInitData } from '@solana/web3.js'
 import { PublicKey } from '@solana/web3.js'
 
-import { AlbusClient } from '@albus/sdk'
-
-import { newProvider } from '@/utils'
+// import type { AlbusClient } from '@albus/sdk'
 
 export enum IProofRequestStatus {
   Pending,
@@ -24,7 +22,7 @@ export const useClientStore = defineStore('client', () => {
 
   const proofRequestAddress = ref()
 
-  const client = ref<AlbusClient>()
+  const client = ref<any>() // <AlbusClient>
   const verifiedTransferClient = ref<any>()
 
   const state = reactive<ClientState>({
@@ -36,8 +34,8 @@ export const useClientStore = defineStore('client', () => {
 
   watch(anchorWallet, async (w) => {
     if (w) {
-      const provider = newProvider(w, connectionStore.connection)
-      client.value = new AlbusClient(provider)
+      // const provider = newProvider(w, connectionStore.connection)
+      // client.value = new AlbusClient(provider)
       // verifiedTransferClient.value = new VerifiedTransferClient(provider)
     }
   }, { deep: true, immediate: true })
