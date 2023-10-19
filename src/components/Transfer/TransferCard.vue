@@ -7,7 +7,7 @@ import { lowerCase } from 'lodash-es'
 import { formatBalance, onlyNumber } from '@/utils'
 
 const { state } = useTransferStore()
-const { setMax, setToken, verifieTransfer } = useTransfer()
+const { setMax, setToken, verifyTransfer } = useTransfer()
 const { state: userState, tokenBalance } = useUserStore()
 const { handleSearchToken, options } = useToken()
 
@@ -34,7 +34,7 @@ async function transferSubmit() {
       message,
     })
   }
-  verifieTransfer()
+  verifyTransfer()
 }
 
 function setMaxCurrency() {

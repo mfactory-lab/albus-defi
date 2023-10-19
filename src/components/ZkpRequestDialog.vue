@@ -51,7 +51,7 @@ watch(() => clientStore.state.requestStatus, (s) => {
         <q-btn v-close-popup flat label="Cancel" class="zkp-dialog__actions--cancel" />
         <q-btn
           v-if="noRequest" v-close-popup outline label="Create"
-          color="yellow" @click="userStore.createProofRequest"
+          color="yellow"
         />
         <q-btn v-if="pendingRequest" v-close-popup color="yellow" outline>
           <a :href="ALBUS_APP_URL" target="_blank">prove</a>

@@ -48,7 +48,7 @@ export function useSwap() {
 
   async function swapSubmit() {
     const tokenSwap = swapStore.tokenSwap
-    clientStore.state.requestStatus = await clientStore.verifieStatus()
+    clientStore.state.requestStatus = await clientStore.verifyStatus()
 
     if (clientStore.state.requestStatus !== IProofRequestStatus.Proved) {
       return
@@ -156,8 +156,8 @@ export function useSwap() {
     )
   }
 
-  async function verifieSwap() {
-    // swapState.status = await verifieStatus()
+  async function verifySwap() {
+    // swapState.status = await verifyStatus()
     // verifiedTransferToken()
   }
 
@@ -213,7 +213,7 @@ export function useSwap() {
     closeSlippage,
     openSlippage,
     changeDirection,
-    verifieSwap,
+    verifySwap,
     changeValue,
     swapSubmit,
     depositToken,

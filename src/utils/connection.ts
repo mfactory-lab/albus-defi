@@ -60,9 +60,12 @@ export function tokenAuthFetchMiddleware({
         const token = tokenStorage.getToken()
         const timeSinceLastSet = tokenStorage.getTimeSinceLastSet()
         const tokenIsValid
-          = token && token !== 'undefined' && timeSinceLastSet && timeSinceLastSet < tokenExpiry
+          = token && token !== 'undefined' && timeSinceLastSet && timeSinceLastSet < tokenExpiry - 10000
         if (!tokenIsValid) {
-          tokenStorage.setToken(await getToken())
+          const newToken = await getToken()
+          if (newToken) {
+            tokenStorage.setToken(newToken)
+          }
         }
       } catch (e: any) {
         console.error(e)

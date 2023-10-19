@@ -1,6 +1,8 @@
 import type { PublicKeyInitData } from '@solana/web3.js'
+import { AnchorProvider } from '@coral-xyz/anchor'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { useAnchorWallet } from 'solana-wallets-vue'
+import { AlbusTransferClient } from '@mfactory-lab/albus-transfer-sdk'
 import BN from 'bn.js'
 import type { SwapData } from './swap'
 import { createTransaction, sendTransaction } from '@/utils'
@@ -9,6 +11,7 @@ export function useTransfer() {
   const { monitorTransaction } = useMonitorTransaction()
   const connectionStore = useConnectionStore()
   const clientStore = useClientStore()
+  const userStore = useUserStore()
   const { reloadUserTokens } = useUserStore()
   const transferStore = useTransferStore()
 
@@ -16,27 +19,43 @@ export function useTransfer() {
 
   const wallet = useAnchorWallet()
 
-  async function verifieTransfer() {
+  const transferClient = computed(() => {
+    return new AlbusTransferClient(
+      new AnchorProvider(
+        connectionStore.connection,
+        wallet.value ?? { publicKey: PublicKey.default } as never,
+        AnchorProvider.defaultOptions(),
+      ),
+    )
+  })
+
+  async function verifyTransfer() {
     try {
       state.loading = true
-      clientStore.state.requestStatus = await clientStore.verifieStatus()
-      if (clientStore.state.requestStatus === IProofRequestStatus.Proved) {
-      // verifiedTransferSOL()
-        await transferSol()
+      // TODO: change check
+      // clientStore.state.requestStatus = await clientStore.verifyStatus()
+      // if (clientStore.state.requestStatus === IProofRequestStatus.Proved) {
+      console.log('certificate === ', userStore.certificate)
+      console.log('certificate?.status === ', userStore.certificate?.data.status)
+      if (userStore.certificate?.data.status === 2) {
+        await verifiedTransferSOL()
       }
+    } catch (e) {
+      console.error('verifyTransfer error: ', e)
     } finally {
       state.loading = false
     }
   }
 
   async function verifiedTransferSOL() {
-    const zkpRequest = clientStore.proofRequestAddress
+    // const zkpRequest = clientStore.proofRequestAddress
+    // console.log('zkpRequest === ', zkpRequest)
     const amount = new BN(Number(transferStore.state.value) * LAMPORTS_PER_SOL)
     const receiver = new PublicKey(transferStore.state.address)
-    await clientStore.verifiedTransferClient!.transfer({
+    await transferClient.value.transfer({
       amount,
       receiver,
-      zkpRequest,
+      proofRequest: userStore.certificate.pubkey,
     })
   }
 
@@ -80,6 +99,6 @@ export function useTransfer() {
   return {
     setMax,
     setToken,
-    verifieTransfer,
+    verifyTransfer,
   }
 }

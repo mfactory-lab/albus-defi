@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
-import { useAnchorWallet } from 'solana-wallets-vue'
+import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
+import { AlbusClient } from '@mfactory-lab/albus-sdk'
 
 import type { PublicKeyInitData } from '@solana/web3.js'
 import { PublicKey } from '@solana/web3.js'
-
-// import type { AlbusClient } from '@albus/sdk'
+import { SERVICE_CODE } from '@/config'
 
 export enum IProofRequestStatus {
   Pending,
@@ -19,17 +19,16 @@ export const useClientStore = defineStore('client', () => {
 
   const connectionStore = useConnectionStore()
   const anchorWallet = useAnchorWallet()
+  const wallet = useWallet()
 
   const proofRequestAddress = ref()
 
-  const client = ref<any>() // <AlbusClient>
-  const verifiedTransferClient = ref<any>()
+  const client = computed(() => AlbusClient.factory(connectionStore.connection, wallet as any))
 
   const state = reactive<ClientState>({
     requestStatus: undefined,
   })
 
-  const serviceCode = 'test'
   const testCircuit = 'SAZUWFDXQpiqjrkitDj3LxGoLHKY9pq1AuZzhRqMMAh'
 
   watch(anchorWallet, async (w) => {
@@ -44,23 +43,16 @@ export const useClientStore = defineStore('client', () => {
     const pubkey = anchorWallet.value?.publicKey as PublicKey
     const circuit = new PublicKey(testCircuit)
 
-    const [serviceProvider] = client.value!.getServiceProviderPDA(serviceCode)
+    const serviceProvider = await client.value!.service.loadById(SERVICE_CODE)
+    console.log('serviceProvider === ', serviceProvider)
     const [zkpRequest] = client.value!.getProofRequestPDA(serviceProvider, circuit, pubkey)
 
     return zkpRequest
   }
 
-  async function createProofRequest() {
-    await monitorTransaction(client.value!.createProofRequest(
-      {
-        circuit: testCircuit,
-        serviceCode,
-      },
-    ))
-  }
-
-  async function verifieStatus() {
+  async function verifyStatus() {
     const zkpStatus: any = await loadZKPRequestStatus()
+    console.log('zkpStatus============ ', zkpStatus)
     if (zkpStatus === IProofRequestStatus.Pending) {
       console.log('PENDING============')
       return IProofRequestStatus.Pending
@@ -86,6 +78,7 @@ export const useClientStore = defineStore('client', () => {
       console.log('ZKP Request: ', proofRequest.toBase58())
       return zkpStatus
     } catch (e) {
+      console.error('loadZKPRequestStatus error: ', e)
       if (String(e).includes('Unable to find ZKPRequest')) {
         return IProofRequestStatus.Empty
       }
@@ -109,12 +102,10 @@ export const useClientStore = defineStore('client', () => {
   return {
     state,
     client,
-    verifiedTransferClient,
     proofRequestAddress,
     proveRequest,
-    verifieStatus,
+    verifyStatus,
     loadProofRequest,
-    createProofRequest,
   }
 })
 

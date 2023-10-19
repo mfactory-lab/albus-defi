@@ -34,7 +34,6 @@ const expiredAt = computed(() => {
       <div v-else-if="!userStore.certificate" class="certificate-status__undefined">
         <q-btn
           label="create" size="sm" unelevated color="yellow" text-color="black"
-          @click="userStore.createProofRequest"
         />
       </div>
       <div v-else-if="!isProved" class="certificate-status__pending">
