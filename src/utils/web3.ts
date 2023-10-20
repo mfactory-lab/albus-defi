@@ -62,9 +62,14 @@ export async function getTokenAccounts(wallet: PublicKeyInitData, solanaConnecti
       const data: any = account.data
       const balance = Number(data.parsed.info.tokenAmount.uiAmount)
       const decimals = data.parsed.info.tokenAmount.decimals
-
+      // if (decimals !== 0) {
+      return {
+        balance,
+        decimals,
+        mint: data.parsed.info.mint,
+      }
+      // }
       const metadata = await Metadata.fromAccountAddress(solanaConnection, getMetadataPDA(data.parsed.info.mint))
-
       const symbol = sanitizeString(metadata.data.symbol)
       let name = sanitizeString(metadata.data.name)
       name = nameMapping[name] ?? name

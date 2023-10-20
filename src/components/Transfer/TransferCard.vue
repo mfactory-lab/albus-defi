@@ -12,8 +12,12 @@ const { state: userState, tokenBalance } = useUserStore()
 const { handleSearchToken, options } = useToken()
 
 const filterTokenExist = computed(() => {
+  console.log(userState.tokens)
   const tokens = options.value.filter(token => userState.tokens.find(t => token.label === lowerCase(t.symbol)))
-  return tokens.length !== 0 ? tokens : [options.value.find(t => t.value === 'sol')]
+  console.log(options.value)
+  console.log(tokens)
+  // return tokens.length !== 0 ? tokens : [options.value.find(t => t.value === 'sol')]
+  return tokens.length !== 0 ? options.value : [options.value.find(t => t.value === 'sol')]
 },
 )
 

@@ -7,6 +7,7 @@ import { ALBUS_APP_URL, SERVICE_CODE } from '@/config'
 
 enum Tokens {
   NATIVE = 'SOL',
+  USDC = 'USDC',
 }
 
 enum VerifiableTypes {
@@ -30,6 +31,9 @@ export const useUserStore = defineStore('user', () => {
   const { publicKey } = useWallet()
 
   async function getTokens() {
+    if (!publicKey.value) {
+      return
+    }
     try {
       state.loading = true
       const tokens = await getTokenAccounts(publicKey.value?.toBase58() as PublicKeyInitData, connectionStore.connection)
@@ -41,8 +45,19 @@ export const useUserStore = defineStore('user', () => {
         decimals: 9,
         mint: 'So11111111111111111111111111111111111111111',
       }
+      const usdcData = tokens.find(t => t.mint === '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU')
+      console.log('usdcData === ', usdcData)
+      const usdcToken = {
+        name: 'USD Coin',
+        symbol: Tokens.USDC,
+        balance: usdcData?.balance ?? 0,
+        decimals: usdcData?.decimals ?? 0,
+        mint: '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU',
+      }
 
-      state.tokens = [...tokens.filter(t => t.decimals > 0), solToken]
+      console.log('tokens ====== ', tokens.filter(t => t.decimals > 0))
+      // state.tokens = [...tokens.filter(t => t.decimals > 0), solToken]
+      state.tokens = [solToken, usdcToken]
       state.vc = tokens.filter(t => t.symbol === VerifiableTypes.ALBUS_VC)
     } finally {
       state.loading = false

@@ -1,16 +1,15 @@
-import type { PublicKeyInitData } from '@solana/web3.js'
 import { AnchorProvider } from '@coral-xyz/anchor'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
-import { useAnchorWallet } from 'solana-wallets-vue'
+import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import { AlbusTransferClient } from '@mfactory-lab/albus-transfer-sdk'
 import BN from 'bn.js'
+import { getAssociatedTokenAddress } from '@solana/spl-token'
 import type { SwapData } from './swap'
 import { createTransaction, sendTransaction } from '@/utils'
 
 export function useTransfer() {
   const { monitorTransaction } = useMonitorTransaction()
   const connectionStore = useConnectionStore()
-  const clientStore = useClientStore()
   const userStore = useUserStore()
   const { reloadUserTokens } = useUserStore()
   const transferStore = useTransferStore()
@@ -18,6 +17,7 @@ export function useTransfer() {
   const { state } = useTransferStore()
 
   const wallet = useAnchorWallet()
+  const { publicKey } = useWallet()
 
   const transferClient = computed(() => {
     return new AlbusTransferClient(
@@ -38,7 +38,12 @@ export function useTransfer() {
       console.log('certificate === ', userStore.certificate)
       console.log('certificate?.status === ', userStore.certificate?.data.status)
       if (userStore.certificate?.data.status === 2) {
-        await verifiedTransferSOL()
+        console.log(state.token)
+        if (state.token.label === 'sol') {
+          await verifiedTransferSOL()
+        } else {
+          await verifiedTransferToken()
+        }
       }
     } catch (e) {
       console.error('verifyTransfer error: ', e)
@@ -72,20 +77,22 @@ export function useTransfer() {
     )
   }
 
-  async function verifiedTransferToken(
-    receiver: PublicKeyInitData,
-    source: PublicKeyInitData,
-    destination: PublicKeyInitData,
-    ZKPRequestAddress: PublicKey,
-    tokenMint: PublicKey,
-    amount: number) {
-    await clientStore.verifiedTransferClient!.splTransfer({
-      destination: new PublicKey(destination),
-      source: new PublicKey(source),
+  async function verifiedTransferToken() {
+    if (!publicKey.value) {
+      return
+    }
+    const tokenMint = new PublicKey('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU')
+    const receiver = new PublicKey(transferStore.state.address)
+    const source = await getAssociatedTokenAddress(tokenMint, publicKey.value)
+    const destination = await getAssociatedTokenAddress(tokenMint, receiver)
+    const amount = new BN(Number(transferStore.state.value) * 1000000)
+    await transferClient.value.transferToken({
+      destination,
+      source,
       tokenMint,
-      amount: new BN(Number(amount) * LAMPORTS_PER_SOL),
-      receiver: new PublicKey(receiver),
-      zkpRequest: ZKPRequestAddress,
+      amount,
+      receiver,
+      proofRequest: userStore.certificate.pubkey,
     })
   }
 
