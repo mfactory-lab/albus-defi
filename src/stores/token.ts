@@ -1,37 +1,19 @@
 import { defineStore } from 'pinia'
-import solToken from '@/assets/img/tokens/sol.png'
-import usdcToken from '@/assets/img/tokens/usdc.png'
-
-import usdtToken from '@/assets/img/tokens/usdt.png'
+import { TOKENS } from '@/config'
 
 export const useTokenStore = defineStore('token', () => {
-  const tokens = [
-    {
-      symbol: 'sol',
-      name: 'sol',
-      img: solToken,
-    },
-    {
-      symbol: 'usd-coin',
-      name: 'usdc',
-      img: usdcToken,
-    },
-    {
-      symbol: 'ether',
-      name: 'usdt',
-      img: usdtToken,
-    },
-    {
-      symbol: PoolTokenSymbol.TOKEN_A,
-      name: PoolTokenSymbol.TOKEN_A,
-      img: solToken,
-    },
-    {
-      symbol: PoolTokenSymbol.TOKEN_B,
-      name: PoolTokenSymbol.TOKEN_B,
-      img: usdcToken,
-    },
-  ]
+  const connectionStore = useConnectionStore()
+
+  const tokens = computed(() => TOKENS.map(t => ({
+    label: t.name,
+    value: t.symbol,
+    name: t.name,
+    symbol: t.symbol,
+    image: t.img,
+    // @ts-expect-error ...
+    mint: t.mint?.[connectionStore.cluster],
+  })))
+
   return {
     tokens,
   }

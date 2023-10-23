@@ -104,7 +104,7 @@ export const useSwapStore = defineStore('swap', () => {
     for (const acc of accs) {
       const s = getSymbolByMint(acc.mint)
       if (s) {
-        balances[s] = acc.amount
+        balances[s] = +acc.amount
       }
     }
     state.userBalance = balances
@@ -213,9 +213,12 @@ export const useSwapStore = defineStore('swap', () => {
 })
 
 export interface SwapData {
+  name: string
+  symbol: string
   value?: number | string
   image: string
   balance?: number
   label: string
   amount?: number
+  mint?: string
 }

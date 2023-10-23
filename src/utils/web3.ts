@@ -62,24 +62,25 @@ export async function getTokenAccounts(wallet: PublicKeyInitData, solanaConnecti
       const data: any = account.data
       const balance = Number(data.parsed.info.tokenAmount.uiAmount)
       const decimals = data.parsed.info.tokenAmount.decimals
-      // if (decimals !== 0) {
-      return {
-        balance,
-        decimals,
-        mint: data.parsed.info.mint,
-      }
-      // }
-      const metadata = await Metadata.fromAccountAddress(solanaConnection, getMetadataPDA(data.parsed.info.mint))
-      const symbol = sanitizeString(metadata.data.symbol)
-      let name = sanitizeString(metadata.data.name)
-      name = nameMapping[name] ?? name
 
-      return {
-        symbol,
-        name,
-        balance,
-        decimals,
-        mint: data.parsed.info.mint,
+      try {
+        const metadata = await Metadata.fromAccountAddress(solanaConnection, getMetadataPDA(data.parsed.info.mint))
+        const symbol = sanitizeString(metadata.data.symbol)
+        let name = sanitizeString(metadata.data.name)
+        name = nameMapping[name] ?? name
+        return {
+          symbol,
+          name,
+          balance,
+          decimals,
+          mint: data.parsed.info.mint,
+        }
+      } catch (e) {
+        return {
+          balance,
+          decimals,
+          mint: data.parsed.info.mint,
+        }
       }
     }),
   ) as { status: 'fulfilled' | 'rejected'; value: IUserToken }[]
@@ -188,7 +189,9 @@ export async function createTransaction(
 export async function getTokensByOwner(connection: Connection, owner: PublicKey, mints?: Address[]): Promise<Array<{
   address: PublicKey
   mint: PublicKey
-  amount: number
+  amount: string
+  balance: number
+  decimals: number
 }>> {
   const tokens = await connection.getParsedTokenAccountsByOwner(owner, {
     programId: TOKEN_PROGRAM_ID,
@@ -202,7 +205,10 @@ export async function getTokensByOwner(connection: Connection, owner: PublicKey,
     }
     acc.push({
       address: new PublicKey(t.pubkey),
-      amount: Number.parseInt(tokenAmount?.amount ?? 0, 10),
+      // amount: Number.parseInt(tokenAmount?.amount ?? 0, 10),
+      amount: tokenAmount?.amount,
+      balance: tokenAmount?.uiAmount,
+      decimals: tokenAmount?.decimals,
       mint: new PublicKey(mint),
     })
     return acc

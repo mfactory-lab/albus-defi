@@ -7,7 +7,7 @@ export {}
 declare global {
   const ACCOUNT_CHANGE_EVENT: typeof import('../src/hooks/wallet')['ACCOUNT_CHANGE_EVENT']
   const EffectScope: typeof import('vue')['EffectScope']
-  const IProofRequestStatus: typeof import('../src/stores/client')['IProofRequestStatus']
+  const IProofRequestStatus: typeof import('../src/stores/user')['IProofRequestStatus']
   const PoolTokenSymbol: typeof import('../src/stores/swap')['PoolTokenSymbol']
   const ProofRequestStatusWithEmpty: typeof import('../src/stores/client')['ProofRequestStatusWithEmpty']
   const WALLET_CONNECT_EVENT: typeof import('../src/hooks/wallet')['WALLET_CONNECT_EVENT']

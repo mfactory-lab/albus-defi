@@ -14,4 +14,3 @@ export async function newSystemAccountWithAirdrop(
   await connection.requestAirdrop(account.publicKey, lamports)
   return account
 }
-

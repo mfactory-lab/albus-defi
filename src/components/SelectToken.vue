@@ -61,13 +61,6 @@ watch(model, (m) => {
           <img :src="model.image">
         </q-avatar>
       </template>
-      <template #before-options>
-        <q-input v-model="searchToken" :maxlength="8" outlined class="token-search" placeholder="search">
-          <template #append>
-            <q-icon v-if="searchToken" :name="evaClose" class="cursor-pointer token-search__close" @click="clearSearch" />
-          </template>
-        </q-input>
-      </template>
       <template #option="scope">
         <q-item v-bind="scope.itemProps" class="token-select__token">
           <q-item-section avatar class="token-select__token--item">

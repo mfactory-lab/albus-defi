@@ -18,8 +18,8 @@ dependencies:
     specifier: ^2.12.0
     version: 2.13.0
   '@mfactory-lab/albus-sdk':
-    specifier: ^0.2.5
-    version: 0.2.5
+    specifier: ^0.2.6
+    version: 0.2.6
   '@mfactory-lab/albus-transfer-sdk':
     specifier: ^0.0.10
     version: 0.0.10
@@ -1398,8 +1398,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@mfactory-lab/albus-core@0.2.4:
-    resolution: {integrity: sha512-ILVjS16ih3JqhZscaJM3Vtwyr6kWvXZG9dZTvB1xKBzSozqk0ieorDjscg//SnBUzxIAyZGWMl8PSc19hSsdhw==, tarball: https://npm.pkg.github.com/download/@mfactory-lab/albus-core/0.2.4/c0e9152ca379a71ee6eb8c4345607ff1854a60bf}
+  /@mfactory-lab/albus-core@0.2.5:
+    resolution: {integrity: sha512-RECdJGK41FPUKVZ5iP/l0inkBmIHjFeRv3x9VzrA0Xk5hllOl1uXhovNbg59rE2VU1mZ9rVlvNTqBx6Ysi63+Q==, tarball: https://npm.pkg.github.com/download/@mfactory-lab/albus-core/0.2.5/e367bf9f9693a4b23b6472ff7ad92720fe1f6a2a}
     dependencies:
       '@metaplex-foundation/mpl-token-metadata': 2.13.0
       '@solana/web3.js': 1.87.1
@@ -1422,8 +1422,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@mfactory-lab/albus-sdk@0.2.5:
-    resolution: {integrity: sha512-1+s4ZpJzzNS4BaiSTy8TBOtMTGjKcj2iOlCGUAFJql4kwDOccWc9FrsBxRwChMGba/26DxD2oJOOQba/d3T/zQ==, tarball: https://npm.pkg.github.com/download/@mfactory-lab/albus-sdk/0.2.5/288c5299780c09da0fadea8ad20af81f6512e342}
+  /@mfactory-lab/albus-sdk@0.2.6:
+    resolution: {integrity: sha512-lh4TDx29RynZwnj1Pq4DUQYKHN7A/v3LXrpOOID/aD+5eSoE7PgJyGAvcl57qG/ItME6O1Hmms8tYcYkCJC0Qw==, tarball: https://npm.pkg.github.com/download/@mfactory-lab/albus-sdk/0.2.6/d6ff3ce9a2edf46af42ff2db8f607af42380c17b}
     peerDependencies:
       snarkjs: '*'
     dependencies:
@@ -1431,7 +1431,7 @@ packages:
       '@metaplex-foundation/beet': 0.7.1
       '@metaplex-foundation/beet-solana': 0.4.0
       '@metaplex-foundation/mpl-token-metadata': 2.13.0
-      '@mfactory-lab/albus-core': 0.2.4
+      '@mfactory-lab/albus-core': 0.2.5
       '@solana/web3.js': 1.87.1
       lodash: 4.17.21
     transitivePeerDependencies:

@@ -38,11 +38,6 @@ const notificationIcon = computed(() => isProvedRequest.value ? evaBell : evaBel
                   {{ request.pubkey }}
                 </q-tooltip>
               </span>
-
-              <q-btn
-                class="notification-prove__btn" label="prove" size="sm" dense color="yellow" text-color="black"
-                unelevated @click="userStore.proveRequest"
-              />
             </div>
           </q-item-label>
         </q-item-section>

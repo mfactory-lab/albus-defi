@@ -3,7 +3,7 @@ import * as BufferLayout from '@solana/buffer-layout'
 /**
  * Layout for a public key
  */
-export const publicKey = (property = 'publicKey') => {
+export function publicKey(property = 'publicKey') {
   return BufferLayout.blob(32, property)
 }
 
