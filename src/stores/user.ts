@@ -4,7 +4,7 @@ import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
 import { lowerCase } from 'lodash-es'
 import { AlbusClient } from '@mfactory-lab/albus-sdk'
 import { getSolanaBalance, getTokensByOwner } from '@/utils'
-import { SERVICE_CODE } from '@/config'
+import { POLICY, SERVICE_CODE } from '@/config'
 
 export enum IProofRequestStatus {
   Pending,
@@ -18,6 +18,7 @@ export const useUserStore = defineStore('user', () => {
   const connectionStore = useConnectionStore()
   const wallet = useWallet()
   const { publicKey } = wallet
+  const route = useRoute()
 
   const client = computed(() => publicKey.value ? AlbusClient.factory(connectionStore.connection, wallet as any) : null)
   const { tokens } = useToken()
@@ -26,7 +27,7 @@ export const useUserStore = defineStore('user', () => {
     tokens: [],
     loading: false,
     certificateLoading: true,
-    certificate: undefined,
+    certificates: undefined,
   })
 
   const mints = computed(() => tokens.value.map(t => t.mint).filter(t => !!t))
@@ -83,32 +84,39 @@ export const useUserStore = defineStore('user', () => {
     await getTokens()
   }
 
-  async function getCertificate() {
+  async function getCertificates() {
     if (!publicKey.value) {
       return
     }
     try {
       state.certificateLoading = true
-      state.certificate = await client.value?.proofRequest.find({
+      state.certificates = await client.value?.proofRequest.find({
         user: publicKey.value,
         serviceProviderCode: SERVICE_CODE,
         // find by policy specified for action/token
       })
+      console.log('certificates === ', state.certificates)
     } catch (e) {
-      console.error('getCertificate error:', e)
+      console.error('getCertificates error:', e)
     } finally {
       state.certificateLoading = false
     }
   }
 
   const certificate = computed(() => {
-    const certificateData = state.certificate
-    return certificateData?.find((r: any) => r)
+    if (route.name) {
+      const pagePolicy = POLICY[route.name]
+      if (pagePolicy) {
+        const policyPubkey = pagePolicy.default
+        return state.certificates?.find((c: any) => c.data.policy.toBase58() === policyPubkey)
+      }
+    }
+    return null
   })
 
-  watch(client, async (c) => {
-    if (c) {
-      getCertificate()
+  watch([client, publicKey], async () => {
+    if (client.value && publicKey.value) {
+      getCertificates()
     }
   }, { immediate: true })
 
@@ -132,7 +140,7 @@ export const useUserStore = defineStore('user', () => {
 interface UserState {
   tokens: IUserToken[]
   loading: boolean
-  certificate?: any
+  certificates?: any
   certificateLoading: boolean
 }
 

@@ -33,10 +33,10 @@ const expiredAt = computed(() => {
       </div>
       <div v-else-if="!userStore.certificate || !isProved" class="certificate-status__undefined">
         <q-btn
-          :label="!isProved ? 'prove' : 'create'"
+          :label="userStore.certificate && !isProved ? 'prove' : 'create'"
           size="sm"
           unelevated
-          :color="!isProved ? 'teal-14' : 'yellow'"
+          :color="userStore.certificate && !isProved ? 'teal-14' : 'yellow'"
           text-color="black"
           :href="`${ALBUS_APP_URL}/wizard/policy-pubkey`"
           target="_blank"
