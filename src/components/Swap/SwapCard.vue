@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// import { ZKPRequestStatus } from '@albus/monorepo/packages/albus-sdk/src/generated'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useWallet } from 'solana-wallets-vue'
 import { formatBalance, formatPct, onlyNumber } from '@/utils'
@@ -7,11 +6,11 @@ import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { SwapData } from '@/stores/swap'
 
 const { state, swapState, changeDirection, openSlippage, closeSlippage, setMax, changeValue, swapSubmit } = useSwap()
-const { handleSearchToken, options } = useToken()
+const { handleSearchToken, tokens } = useToken()
 
 const { connected } = useWallet()
 
-const filterTokens = computed(() => [...options.value].splice(-2))
+const filterTokens = computed(() => [...tokens.value].splice(-2))
 
 function tokenBalance(symbol: string) {
   return swapState.userBalance[symbol] / LAMPORTS_PER_SOL
@@ -57,15 +56,6 @@ const insufficientError = computed(() => {
 
 watch(() => state.from.amount, (a) => {
   state.active = Number(a) >= 1 && !insufficientError.value
-})
-
-watch(() => swapState.status, (s) => {
-  /*   if (typeof s !== 'number') {
-      return
-    }
-    if (s !== ZKPRequestStatus.Verified) {
-      dialog.value = true
-    } */
 })
 </script>
 

@@ -2,48 +2,75 @@ import { defineStore } from 'pinia'
 import { useWallet } from 'solana-wallets-vue'
 import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
 import { lowerCase } from 'lodash-es'
-import { getSolanaBalance, getTokenAccounts } from '@/utils'
-import { ALBUS_APP_URL } from '@/config'
+import { AlbusClient } from '@mfactory-lab/albus-sdk'
+import { getSolanaBalance, getTokensByOwner } from '@/utils'
+import { POLICY, SERVICE_CODE } from '@/config'
 
-enum Tokens {
-  NATIVE = 'SOL',
-}
-
-enum VerifiableTypes {
-  ALBUS_VC = 'ALBUS-VC',
-  ALBUS_P = 'ALBUS-p',
+export enum IProofRequestStatus {
+  Pending,
+  Proved,
+  Verified,
+  Rejected,
+  Empty,
 }
 
 export const useUserStore = defineStore('user', () => {
   const connectionStore = useConnectionStore()
-  const clientStore = useClientStore()
-  const { notify } = useQuasar()
+  const wallet = useWallet()
+  const { publicKey } = wallet
+  const route = useRoute()
+
+  const client = computed(() => publicKey.value ? AlbusClient.factory(connectionStore.connection, wallet as any) : null)
+  const { tokens } = useToken()
 
   const state = reactive<UserState>({
     tokens: [],
-    vc: undefined,
     loading: false,
     certificateLoading: true,
-    certificate: undefined,
+    certificates: undefined,
   })
 
-  const { publicKey, connected } = useWallet()
+  const mints = computed(() => tokens.value.map(t => t.mint).filter(t => !!t))
 
   async function getTokens() {
+    if (!publicKey.value) {
+      return
+    }
     try {
       state.loading = true
-      const tokens = await getTokenAccounts(publicKey.value?.toBase58() as PublicKeyInitData, connectionStore.connection)
-      const solBalance = await getSolanaBalance(publicKey.value?.toBase58() as PublicKeyInitData, connectionStore.connection)
-      const solToken = {
-        name: Tokens.NATIVE,
-        symbol: Tokens.NATIVE,
-        balance: solBalance,
-        decimals: 9,
-        mint: 'So11111111111111111111111111111111111111111',
-      }
 
-      state.tokens = [...tokens.filter(t => t.decimals > 0), solToken]
-      state.vc = tokens.filter(t => t.symbol === VerifiableTypes.ALBUS_VC)
+      const solBalance = await getSolanaBalance(publicKey.value?.toBase58() as PublicKeyInitData, connectionStore.connection)
+      const solConf = tokens.value.find(t => t.symbol === 'sol')
+      const solToken = solConf
+        ? {
+            name: solConf.name,
+            symbol: solConf.symbol,
+            balance: solBalance,
+            decimals: 9,
+            mint: solConf.mint?.[connectionStore.cluster],
+          }
+        : null
+
+      // const tokens = await getTokenAccounts(publicKey.value?.toBase58() as PublicKeyInitData, connectionStore.connection)
+      const tokensData = await getTokensByOwner(connectionStore.connection, publicKey.value, mints.value)
+      const tokensState = tokensData.map((t) => {
+        const mint = t.mint.toBase58()
+        const token = tokens.value.find(i => i.mint === mint)
+        if (token) {
+          return {
+            name: token.name,
+            symbol: token.symbol,
+            balance: t?.balance ?? 0,
+            decimals: t?.decimals ?? 0,
+            mint,
+          }
+        }
+        return null
+      })
+
+      // @ts-expect-error null filtered
+      state.tokens = [solToken, ...tokensState].filter(t => !!t)
+      console.log('state.tokens === ', state.tokens)
     } finally {
       state.loading = false
     }
@@ -53,81 +80,67 @@ export const useUserStore = defineStore('user', () => {
     return state.tokens.find(t => [lowerCase(t.symbol), lowerCase(t.name)].includes(lowerCase(token)))?.balance ?? 0
   }
 
-  const reloadUserTokens = () => {
-    getTokens()
+  const reloadUserTokens = async () => {
+    await getTokens()
   }
 
-  async function createProofRequest() {
-    try {
-      await clientStore.createProofRequest()
-      await getCertificate()
-    } catch (e) {
-      console.log(e)
+  async function getCertificates() {
+    if (!publicKey.value) {
+      return
     }
-  }
-
-  async function getCertificate() {
     try {
       state.certificateLoading = true
-      state.certificate = await clientStore.client?.findProofRequests()
+      state.certificates = await client.value?.proofRequest.find({
+        user: publicKey.value,
+        serviceProviderCode: SERVICE_CODE,
+        // find by policy specified for action/token
+      })
+      console.log('certificates === ', state.certificates)
+    } catch (e) {
+      console.error('getCertificates error:', e)
     } finally {
       state.certificateLoading = false
     }
   }
 
   const certificate = computed(() => {
-    const certificateData = state.certificate
-    return certificateData?.find((r: any) => r)
+    if (route.name) {
+      const pagePolicy = POLICY[route.name]
+      if (pagePolicy) {
+        const policyPubkey = pagePolicy.default
+        return state.certificates?.find((c: any) => c.data.policy.toBase58() === policyPubkey)
+      }
+    }
+    return null
   })
 
-  async function proveRequest(e: any) {
-    if (!e.ctrlKey) {
-      window.open(ALBUS_APP_URL, '_blank')
-      return
+  watch([client, publicKey], async () => {
+    if (client.value && publicKey.value) {
+      getCertificates()
     }
-    try {
-      const vc = state.vc[0]?.mint
-      const proofRequest = certificate.value.pubkey
-      if (!vc) {
-        notify({
-          type: 'negative',
-          html: true,
-          message: `To continue, you need to create 
-          <a href="${ALBUS_APP_URL}" target="_blank" style="color: #fff">Verifiable Credential</a>`,
-        })
-        return
-      }
-      await clientStore.proveRequest(proofRequest, vc)
-      await getCertificate()
-    } catch (e) {
-      console.log(e)
-    }
-  }
+  }, { immediate: true })
 
-  watch(connected, async (c) => {
-    if (c && state.tokens.length === 0) {
-      await reloadUserTokens()
-      await getCertificate()
+  watch(publicKey, (p) => {
+    if (p) {
+      reloadUserTokens()
     } else {
       state.tokens = []
     }
   }, { immediate: true })
+
   return {
     state,
     certificate,
     getTokens,
     tokenBalance,
     reloadUserTokens,
-    proveRequest,
-    createProofRequest,
   }
 })
 
 interface UserState {
   tokens: IUserToken[]
-  vc: any
   loading: boolean
-  certificate?: any
+  certificates?: any
   certificateLoading: boolean
 }
 

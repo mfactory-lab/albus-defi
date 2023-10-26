@@ -1,33 +1,28 @@
 <script lang="ts" setup>
 import { evaClose } from '@quasar/extras/eva-icons'
-import { IProofRequestStatus } from '@/stores/client'
+import { IProofRequestStatus } from '@/stores'
 import { ALBUS_APP_URL } from '@/config'
 
-const clientStore = useClientStore()
 const userStore = useUserStore()
 
 const dialog = ref(false)
 
-function handleClearStatus() {
-  clientStore.state.requestStatus = undefined
-}
+const noRequest = computed(() => IProofRequestStatus.Empty === userStore.certificate?.data.status)
+const pendingRequest = computed(() => IProofRequestStatus.Pending === userStore.certificate?.data.status)
 
-const noRequest = computed(() => IProofRequestStatus.Empty === clientStore.state.requestStatus)
-const pendingRequest = computed(() => IProofRequestStatus.Pending === clientStore.state.requestStatus)
+// watch(() => userStore.certificate?.data.status, (s) => {
+//   if (typeof s === 'undefined') {
+//     return
+//   }
 
-watch(() => clientStore.state.requestStatus, (s) => {
-  if (typeof s === 'undefined') {
-    return
-  }
-
-  if (s !== IProofRequestStatus.Proved) {
-    dialog.value = true
-  }
-})
+//   if (s !== IProofRequestStatus.Proved) {
+//     dialog.value = true
+//   }
+// })
 </script>
 
 <template>
-  <q-dialog v-model="dialog" @hide="handleClearStatus">
+  <q-dialog v-model="dialog">
     <q-card class="zkp-dialog">
       <q-card-section class="row items-center q-pb-none zkp-dialog__header">
         <div class="text-h6">
@@ -51,7 +46,7 @@ watch(() => clientStore.state.requestStatus, (s) => {
         <q-btn v-close-popup flat label="Cancel" class="zkp-dialog__actions--cancel" />
         <q-btn
           v-if="noRequest" v-close-popup outline label="Create"
-          color="yellow" @click="userStore.createProofRequest"
+          color="yellow"
         />
         <q-btn v-if="pendingRequest" v-close-popup color="yellow" outline>
           <a :href="ALBUS_APP_URL" target="_blank">prove</a>

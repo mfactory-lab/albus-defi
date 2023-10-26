@@ -12,7 +12,7 @@ enum SwapDirection {
 }
 
 export function useSwap() {
-  const clientStore = useClientStore()
+  const userStore = useUserStore()
   const swapStore = useSwapStore()
   const wallet = useAnchorWallet()
   const connectionStore = useConnectionStore()
@@ -48,11 +48,10 @@ export function useSwap() {
 
   async function swapSubmit() {
     const tokenSwap = swapStore.tokenSwap
-    clientStore.state.requestStatus = await clientStore.verifieStatus()
-
-    if (clientStore.state.requestStatus !== IProofRequestStatus.Proved) {
+    if (userStore.certificate?.data.status !== 2) {
       return
     }
+
     if (!tokenSwap) {
       console.log('TokenSwap is not initialized...')
       return
@@ -156,8 +155,8 @@ export function useSwap() {
     )
   }
 
-  async function verifieSwap() {
-    // swapState.status = await verifieStatus()
+  async function verifySwap() {
+    // swapState.status = await verifyStatus()
     // verifiedTransferToken()
   }
 
@@ -213,7 +212,7 @@ export function useSwap() {
     closeSlippage,
     openSlippage,
     changeDirection,
-    verifieSwap,
+    verifySwap,
     changeValue,
     swapSubmit,
     depositToken,

@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { Notify } from 'quasar'
 import { evaClose } from '@quasar/extras/eva-icons'
-
 import { useWallet } from 'solana-wallets-vue'
 import { lowerCase } from 'lodash-es'
 import { formatBalance, onlyNumber } from '@/utils'
 
-const { state } = useTransferStore()
-const { setMax, setToken, verifieTransfer } = useTransfer()
+const { state, setMax, setToken, verifyTransfer } = useTransferStore()
 const { state: userState, tokenBalance } = useUserStore()
-const { handleSearchToken, options } = useToken()
+const { tokens } = useToken()
 
 const filterTokenExist = computed(() => {
-  const tokens = options.value.filter(token => userState.tokens.find(t => token.label === lowerCase(t.symbol)))
-  return tokens.length !== 0 ? tokens : [options.value.find(t => t.value === 'sol')]
+  const tokensFiltered = tokens.value.filter(token => userState.tokens.find(t => token.name === lowerCase(t.symbol)))
+  // return tokens.length !== 0 ? tokens : [options.value.find(t => t.value === 'sol')]
+  return tokensFiltered.length !== 0 ? tokens.value : [tokens.value.find(t => t.symbol === 'sol')]
 },
 )
 
@@ -34,7 +33,7 @@ async function transferSubmit() {
       message,
     })
   }
-  verifieTransfer()
+  verifyTransfer()
 }
 
 function setMaxCurrency() {
@@ -90,7 +89,8 @@ const active = computed(() => Number(state.value) > 0 && state.address.length >=
             </q-input>
 
             <select-token
-              :disable="!connected" :options="filterTokenExist" @handle-search-token="handleSearchToken"
+              :disable="!connected"
+              :options="filterTokenExist"
               @set-token="setToken"
             />
           </div>
