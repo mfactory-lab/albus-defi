@@ -103,13 +103,19 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  const certificate = computed(() => {
+  const requiredPolicy = computed(() => {
     if (route.name) {
       const pagePolicy = POLICY[route.name]
       if (pagePolicy) {
-        const policyPubkey = pagePolicy.default
-        return state.certificates?.find((c: any) => c.data.policy.toBase58() === policyPubkey)
+        return pagePolicy.default
       }
+    }
+    return ''
+  })
+
+  const certificate = computed(() => {
+    if (requiredPolicy.value) {
+      return state.certificates?.find((c: any) => c.data.policy.toBase58() === requiredPolicy.value)
     }
     return null
   })
@@ -131,6 +137,7 @@ export const useUserStore = defineStore('user', () => {
   return {
     state,
     certificate,
+    requiredPolicy,
     getTokens,
     tokenBalance,
     reloadUserTokens,

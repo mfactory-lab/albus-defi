@@ -38,7 +38,7 @@ const expiredAt = computed(() => {
           unelevated
           :color="userStore.certificate && !isProved ? 'teal-14' : 'yellow'"
           text-color="black"
-          :href="`${ALBUS_APP_URL}/wizard/policy-pubkey`"
+          :href="`${ALBUS_APP_URL}/wizard/${userStore.requiredPolicy}`"
           target="_blank"
           type="a"
         />
