@@ -3,6 +3,6 @@ export const TELEGRAM_URL = 'https://t.me/albusprotocol'
 export const TWITTER_URL = 'https://twitter.com/AlbusProtocol'
 export const DISCORD_URL = ''
 
-export const ALBUS_APP_URL = 'https://albus.finance'
+export const ALBUS_APP_URL = 'https://app.albus.finance'
 
 export const SERVICE_CODE = 'grigoriyApp'
