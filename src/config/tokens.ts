@@ -31,14 +31,14 @@ export const TOKENS = [
       'devnet': 'HY6uvCfBQhKANRxBcYLBK7aUva8mT7mLP2SjrLLmipza',
     },
   },
-  {
-    symbol: PoolTokenSymbol.TOKEN_A,
-    name: PoolTokenSymbol.TOKEN_A,
-    img: solToken,
-  },
-  {
-    symbol: PoolTokenSymbol.TOKEN_B,
-    name: PoolTokenSymbol.TOKEN_B,
-    img: usdcToken,
-  },
+  // {
+  //   symbol: PoolTokenSymbol.TOKEN_A,
+  //   name: PoolTokenSymbol.TOKEN_A,
+  //   img: solToken,
+  // },
+  // {
+  //   symbol: PoolTokenSymbol.TOKEN_B,
+  //   name: PoolTokenSymbol.TOKEN_B,
+  //   img: usdcToken,
+  // },
 ]

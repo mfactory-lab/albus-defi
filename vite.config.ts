@@ -12,14 +12,17 @@ import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import inject from '@rollup/plugin-inject'
 
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
+// import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 
 // import nodePolyfills from 'rollup-plugin-node-polyfills'
+const esbuildShim = require.resolve('node-stdlib-browser/helpers/esbuild/shim')
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(async ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
   const isProd = mode === 'production'
+
+  const { default: stdLibBrowser } = await import('node-stdlib-browser')
 
   const build: BuildOptions = {
     manifest: isProd,
@@ -90,14 +93,24 @@ export default defineConfig(({ mode }) => {
         ],
         dts: 'types/components.d.ts',
       }),
+
+      {
+        ...inject({
+          global: [esbuildShim, 'global'],
+          process: [esbuildShim, 'process'],
+          Buffer: [esbuildShim, 'Buffer'],
+        }),
+        enforce: 'post',
+      },
     ],
     resolve: {
       // preserveSymlinks: true,
       alias: {
         '~/': `${path.resolve(__dirname, 'src')}/`,
         '@/': `${path.resolve(__dirname, 'src')}/`,
+        ...stdLibBrowser,
         // add buffer
-        'node:buffer': 'buffer',
+        // 'node:buffer': 'buffer',
         // for metaplex
         // 'stream': 'rollup-plugin-node-polyfills/polyfills/stream',
         // 'events': 'rollup-plugin-node-polyfills/polyfills/events',
@@ -127,9 +140,23 @@ export default defineConfig(({ mode }) => {
       },
     },
     optimizeDeps: {
-      esbuildOptions: {
-        plugins: [NodeGlobalsPolyfillPlugin({ buffer: true })],
-      },
+      include: [
+        'vue',
+        'vue-router',
+        '@vueuse/core',
+        '@vueuse/head',
+        'axios',
+        'pinia',
+        'buffer',
+        'process',
+      ],
+      exclude: [
+        'ethereum-cryptography',
+        'vue-demi',
+      ],
+      // esbuildOptions: {
+      //   plugins: [NodeGlobalsPolyfillPlugin({ buffer: true })],
+      // },
     },
   }
 })
