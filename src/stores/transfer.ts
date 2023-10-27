@@ -14,12 +14,14 @@ export const useTransferStore = defineStore('transfer', () => {
   const connectionStore = useConnectionStore()
   const { tokens } = useTokenStore()
   const userStore = useUserStore()
-  const { state: tokenState, reloadUserTokens } = useUserStore()
+  const { state: tokenState, getUserTokens } = useUserStore()
   const certificate = computed(() => userStore.certificate)
+  const certificateValid = computed(() => userStore.certificateValid)
   const defaultFee = 0.00
 
   const wallet = useAnchorWallet()
   const { publicKey } = useWallet()
+  const { notify } = useQuasar()
 
   const token = reactive<SwapData>(tokens[0])
 
@@ -39,6 +41,7 @@ export const useTransferStore = defineStore('transfer', () => {
 
   watch(() => state.token, () => {
     reset()
+    userStore.policySpec = state.token.name
   })
 
   watch(() => wallet.value?.publicKey, (p) => {
@@ -96,15 +99,34 @@ export const useTransferStore = defineStore('transfer', () => {
     try {
       state.loading = true
       // TODO: change check
-      console.log('certificate === ', certificate.value)
-      if (certificate.value?.data.status === 2) {
+      console.log('[debug] on transfer certificate === ', certificate.value)
+      if (certificateValid.value) {
         console.log(state.token)
+        let signature
         if (state.token.label === 'sol') {
-          await verifiedTransferSOL()
+          signature = await verifiedTransferSOL()
         } else {
-          await verifiedTransferToken()
+          signature = await verifiedTransferToken()
         }
-        await reloadUserTokens()
+        // TODO: refactory notifications
+        notify({
+          type: 'positive',
+          message: 'Transaction confirmed',
+          actions: [{
+            label: 'Explore',
+            color: 'white',
+            target: '_blank',
+            href: `https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`,
+            onClick: () => false,
+          }],
+        })
+        await getUserTokens()
+      } else {
+        notify({
+          type: 'info',
+          position: 'top-right',
+          message: 'You need a valid Certificate',
+        })
       }
     } catch (e) {
       console.error('verifyTransfer error: ', e)
@@ -116,7 +138,7 @@ export const useTransferStore = defineStore('transfer', () => {
   async function verifiedTransferSOL() {
     const amount = new BN(Number(state.value) * LAMPORTS_PER_SOL)
     const receiver = new PublicKey(state.address)
-    await transferClient.value.transfer({
+    return await transferClient.value.transfer({
       amount,
       receiver,
       proofRequest: certificate.value.pubkey,
@@ -137,7 +159,7 @@ export const useTransferStore = defineStore('transfer', () => {
     const source = await getAssociatedTokenAddress(tokenMint, publicKey.value)
     const destination = await getAssociatedTokenAddress(tokenMint, receiver)
     const amount = new BN(Number(state.value) * (10 ** tokenInfo.decimals))
-    await transferClient.value.transferToken({
+    return await transferClient.value.transferToken({
       destination,
       source,
       tokenMint,

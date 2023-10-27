@@ -4,5 +4,3 @@ export const TWITTER_URL = 'https://twitter.com/AlbusProtocol'
 export const DISCORD_URL = ''
 
 export const ALBUS_APP_URL = 'https://app.albus.finance'
-
-export const SERVICE_CODE = 'grigoriyApp'

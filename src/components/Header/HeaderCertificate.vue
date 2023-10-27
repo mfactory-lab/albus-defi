@@ -6,16 +6,19 @@ import { ALBUS_APP_URL } from '@/config'
 const userStore = useUserStore()
 
 const { connected } = useWallet()
-const isProved = computed(() => !!userStore.certificate?.data.proof)
+// const isProved = computed(() => !!userStore.certificate?.data.proof)
+const certificate = computed(() => userStore.certificate)
+const certificateValid = computed(() => userStore.certificateValid)
+const certificateLoading = computed(() => userStore.state.certificateLoading)
 
 const createdAt = computed(() => {
-  const date = new Date(Number(userStore.certificate?.data.createdAt) * 1000)
+  const date = new Date(Number(certificate.value?.data.createdAt) * 1000)
   return formatDate(date)
 })
 
 const expiredAt = computed(() => {
-  const date = new Date(Number(userStore.certificate?.data.expiredAt) * 1000)
-  return Number(userStore.certificate?.data.expiredAt) === 0 ? '&infin;' : formatDate(date)
+  const date = new Date(Number(certificate.value?.data.expiredAt) * 1000)
+  return Number(certificate.value?.data.expiredAt) === 0 ? '&infin;' : formatDate(date)
 })
 </script>
 
@@ -28,15 +31,15 @@ const expiredAt = computed(() => {
       <div v-if="!connected" class="certificate-not-connected">
         -
       </div>
-      <div v-else-if="userStore.state.certificateLoading" class="certificate-loading">
-        <q-inner-loading :showing="userStore.state.certificateLoading" label-class="text-teal" label-style="font-size: 1.1em" />
+      <div v-else-if="certificateLoading" class="certificate-loading">
+        <q-inner-loading :showing="certificateLoading" label-class="text-teal" label-style="font-size: 1.1em" />
       </div>
-      <div v-else-if="!userStore.certificate || !isProved" class="certificate-status__undefined">
+      <div v-else-if="!certificateValid" class="certificate-status__undefined">
         <q-btn
-          :label="userStore.certificate && !isProved ? 'prove' : 'create'"
+          :label="certificate ? 'prove' : 'create'"
           size="sm"
           unelevated
-          :color="userStore.certificate && !isProved ? 'teal-14' : 'yellow'"
+          :color="certificate ? 'teal-14' : 'yellow'"
           text-color="black"
           :href="`${ALBUS_APP_URL}/wizard/${userStore.requiredPolicy}`"
           target="_blank"
@@ -52,5 +55,15 @@ const expiredAt = computed(() => {
         </a>
       </div>
     </div>
+
+    <q-btn
+      v-if="!certificateLoading && connected && !certificateValid"
+      label="reload"
+      size="sm"
+      unelevated
+      color="yellow"
+      text-color="black"
+      @click="userStore.getCertificates"
+    />
   </div>
 </template>
