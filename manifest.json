@@ -3,33 +3,42 @@
     "file": "assets/SelectToken-4ee8d9e2.css",
     "src": "SelectToken.css"
   },
-  "_SelectToken.vue_vue_type_script_setup_true_lang-010b8607.js": {
-    "css": [
-      "assets/SelectToken-4ee8d9e2.css"
+  "_PolicyCard.vue_vue_type_script_setup_true_lang-59082963.js": {
+    "assets": [
+      "assets/usdt-c76e1706.png"
     ],
-    "file": "assets/SelectToken.vue_vue_type_script_setup_true_lang-010b8607.js",
+    "file": "assets/PolicyCard.vue_vue_type_script_setup_true_lang-59082963.js",
     "imports": [
       "index.html"
     ]
   },
-  "_v4-7843aaaa.js": {
-    "file": "assets/v4-7843aaaa.js",
+  "_SelectToken.vue_vue_type_script_setup_true_lang-f00f4e4c.js": {
+    "css": [
+      "assets/SelectToken-4ee8d9e2.css"
+    ],
+    "file": "assets/SelectToken.vue_vue_type_script_setup_true_lang-f00f4e4c.js",
+    "imports": [
+      "index.html",
+      "_PolicyCard.vue_vue_type_script_setup_true_lang-59082963.js"
+    ]
+  },
+  "_v4-ae53bbcc.js": {
+    "file": "assets/v4-ae53bbcc.js",
     "imports": [
       "index.html"
     ]
   },
   "index.css": {
-    "file": "assets/index-4126289f.css",
+    "file": "assets/index-c2507194.css",
     "src": "index.css"
   },
   "index.html": {
     "assets": [
-      "assets/usdt-c76e1706.png",
       "assets/albus-logo-0ecbff35.svg",
       "assets/solana-logo-1f8bc0f3.svg"
     ],
     "css": [
-      "assets/index-4126289f.css"
+      "assets/index-c2507194.css"
     ],
     "dynamicImports": [
       "src/layouts/home.vue",
@@ -44,12 +53,12 @@
       "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.3/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js",
       "node_modules/.pnpm/@solflare-wallet+sdk@1.3.2_@solana+web3.js@1.87.3/node_modules/@solflare-wallet/sdk/lib/esm/index.js"
     ],
-    "file": "assets/index-e92fcabe.js",
+    "file": "assets/index-01da7810.js",
     "isEntry": true,
     "src": "index.html"
   },
   "node_modules/.pnpm/@ledgerhq+hw-transport-webhid@6.27.1/node_modules/@ledgerhq/hw-transport-webhid/lib-es/TransportWebHID.js": {
-    "file": "assets/TransportWebHID-1463c462.js",
+    "file": "assets/TransportWebHID-898772a2.js",
     "imports": [
       "index.html"
     ],
@@ -57,25 +66,25 @@
     "src": "node_modules/.pnpm/@ledgerhq+hw-transport-webhid@6.27.1/node_modules/@ledgerhq/hw-transport-webhid/lib-es/TransportWebHID.js"
   },
   "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.3/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js": {
-    "file": "assets/index-99dcf6b9.js",
+    "file": "assets/index-e108ec8c.js",
     "imports": [
       "index.html",
-      "_v4-7843aaaa.js"
+      "_v4-ae53bbcc.js"
     ],
     "isDynamicEntry": true,
     "src": "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.3/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js"
   },
   "node_modules/.pnpm/@solflare-wallet+sdk@1.3.2_@solana+web3.js@1.87.3/node_modules/@solflare-wallet/sdk/lib/esm/index.js": {
-    "file": "assets/index-f163c9d2.js",
+    "file": "assets/index-974f933a.js",
     "imports": [
       "index.html",
-      "_v4-7843aaaa.js"
+      "_v4-ae53bbcc.js"
     ],
     "isDynamicEntry": true,
     "src": "node_modules/.pnpm/@solflare-wallet+sdk@1.3.2_@solana+web3.js@1.87.3/node_modules/@solflare-wallet/sdk/lib/esm/index.js"
   },
   "node_modules/.pnpm/salmon-adapter-sdk@1.1.1_@solana+web3.js@1.87.3/node_modules/salmon-adapter-sdk/lib/esm/index.js": {
-    "file": "assets/index-fed49adb.js",
+    "file": "assets/index-f63540c4.js",
     "imports": [
       "index.html"
     ],
@@ -95,7 +104,7 @@
     "src": "src/assets/img/tokens/usdt.png"
   },
   "src/layouts/home.vue": {
-    "file": "assets/home-91a4ac13.js",
+    "file": "assets/home-2e5ad1de.js",
     "imports": [
       "index.html"
     ],
@@ -110,7 +119,7 @@
     "css": [
       "assets/_...all_-f6a7ef33.css"
     ],
-    "file": "assets/_...all_-c06425e8.js",
+    "file": "assets/_...all_-813b9d49.js",
     "imports": [
       "index.html"
     ],
@@ -118,7 +127,7 @@
     "src": "src/pages/[...all].vue"
   },
   "src/pages/about.vue": {
-    "file": "assets/about-dc1a4e02.js",
+    "file": "assets/about-5e592bb2.js",
     "imports": [
       "index.html"
     ],
@@ -133,15 +142,16 @@
     "css": [
       "assets/stake-ee624a95.css"
     ],
-    "file": "assets/stake-0c6720aa.js",
+    "file": "assets/stake-52e8fadf.js",
     "imports": [
-      "index.html"
+      "index.html",
+      "_PolicyCard.vue_vue_type_script_setup_true_lang-59082963.js"
     ],
     "isDynamicEntry": true,
     "src": "src/pages/stake.vue"
   },
   "src/pages/support.vue": {
-    "file": "assets/support-ed9ba6ff.js",
+    "file": "assets/support-4940a485.js",
     "imports": [
       "index.html"
     ],
@@ -149,19 +159,21 @@
     "src": "src/pages/support.vue"
   },
   "src/pages/swap.vue": {
-    "file": "assets/swap-28d2a8cf.js",
+    "file": "assets/swap-570405e0.js",
     "imports": [
       "index.html",
-      "_SelectToken.vue_vue_type_script_setup_true_lang-010b8607.js"
+      "_SelectToken.vue_vue_type_script_setup_true_lang-f00f4e4c.js",
+      "_PolicyCard.vue_vue_type_script_setup_true_lang-59082963.js"
     ],
     "isDynamicEntry": true,
     "src": "src/pages/swap.vue"
   },
   "src/pages/transfer.vue": {
-    "file": "assets/transfer-96e48dac.js",
+    "file": "assets/transfer-abb51914.js",
     "imports": [
       "index.html",
-      "_SelectToken.vue_vue_type_script_setup_true_lang-010b8607.js"
+      "_SelectToken.vue_vue_type_script_setup_true_lang-f00f4e4c.js",
+      "_PolicyCard.vue_vue_type_script_setup_true_lang-59082963.js"
     ],
     "isDynamicEntry": true,
     "src": "src/pages/transfer.vue"
