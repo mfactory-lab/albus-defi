@@ -120,6 +120,7 @@ export const useTransferStore = defineStore('transfer', () => {
             onClick: () => false,
           }],
         })
+        reset()
         await getUserTokens()
       } else {
         notify({

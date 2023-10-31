@@ -71,54 +71,6 @@
 }
 
 .app-header {
-  .certificate {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-  
-    &-text {
-      font-size: 18px;
-    }
-  
-    &-loading {
-      position: relative;
-      width: 27px;
-      height: 27px;
-  
-      .q-inner-loading {
-        background: none;
-      }
-    }
-  
-    &-status {
-      font-size: 16px;
-  
-      &__proved {
-        position: relative;
-        display: flex;
-        align-items: flex-end;
-        gap: 8px;
-  
-        a {
-          width: 27px;
-          height: 27px;
-        }
-  
-        svg {
-          position: absolute;
-          bottom: -10px;
-          width: 22px;
-          height: 38px;
-  
-          path {
-            fill: $yellow;
-          }
-        }
-  
-      }
-    }
-  }
-  
   .notification {
     margin-left: auto;
     margin-right: 20px;

@@ -38,12 +38,8 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
   overflow: hidden;
   border: 1px solid $swap-card-border-color;
   max-width: 460px;
+  width: 100%;
   box-shadow: $swap-shadow;
-  margin: 80px auto 66px;
-
-  @media (max-width: $breakpoint-xs) {
-    margin: 40px 0 56px;
-  }
 
   &__header {
     height: 48px;
@@ -294,23 +290,6 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
   @media (max-width: $breakpoint-xs) {
     width: 90%;
     margin: 0 auto;
-  }
-
-  &::before {
-    content: "";
-    height: 1px;
-    position: absolute;
-    top: -5px;
-    width: 100%;
-    background-color: #aabec8;
-
-    @media (max-width: $breakpoint-md) {
-      width: 98%;
-    }
-
-    @media (max-width: $breakpoint-xs) {
-      width: 100%;
-    }
   }
 
   &__title {

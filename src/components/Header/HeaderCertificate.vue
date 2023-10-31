@@ -50,7 +50,7 @@ const expiredAt = computed(() => {
         <a :href="ALBUS_APP_URL" target="_blank">
           <i-app-certificate />
           <q-tooltip anchor="top middle" self="center middle">
-            Your certificate has been prove. Created: {{ createdAt }}. Expired: <span v-html="expiredAt" />
+            Your certificate has been proved. Created: {{ createdAt }}. Expired: <span v-html="expiredAt" />
           </q-tooltip>
         </a>
       </div>

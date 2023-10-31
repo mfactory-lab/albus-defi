@@ -21,6 +21,7 @@ declare module 'vue' {
     IAppTelegram: typeof import('~icons/app/telegram')['default']
     IAppTwitter: typeof import('~icons/app/twitter')['default']
     MobileMenu: typeof import('./../src/components/Menu/MobileMenu.vue')['default']
+    PolicyCard: typeof import('./../src/components/PolicyCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectToken: typeof import('./../src/components/SelectToken.vue')['default']

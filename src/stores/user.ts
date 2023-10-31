@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { useWallet } from 'solana-wallets-vue'
 import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
 import { lowerCase } from 'lodash-es'
+import type { Policy, ServiceProvider } from '@mfactory-lab/albus-sdk'
 import { AlbusClient, ProofRequestStatus } from '@mfactory-lab/albus-sdk'
 import { getSolanaBalance, getTokensByOwner } from '@/utils'
 import { APP_CONFIG } from '@/config'
@@ -14,12 +15,21 @@ export enum IProofRequestStatus {
   Empty,
 }
 
+interface PolicyItem {
+  pubkey: PublicKey
+  data: Policy | null
+}
+
 export const useUserStore = defineStore('user', () => {
   const connectionStore = useConnectionStore()
   const wallet = useWallet()
   const { publicKey } = wallet
   const route = useRoute()
 
+  const client = computed(() => AlbusClient.factory(connectionStore.connection))
+  const { tokens } = useToken()
+
+  const serviceLoading = ref(false)
   const policySpec = ref('')
   // @ts-expect-error not all of clusters in config
   const appConfig = computed(() => APP_CONFIG[connectionStore.cluster])
@@ -32,16 +42,28 @@ export const useUserStore = defineStore('user', () => {
     }
     return ''
   })
-
-  watch(requiredPolicy, async () => {
-    console.log('[debug] required Policy === ', requiredPolicy.value)
-  }, { immediate: true })
+  const servicePolicy = ref<PolicyItem[]>()
+  const serviceData = ref<ServiceProvider>()
   watch(appConfig, async () => {
     console.log('[debug] service Code === ', appConfig.value.serviceCode)
+    if (appConfig.value) {
+      serviceLoading.value = true
+      servicePolicy.value = await client.value?.policy.find({ serviceCode: appConfig.value.serviceCode })
+      serviceData.value = (await client.value?.service.find({ code: appConfig.value.serviceCode }))?.[0].data ?? undefined
+      serviceLoading.value = false
+    } else {
+      servicePolicy.value = undefined
+      serviceData.value = undefined
+    }
+    console.log('[debug] required Policy pk === ', requiredPolicy.value)
+    console.log('[debug] service Policy === ', servicePolicy.value)
   }, { immediate: true })
-
-  const client = computed(() => publicKey.value ? AlbusClient.factory(connectionStore.connection, wallet as any) : null)
-  const { tokens } = useToken()
+  const requiredPolicyData = computed(() => {
+    if (requiredPolicy.value) {
+      return servicePolicy.value?.find(p => p.pubkey.toBase58() === requiredPolicy.value)?.data
+    }
+    return null
+  })
 
   const state = reactive<UserState>({
     tokens: [],
@@ -132,6 +154,8 @@ export const useUserStore = defineStore('user', () => {
   watch([client, publicKey], async () => {
     if (client.value && publicKey.value) {
       getCertificates()
+    } else {
+      state.certificates = []
     }
   }, { immediate: true })
 
@@ -147,8 +171,13 @@ export const useUserStore = defineStore('user', () => {
     state,
     certificate,
     certificateValid,
+
+    serviceLoading,
     requiredPolicy,
+    requiredPolicyData,
     policySpec,
+    serviceData,
+
     tokenBalance,
     getUserTokens,
     getCertificates,
