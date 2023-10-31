@@ -14,23 +14,21 @@ export const APP_CONFIG = {
     },
   },
   'devnet': {
-    serviceCode: 'grigoriyApp',
+    serviceCode: 'leoAlbus',
     policy: {
       transfer: {
-        // attendance sb2023a
-        default: 'FQZfvRxA3hCTy5VLfUSHBXWKCRvSFu7xGfSaJrBEVjm7',
-        // attendance cacf
-        usdc: '4BaEGwdWUvdFiCpG5s816H1rjkEiRtynoQbUDosxwJg4',
-        // attendance sbbd
-        usdt: '6i9NHjoQvMXJy8wSoc1TGvwxzzEY1Poo8N3EZVDXZhZy',
+        // age 18 - 100
+        default: '6U2y9mwzH8afwmNzHZaa4Rwe5TTV7TRdrAnSybAQeWt',
+        usdc: '6U2y9mwzH8afwmNzHZaa4Rwe5TTV7TRdrAnSybAQeWt',
+        usdt: '6U2y9mwzH8afwmNzHZaa4Rwe5TTV7TRdrAnSybAQeWt',
       },
       swap: {
-        // liveness
-        default: '4ARkb5StiDU67sYXpER8PqWvKTdHzK7KvCR83EJknG7T',
+        // age 1 - 40
+        default: 'Co3VdBNFXxDJETPfijaokRGKnKWw5RvHFmCocgRRgL7N',
       },
       stake: {
-        // age
-        default: '5q6MCuMrdc5yzGJkarC8PKWqN5JY2i7eEVBdxy7ei74T',
+        // age 40 - 70
+        default: '69tnNVTHMwvmG9W8s68EtgAXthhqwT112KJxp2sTSH7v',
       },
     },
   },
