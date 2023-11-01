@@ -3,9 +3,6 @@ import { useWallet } from 'solana-wallets-vue'
 import { formatDate } from '@/utils'
 import { ALBUS_APP_URL } from '@/config'
 
-const connectionStore = useConnectionStore()
-const cluster = computed(() => connectionStore.cluster)
-
 const userStore = useUserStore()
 const requiredPolicyData = computed(() => userStore.requiredPolicyData)
 const serviceLoading = computed(() => userStore.serviceLoading)
@@ -53,15 +50,7 @@ const expiredAt = computed(() => {
         </div>
 
         <div v-if="!certificateValid" class="certificate-status__undefined">
-          <q-btn
-            :label="certificate ? 'prove' : 'create'"
-            unelevated
-            :color="certificate ? 'teal-14' : 'yellow'"
-            text-color="black"
-            :href="`${ALBUS_APP_URL}/wizard/${userStore.requiredPolicy}/${cluster}`"
-            target="_blank"
-            type="a"
-          />
+          <create-certificate-btn />
           <q-btn
             :loading="certificateLoading"
             class="q-ml-md"

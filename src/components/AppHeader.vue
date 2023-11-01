@@ -7,5 +7,7 @@
       <cluster-selector />
       <connect-wallet />
     </div>
+
+    <create-certificate-dialog />
   </header>
 </template>

@@ -9,9 +9,13 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./../src/components/AppFooter.vue')['default']
     AppHeader: typeof import('./../src/components/AppHeader.vue')['default']
+    AppIframe: typeof import('./../src/components/AppIframe.vue')['default']
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     CopyToClipboard: typeof import('./../src/components/CopyToClipboard.vue')['default']
+    CreateCertificateBtn: typeof import('./../src/components/CreateCertificateBtn.vue')['default']
+    CreateCertificateDialog: typeof import('./../src/components/CreateCertificateDialog.vue')['default']
+    CreateCertificateDIalog: typeof import('./../src/components/CreateCertificateDIalog.vue')['default']
     DarkThemeToggle: typeof import('./../src/components/DarkThemeToggle.vue')['default']
     HeaderCertificate: typeof import('./../src/components/Header/HeaderCertificate.vue')['default']
     HeaderNotifications: typeof import('./../src/components/Header/HeaderNotifications.vue')['default']

@@ -8,7 +8,7 @@ import { getAssociatedTokenAddress } from '@solana/spl-token'
 import BN from 'bn.js'
 import type { SwapData } from './swap'
 import type { IProofRequestStatus } from '@/stores'
-import { createTransaction, getMetadataPDA, transactionFee, validateAddress } from '@/utils'
+import { createTransaction, getMetadataPDA, startCreteCertificate, transactionFee, validateAddress } from '@/utils'
 
 export const useTransferStore = defineStore('transfer', () => {
   const connectionStore = useConnectionStore()
@@ -123,11 +123,7 @@ export const useTransferStore = defineStore('transfer', () => {
         reset()
         await getUserTokens()
       } else {
-        notify({
-          type: 'info',
-          position: 'top-right',
-          message: 'You need a valid Certificate',
-        })
+        startCreteCertificate()
       }
     } catch (e) {
       console.error('verifyTransfer error: ', e)
