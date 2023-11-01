@@ -127,6 +127,10 @@ export const useTransferStore = defineStore('transfer', () => {
       }
     } catch (e) {
       console.error('verifyTransfer error: ', e)
+      notify({
+        type: 'negative',
+        message: `${e}`,
+      })
     } finally {
       state.loading = false
     }
