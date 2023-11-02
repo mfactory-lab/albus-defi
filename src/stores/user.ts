@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { useWallet } from 'solana-wallets-vue'
 import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
+import debounce from 'lodash-es/debounce'
 import { lowerCase } from 'lodash-es'
 import type { Policy, ServiceProvider } from '@mfactory-lab/albus-sdk'
 import { AlbusClient, ProofRequestStatus } from '@mfactory-lab/albus-sdk'
@@ -25,6 +26,7 @@ export const useUserStore = defineStore('user', () => {
   const wallet = useWallet()
   const { publicKey } = wallet
   const route = useRoute()
+  const emitter = useEmitter()
 
   const client = computed(() => AlbusClient.factory(connectionStore.connection))
   const { tokens } = useToken()
@@ -74,7 +76,7 @@ export const useUserStore = defineStore('user', () => {
 
   const mints = computed(() => tokens.value.map(t => t.mint).filter(t => !!t))
 
-  async function getUserTokens() {
+  const getUserTokens = debounce(async () => {
     if (!publicKey.value) {
       return
     }
@@ -116,7 +118,7 @@ export const useUserStore = defineStore('user', () => {
     } finally {
       state.loading = false
     }
-  }
+  }, 500)
 
   const tokenBalance = (token: string) => {
     return state.tokens.find(t => [lowerCase(t.symbol), lowerCase(t.name)].includes(lowerCase(token)))?.balance ?? 0
@@ -166,6 +168,7 @@ export const useUserStore = defineStore('user', () => {
       state.tokens = []
     }
   }, { immediate: true })
+  emitter.on(ACCOUNT_CHANGE_EVENT, getUserTokens)
 
   return {
     state,
