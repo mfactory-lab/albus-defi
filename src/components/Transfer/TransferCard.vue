@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Notify } from 'quasar'
-import { evaClose } from '@quasar/extras/eva-icons'
 import { useWallet } from 'solana-wallets-vue'
 import { lowerCase } from 'lodash-es'
-import { formatBalance, onlyNumber } from '@/utils'
+import { formatBalance, onlyNumber, validateAddress } from '@/utils'
+import { MIN_FEE, RENT_FEE, TRANSFER_FEE_CONST } from '@/config/common'
 
 const { state, setMax, setToken, verifyTransfer } = useTransferStore()
 const { state: userState, tokenBalance } = useUserStore()
@@ -39,16 +39,18 @@ async function transferSubmit() {
 function setMaxCurrency() {
   setMax(balance.value)
   if (state.token.value === 'sol') {
-    Notify.create({
-      type: 'negative',
-      timeout: 0,
-      message: 'When transferring all funds, you will no longer be able to sign transactions! Leave not a lot of SOL on the account',
-      actions: [{ icon: evaClose, color: 'white' }],
-    })
+    // save additional 2 min fee for next transaction
+    state.value = balance.value - RENT_FEE - 3 * MIN_FEE - TRANSFER_FEE_CONST
+    // Notify.create({
+    //   type: 'negative',
+    //   timeout: 0,
+    //   message: 'When transferring all funds, you will no longer be able to sign transactions! Leave not a lot of SOL on the account',
+    //   actions: [{ icon: evaClose, color: 'white' }],
+    // })
   }
 }
 
-const active = computed(() => Number(state.value) > 0 && state.address.length >= 44)
+const active = computed(() => Number(state.value) > 0 && validateAddress(state.address))
 </script>
 
 <template>

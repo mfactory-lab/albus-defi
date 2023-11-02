@@ -19,7 +19,7 @@ export function shortenAddress(address: string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`
 }
 
-export async function validateAddress(address: PublicKeyInitData): Promise<boolean> {
+export function validateAddress(address: PublicKeyInitData | string): boolean {
   try {
     const owner = new PublicKey(address)
     return PublicKey.isOnCurve(owner.toString())

@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
-import { lowerCase } from 'lodash-es'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { AnchorProvider } from '@coral-xyz/anchor'
 import { AlbusTransferClient } from '@mfactory-lab/albus-transfer-sdk'
@@ -9,6 +8,7 @@ import BN from 'bn.js'
 import type { SwapData } from './swap'
 import type { IProofRequestStatus } from '@/stores'
 import { createTransaction, getMetadataPDA, startCreteCertificate, transactionFee, validateAddress } from '@/utils'
+import { TRANSFER_FEE_CONST } from '@/config'
 
 export const useTransferStore = defineStore('transfer', () => {
   const connectionStore = useConnectionStore()
@@ -52,10 +52,22 @@ export const useTransferStore = defineStore('transfer', () => {
   })
 
   watch(() => state.address, async () => {
-    state.valid = await validateAddress(state.address)
+    state.valid = validateAddress(state.address)
   })
 
-  watch([() => state.valid, () => state.value], async ([v, s]) => {
+  const tokenMint = computed(() => {
+    const mint = state.token.mint ?? ''
+    return validateAddress(mint) ? new PublicKey(mint) : ''
+  })
+  const receiver = computed(() => validateAddress(state.address) ? new PublicKey(state.address) : '')
+  const destinationTokenAcc = ref()
+  watch([tokenMint, receiver], async () => {
+    if (tokenMint.value && receiver.value && state.valid) {
+      return destinationTokenAcc.value = await getAssociatedTokenAddress(tokenMint.value, receiver.value)
+    }
+    destinationTokenAcc.value = ''
+  })
+  watch([() => state.valid, () => state.value, destinationTokenAcc], async ([v, s]) => {
     if (v && Number(s) > 0) {
       getTransactionFee()
     } else {
@@ -65,14 +77,13 @@ export const useTransferStore = defineStore('transfer', () => {
 
   async function getTokenAccount() {
     const symbol = state.token.label
-    const token = tokenState.tokens.find(t => lowerCase(t.symbol) === lowerCase(symbol))
     if (symbol === 'sol') {
       return true
-    } else if (!token || !token.mint) {
+    } else if (!destinationTokenAcc.value) {
       return false
     } else {
       // TODO: valid check if receiver has token account
-      return !!getMetadataPDA(token.mint)
+      return !!getMetadataPDA(destinationTokenAcc.value)
     }
   }
 
@@ -81,7 +92,7 @@ export const useTransferStore = defineStore('transfer', () => {
     const transaction = await createTransaction(
       wallet.value?.publicKey as PublicKey, state.address, Number(state.value), connectionStore.connection)
 
-    const fee = await transactionFee(transaction, connectionStore.connection)
+    const fee = await transactionFee(transaction, connectionStore.connection) + TRANSFER_FEE_CONST
     state.fee = !isAccountExist ? fee + 0.02 : fee
   }
 
@@ -101,7 +112,6 @@ export const useTransferStore = defineStore('transfer', () => {
       // TODO: change check
       console.log('[debug] on transfer certificate === ', certificate.value)
       if (certificateValid.value) {
-        console.log(state.token)
         let signature
         if (state.token.label === 'sol') {
           signature = await verifiedTransferSOL()
@@ -146,26 +156,22 @@ export const useTransferStore = defineStore('transfer', () => {
     })
   }
 
-  // TODO: errors
   async function verifiedTransferToken() {
     if (!publicKey.value || !state.token.mint) {
       return
     }
     const tokenInfo = tokenState.tokens.find(t => t.mint === state.token.mint)
-    if (!tokenInfo) {
+    if (!tokenInfo || !tokenMint.value || !receiver.value) {
       return
     }
-    const tokenMint = new PublicKey(state.token.mint)
-    const receiver = new PublicKey(state.address)
-    const source = await getAssociatedTokenAddress(tokenMint, publicKey.value)
-    const destination = await getAssociatedTokenAddress(tokenMint, receiver)
+    const source = await getAssociatedTokenAddress(tokenMint.value, publicKey.value)
     const amount = new BN(Number(state.value) * (10 ** tokenInfo.decimals))
     return await transferClient.value.transferToken({
-      destination,
+      destination: destinationTokenAcc.value,
       source,
-      tokenMint,
+      tokenMint: tokenMint.value,
       amount,
-      receiver,
+      receiver: receiver.value,
       proofRequest: certificate.value.pubkey,
     })
   }
