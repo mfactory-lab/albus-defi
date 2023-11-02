@@ -46,17 +46,18 @@ export const useUserStore = defineStore('user', () => {
   })
   const servicePolicy = ref<PolicyItem[]>()
   const serviceData = ref<ServiceProvider>()
-  watch(appConfig, async () => {
+  watch([appConfig, client], async () => {
     console.log('[debug] service Code === ', appConfig.value.serviceCode)
     if (appConfig.value) {
       serviceLoading.value = true
       servicePolicy.value = await client.value?.policy.find({ serviceCode: appConfig.value.serviceCode })
-      serviceData.value = (await client.value?.service.find({ code: appConfig.value.serviceCode }))?.[0].data ?? undefined
+      serviceData.value = (await client.value?.service.find({ code: appConfig.value.serviceCode }))?.[0]?.data ?? undefined
       serviceLoading.value = false
     } else {
       servicePolicy.value = undefined
       serviceData.value = undefined
     }
+    console.log('[debug] serviceData  === ', serviceData.value)
     console.log('[debug] required Policy pk === ', requiredPolicy.value)
     console.log('[debug] service Policy === ', servicePolicy.value)
   }, { immediate: true })

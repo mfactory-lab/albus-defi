@@ -4,6 +4,7 @@ import { formatDate } from '@/utils'
 import { ALBUS_APP_URL } from '@/config'
 
 const userStore = useUserStore()
+const serviceData = computed(() => userStore.serviceData)
 const requiredPolicyData = computed(() => userStore.requiredPolicyData)
 const serviceLoading = computed(() => userStore.serviceLoading)
 
@@ -35,7 +36,7 @@ const expiredAt = computed(() => {
         <div class="title">
           Required certificate
         </div>
-        <div>Name: {{ requiredPolicyData.name }}</div>
+        <div>Name: {{ serviceData?.name }} {{ requiredPolicyData.name }}</div>
         <div>Rules:</div>
         <div class="q-ml-xs">
           <div v-for="(r, i) in requiredPolicyData.rules" :key="i">
