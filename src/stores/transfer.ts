@@ -1,16 +1,17 @@
 import { defineStore } from 'pinia'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, PublicKey, Transaction } from '@solana/web3.js'
 import { AnchorProvider } from '@coral-xyz/anchor'
 import { AlbusTransferClient } from '@mfactory-lab/albus-transfer-sdk'
 import { getAccount, getAssociatedTokenAddress } from '@solana/spl-token'
 import BN from 'bn.js'
 import type { SwapData } from './swap'
 import type { IProofRequestStatus } from '@/stores'
-import { createTransaction, startCreateCertificate, transactionFee, validateAddress } from '@/utils'
+import { createTransaction, getOrInitAssociatedTokenAddress, sendTransaction, startCreateCertificate, transactionFee, validateAddress } from '@/utils'
 import { MIN_TRANSFER_FEE, TRANSFER_FEE_CONST } from '@/config'
 
 export const useTransferStore = defineStore('transfer', () => {
+  const { monitorTransaction } = useMonitorTransaction()
   const connectionStore = useConnectionStore()
   const { tokens } = useTokenStore()
   const userStore = useUserStore()
@@ -165,10 +166,29 @@ export const useTransferStore = defineStore('transfer', () => {
     if (!tokenInfo || !tokenMint.value || !receiver.value || !wallet.value) {
       return
     }
+
+    const destination = destinationTokenAcc.value ? destinationTokenAcc.value : await getAssociatedTokenAddress(tokenMint.value, receiver.value)
+    if (!destinationTokenAcc.value) {
+      const tx = new Transaction()
+      await getOrInitAssociatedTokenAddress(
+        connectionStore.connection,
+        tx,
+        tokenMint.value,
+        receiver.value,
+        publicKey.value,
+      )
+      if (tx.instructions.length) {
+        await monitorTransaction(
+          sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
+        )
+      }
+    }
+
     const source = await getAssociatedTokenAddress(tokenMint.value, publicKey.value)
     const amount = new BN(Number(state.value) * (10 ** tokenInfo.decimals))
     return await transferClient.value.transferToken({
-      destination: destinationTokenAcc.value,
+      // destination: destinationTokenAcc.value,
+      destination,
       source,
       tokenMint: tokenMint.value,
       amount,
