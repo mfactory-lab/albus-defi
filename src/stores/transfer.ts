@@ -3,12 +3,12 @@ import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { AnchorProvider } from '@coral-xyz/anchor'
 import { AlbusTransferClient } from '@mfactory-lab/albus-transfer-sdk'
-import { getAssociatedTokenAddress } from '@solana/spl-token'
+import { getAccount, getAssociatedTokenAddress } from '@solana/spl-token'
 import BN from 'bn.js'
 import type { SwapData } from './swap'
 import type { IProofRequestStatus } from '@/stores'
-import { createTransaction, getMetadataPDA, startCreteCertificate, transactionFee, validateAddress } from '@/utils'
-import { TRANSFER_FEE_CONST } from '@/config'
+import { createTransaction, startCreateCertificate, transactionFee, validateAddress } from '@/utils'
+import { MIN_TRANSFER_FEE, TRANSFER_FEE_CONST } from '@/config'
 
 export const useTransferStore = defineStore('transfer', () => {
   const connectionStore = useConnectionStore()
@@ -61,39 +61,40 @@ export const useTransferStore = defineStore('transfer', () => {
   })
   const receiver = computed(() => validateAddress(state.address) ? new PublicKey(state.address) : '')
   const destinationTokenAcc = ref()
-  watch([tokenMint, receiver], async () => {
+  watch([tokenMint, receiver, () => state.valid], async () => {
     if (tokenMint.value && receiver.value && state.valid) {
-      return destinationTokenAcc.value = await getAssociatedTokenAddress(tokenMint.value, receiver.value)
+      try {
+        const tokenAcc = await getAssociatedTokenAddress(tokenMint.value, receiver.value)
+        await getAccount(connectionStore.connection, tokenAcc)
+        return destinationTokenAcc.value = tokenAcc
+      } catch (e) {
+        destinationTokenAcc.value = ''
+      }
     }
     destinationTokenAcc.value = ''
   })
-  watch([() => state.valid, () => state.value, destinationTokenAcc], async ([v, s]) => {
-    if (v && Number(s) > 0) {
+  watch([() => state.valid, () => state.value, destinationTokenAcc], () => {
+    if (state.valid && Number(state.value) > 0) {
       getTransactionFee()
     } else {
       state.fee = defaultFee
     }
   })
 
-  async function getTokenAccount() {
+  function hasTokenAccount() {
     const symbol = state.token.label
     if (symbol === 'sol') {
       return true
-    } else if (!destinationTokenAcc.value) {
-      return false
-    } else {
-      // TODO: valid check if receiver has token account
-      return !!getMetadataPDA(destinationTokenAcc.value)
     }
+    return !!destinationTokenAcc.value
   }
 
   async function getTransactionFee() {
-    const isAccountExist = await getTokenAccount()
     const transaction = await createTransaction(
       wallet.value?.publicKey as PublicKey, state.address, Number(state.value), connectionStore.connection)
 
     const fee = await transactionFee(transaction, connectionStore.connection) + TRANSFER_FEE_CONST
-    state.fee = !isAccountExist ? fee + 0.02 : fee
+    state.fee = !hasTokenAccount() ? fee + MIN_TRANSFER_FEE : fee
   }
 
   const transferClient = computed(() => {
@@ -133,7 +134,7 @@ export const useTransferStore = defineStore('transfer', () => {
         reset()
         await getUserTokens()
       } else {
-        startCreteCertificate()
+        startCreateCertificate()
       }
     } catch (e) {
       console.error('verifyTransfer error: ', e)
@@ -161,7 +162,7 @@ export const useTransferStore = defineStore('transfer', () => {
       return
     }
     const tokenInfo = tokenState.tokens.find(t => t.mint === state.token.mint)
-    if (!tokenInfo || !tokenMint.value || !receiver.value) {
+    if (!tokenInfo || !tokenMint.value || !receiver.value || !wallet.value) {
       return
     }
     const source = await getAssociatedTokenAddress(tokenMint.value, publicKey.value)
