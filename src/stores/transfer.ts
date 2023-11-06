@@ -187,7 +187,7 @@ export const useTransferStore = defineStore('transfer', () => {
       amount,
       receiver,
       proofRequest: certificate.value.pubkey,
-      policy: requiredPolicy.value,
+      policy: new PublicKey(requiredPolicy.value),
     })
   }
 
@@ -209,7 +209,7 @@ export const useTransferStore = defineStore('transfer', () => {
       amount,
       receiver: receiver.value,
       proofRequest: certificate.value.pubkey,
-      policy: requiredPolicy.value,
+      policy: new PublicKey(requiredPolicy.value),
     })
   }
 
