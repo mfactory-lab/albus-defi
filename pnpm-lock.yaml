@@ -21,8 +21,8 @@ dependencies:
     specifier: ^0.2.6
     version: 0.2.6
   '@mfactory-lab/albus-transfer-sdk':
-    specifier: ^0.0.10
-    version: 0.0.10
+    specifier: 0.0.12
+    version: 0.0.12
   '@rollup/plugin-inject':
     specifier: ^5.0.3
     version: 5.0.5
@@ -1445,8 +1445,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@mfactory-lab/albus-transfer-sdk@0.0.10:
-    resolution: {integrity: sha512-MnHcd0Iz9SBVPzSKTssJYwJH2yozFzNX2HGM7ncWvhdEIZHjEuXhc4YfRG85WEuXAvgpDZoi3XEuU0GFX4RB9w==, tarball: https://npm.pkg.github.com/download/@mfactory-lab/albus-transfer-sdk/0.0.10/6da51e862869c37c2ff3527b5a24e4b24c769a3b}
+  /@mfactory-lab/albus-transfer-sdk@0.0.12:
+    resolution: {integrity: sha512-Rkz5xd0+jCeDi1PFtb1yPhYracLUaEtMqLcPxkOz+AVZOhazhRgCd9rrzFQmIS10K+rI+BIhRD1pU1wQjAXrTQ==, tarball: https://npm.pkg.github.com/download/@mfactory-lab/albus-transfer-sdk/0.0.12/c76d0d8f27adffafed33dd3b4297bb7e61a5f33c}
     dependencies:
       '@coral-xyz/anchor': 0.29.0
       '@metaplex-foundation/beet': 0.7.1
