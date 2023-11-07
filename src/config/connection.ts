@@ -12,7 +12,7 @@ export const ENDPOINTS: Endpoint[] = [
     url: import.meta.env.DEV
       ? 'https://restless-blue-valley.solana-mainnet.quiknode.pro/388d47063172de995210b42f44a3483d4269dcf9/'
       : 'https://rpc.jfactory.ch/',
-    wsEndpoint: import.meta.env.DEV ? undefined : 'wss://sleek-solemn-rain.solana-mainnet.quiknode.pro/1bac3b4146d57810e23b4263129fda9dbff83fe9/',
+    wsEndpoint: import.meta.env.DEV ? undefined : 'wss://sleek-solemn-rain.solana-mainnet.quiknode.pro/6e7118f20a84b8d10c8f00ec8f16ab6878f00fb8/',
     getToken: getJFRpcToken,
   },
   {

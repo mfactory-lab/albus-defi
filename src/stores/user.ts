@@ -35,7 +35,7 @@ export const useUserStore = defineStore('user', () => {
   const policySpec = ref('')
   // @ts-expect-error not all of clusters in config
   const appConfig = computed(() => APP_CONFIG[connectionStore.cluster])
-  const requiredPolicy = computed(() => {
+  const requiredPolicy = computed<string>(() => {
     if (route.name) {
       const pagePolicy = appConfig.value?.policy[route.name]
       if (pagePolicy) {
