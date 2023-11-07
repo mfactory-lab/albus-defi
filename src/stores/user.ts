@@ -3,8 +3,8 @@ import { useWallet } from 'solana-wallets-vue'
 import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
 import debounce from 'lodash-es/debounce'
 import { lowerCase } from 'lodash-es'
-import type { Policy, ServiceProvider } from '@mfactory-lab/albus-sdk'
-import { AlbusClient, ProofRequestStatus } from '@mfactory-lab/albus-sdk'
+import type { Policy, ServiceProvider } from '@albus-finance/sdk'
+import { AlbusClient, ProofRequestStatus } from '@albus-finance/sdk'
 import { getSolanaBalance, getTokensByOwner } from '@/utils'
 import { APP_CONFIG } from '@/config'
 
@@ -35,7 +35,7 @@ export const useUserStore = defineStore('user', () => {
   const policySpec = ref('')
   // @ts-expect-error not all of clusters in config
   const appConfig = computed(() => APP_CONFIG[connectionStore.cluster])
-  const requiredPolicy = computed(() => {
+  const requiredPolicy = computed<string>(() => {
     if (route.name) {
       const pagePolicy = appConfig.value?.policy[route.name]
       if (pagePolicy) {
