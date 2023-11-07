@@ -18,9 +18,11 @@ export const APP_CONFIG = {
     policy: {
       transfer: {
         // age 18 - 100
-        default: '6U2y9mwzH8afwmNzHZaa4Rwe5TTV7TRdrAnSybAQeWt',
-        usdc: '6U2y9mwzH8afwmNzHZaa4Rwe5TTV7TRdrAnSybAQeWt',
-        usdt: '6U2y9mwzH8afwmNzHZaa4Rwe5TTV7TRdrAnSybAQeWt',
+        // default: '6U2y9mwzH8afwmNzHZaa4Rwe5TTV7TRdrAnSybAQeWt',
+        // countries
+        default: 'Bn2XUm6UyEYxxEKDbsq51hbXTAjnbaAAruX8fExNGrnT',
+        usdc: 'Bn2XUm6UyEYxxEKDbsq51hbXTAjnbaAAruX8fExNGrnT',
+        usdt: 'Bn2XUm6UyEYxxEKDbsq51hbXTAjnbaAAruX8fExNGrnT',
       },
       swap: {
         // age 1 - 40
