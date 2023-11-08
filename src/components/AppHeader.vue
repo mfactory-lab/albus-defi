@@ -1,6 +1,6 @@
 <template>
   <header class="app-header">
-    <!-- <header-certificate /> -->
+    <policy-card />
     <!-- <header-notifications /> -->
 
     <div class="app-header__buttons q-ml-auto">

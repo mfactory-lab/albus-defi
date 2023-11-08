@@ -15,13 +15,11 @@ const certificate = computed(() => userStore.certificate)
 const certificateValid = computed(() => userStore.certificateValid)
 const certificateLoading = computed(() => userStore.state?.certificateLoading)
 
-const createdAt = computed(() => {
-  const date = new Date(Number(certificate.value?.data.createdAt) * 1000)
-  return formatDate(date)
-})
-
 const expiredAt = computed(() => {
-  const date = new Date(Number(certificate.value?.data.expiredAt) * 1000)
+  if (!certificate.value) {
+    return
+  }
+  const date = new Date(Number(certificate.value.data.expiredAt) * 1000)
   return Number(certificate.value?.data.expiredAt) === 0 ? '&infin;' : formatDate(date)
 })
 
@@ -44,52 +42,44 @@ function formatRule(key: string, label: string, value: number[]) {
 </script>
 
 <template>
-  <q-card class="swap-card policy-card">
-    <q-card-section class="swap-card__header">
-      Certificate
-    </q-card-section>
-    <div>
-      <q-inner-loading :showing="serviceLoading" label-class="text-teal" label-style="font-size: 1.1em" />
-      <q-card-section v-if="requiredPolicyData" class="swap-card__body swap-field__label">
-        <div class="title">
+  <q-card class="policy-card">
+    <q-inner-loading :showing="serviceLoading || certificateLoading" label-class="text-teal" label-style="font-size: 1.1em" />
+    <div class="row">
+      <div class="policy-card__info">
+        <div class="policy-card__info__title">
           Required certificate
         </div>
-        <div>Name: {{ serviceData?.name }} {{ requiredPolicyData.name }}</div>
-        <div>Rules:</div>
-        <div class="q-ml-xs">
-          <div v-for="(r, i) in requiredPolicyData.rules" :key="i">
-            {{ formatRule(r.key, r.label, r.value) }}
-          </div>
-        </div>
-      </q-card-section>
-      <q-card-section v-if="connected" class="swap-card__body swap-field__label">
-        <q-inner-loading :showing="certificateLoading" label-class="text-teal" label-style="font-size: 1.1em" />
-        <div class="title q-mb-md">
-          Your certificate
-        </div>
-
-        <div v-if="!certificateValid" class="certificate-status__undefined">
-          <create-certificate-btn />
-          <q-btn
-            :loading="certificateLoading"
-            class="q-ml-md"
-            label="reload"
-            unelevated
-            color="yellow"
-            text-color="black"
-            @click="userStore.getCertificates"
+        <div class="policy-card__info__policy-name">
+          <span
+            class="policy-card__info__status-line"
+            :class="certificateValid ? 'policy-card__info__status-line--positive' : 'policy-card__info__status-line--negative'"
           />
+          <span>{{ serviceData?.name }}, {{ requiredPolicyData?.name }}</span>
         </div>
-        <div v-else class="certificate-status__proved">
-          <a :href="`${ALBUS_APP_URL}/holder`" target="_blank">
-            <i-app-certificate />
-          </a>
-          <div class="q-ml-md">
-            <div>Created: {{ createdAt }}</div>
-            <div>Expired: <span v-html="expiredAt" /></div>
+        <div class="row">
+          <div
+            v-if="certificateValid"
+            class="policy-card__info__date policy-card__info__date--positive"
+          >
+            Valid until <span v-html="expiredAt" />
           </div>
+          <div
+            v-else
+            class="policy-card__info__date policy-card__info__date--negative"
+          >
+            certificate invalid
+          </div>
+          <policy-info-card />
         </div>
-      </q-card-section>
+      </div>
+      <div class="policy-card__action">
+        <div v-if="!certificateValid">
+          <create-certificate-btn />
+        </div>
+        <a v-else :href="`${ALBUS_APP_URL}/holder`" class="policy-card__certificate certificate" target="_blank">
+          <i-app-certificate />
+        </a>
+      </div>
     </div>
   </q-card>
 </template>
