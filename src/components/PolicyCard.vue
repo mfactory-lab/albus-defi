@@ -13,7 +13,7 @@ const { connected } = useWallet()
 // const isProved = computed(() => !!userStore.certificate?.data.proof)
 const certificate = computed(() => userStore.certificate)
 const certificateValid = computed(() => userStore.certificateValid)
-const certificateLoading = computed(() => userStore.state.certificateLoading)
+const certificateLoading = computed(() => userStore.state?.certificateLoading)
 
 const createdAt = computed(() => {
   const date = new Date(Number(certificate.value?.data.createdAt) * 1000)

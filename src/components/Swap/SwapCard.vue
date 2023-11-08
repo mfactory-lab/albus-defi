@@ -153,7 +153,7 @@ watch(() => state.from.amount, (a) => {
       </div>
     </q-card-section>
 
-    <q-inner-loading :showing="swapState.loading" class="swap-loading" color="grey" />
+    <q-inner-loading :showing="swapState?.loading" class="swap-loading" color="grey" />
   </q-card>
   <q-dialog v-model="swapState.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
     <q-card>
