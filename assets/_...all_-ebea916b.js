@@ -1,0 +1,1 @@
+import{_ as t,o as c,i as o,ba as _}from"./index-8238a680.js";const e={},n={class:"page-404"};function s(a,l){return c(),o("div",n," 404 ")}typeof _=="function"&&_(e);const f=t(e,[["render",s]]);export{f as default};
