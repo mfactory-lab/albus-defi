@@ -2,6 +2,7 @@
 import { useWallet } from 'solana-wallets-vue'
 import { formatDate } from '@/utils'
 import { ALBUS_APP_URL } from '@/config'
+import { COUNTRIES_LIST } from '@/config/countries'
 
 const userStore = useUserStore()
 const serviceData = computed(() => userStore.serviceData)
@@ -23,6 +24,23 @@ const expiredAt = computed(() => {
   const date = new Date(Number(certificate.value?.data.expiredAt) * 1000)
   return Number(certificate.value?.data.expiredAt) === 0 ? '&infin;' : formatDate(date)
 })
+
+function formatCamelCase(str: string) {
+  return str.split(/(?=[A-Z])/).join(' ')
+}
+
+function formatRule(key: string, label: string, value: number[]) {
+  if (key === 'selectionMode') {
+    return `- Is${label === 'false' ? ' not' : ''} a resident of:`
+  } else if (/countryLookup/.test(key)) {
+    const items = value.filter(v => v > 0)
+    if (items.length) {
+      return items.reduce((acc, cur, idx) => `${acc}${idx > 0 ? ', ' : ''}${COUNTRIES_LIST[cur - 1]?.name}`, '')
+    }
+    return ''
+  }
+  return `- ${formatCamelCase(key)}: ${label}`
+}
 </script>
 
 <template>
@@ -40,7 +58,7 @@ const expiredAt = computed(() => {
         <div>Rules:</div>
         <div class="q-ml-xs">
           <div v-for="(r, i) in requiredPolicyData.rules" :key="i">
-            - {{ r.key }}: {{ r.label }}
+            {{ formatRule(r.key, r.label, r.value) }}
           </div>
         </div>
       </q-card-section>
