@@ -43,7 +43,8 @@ export const ENDPOINTS: Endpoint[] = [
     id: 'devnet',
     name: 'DevNet',
     cluster: 'devnet',
-    url: clusterApiUrl('devnet'),
+    url: 'https://polished-damp-dust.solana-devnet.quiknode.pro/e3fdb5a9915e3c3c47709465b4b5fa9f0153b674',
+    // url: clusterApiUrl('devnet'),
   },
 ]
 

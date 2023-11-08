@@ -28,7 +28,7 @@ export const useUserStore = defineStore('user', () => {
   const route = useRoute()
   const emitter = useEmitter()
 
-  const client = computed(() => AlbusClient.factory(connectionStore.connection))
+  const client = computed(() => AlbusClient.fromWallet(connectionStore.connection))
   const { tokens } = useToken()
 
   const serviceLoading = ref(false)

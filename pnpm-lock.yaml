@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@albus-finance/sdk':
-    specifier: ^0.2.0
-    version: 0.2.0
+    specifier: 0.2.2-next.2
+    version: 0.2.2-next.2
   '@albus-finance/swap-sdk':
     specifier: ^0.1.1
     version: 0.1.1
@@ -186,8 +186,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@albus-finance/sdk@0.2.0:
-    resolution: {integrity: sha512-w58Ila0WUu/0dfJuFaiCyRbqLyRUOxQAM9VPKvVAR9n+wRmTPqA3TO6Fldt+AYeCzsiomnusi9hFe5iQ6d6PHQ==}
+  /@albus-finance/sdk@0.2.2-next.2:
+    resolution: {integrity: sha512-nTJh25FYwl5CSSedmRsrwLP2eqO9ZCHKsnP5fbjAt0jLUy7mBPe5vQzJQEHQA0G236CE6aHWCN18FU4feeLsCg==}
     peerDependencies:
       snarkjs: '*'
     dependencies:
