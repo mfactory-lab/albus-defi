@@ -114,13 +114,13 @@ const active = computed(() => Number(state.value) > 0 && validateAddress(state.a
       </div>
 
       <div class="swap-submit transfer-submit">
-        <q-btn :loading="state.loading" :disable="!active" rounded :ripple="false" @click="transferSubmit">
+        <q-btn :loading="state?.loading" :disable="!active" rounded :ripple="false" @click="transferSubmit">
           Send
         </q-btn>
       </div>
     </q-card-section>
 
-    <q-inner-loading :showing="userState.loading" class="swap-loading" color="grey" />
+    <q-inner-loading :showing="userState?.loading" class="swap-loading" color="grey" />
   </q-card>
 
   <zkp-request-dialog />
