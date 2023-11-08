@@ -170,6 +170,4 @@ watch(() => state.from.amount, (a) => {
       </q-card-section>
     </q-card>
   </q-dialog>
-
-  <zkp-request-dialog />
 </template>

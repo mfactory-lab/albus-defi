@@ -1,25 +1,120 @@
 .policy-card {
-  .certificate {
-    display: flex;
-    align-items: flex-end;
-    &-status {
-      &__proved {
-        display: flex;
-        align-items: center;
-        a {
-          height: 64px;
-          display: inline-block;
-          text-align: center;
-          svg {
-            height: 64px;
-            width: 64px;
-    
-            path {
-              fill: $yellow;
-            }
-          }
+  height: 60px;
+  width: 191px;
+  background-color: #F9F9F9;
+  padding: 6px 12px;
+  font-size: 10px;
+  color: $primary;
+  .body--dark & {
+    color: $white;
+  }
+
+  &__info {
+    flex-basis: 0;
+    flex-grow: 1;
+    overflow: hidden;
+    padding-right: 4px;
+
+    &__title {
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    &__status-line {
+      width: 3px;
+      height: 13px;
+      display: inline-block;
+      margin-right: 6px;
+      &--negative {
+        background-color: $negative;
+      }
+      &--positive {
+        background-color: $positive;
+      }
+    }
+    &__policy-name {
+      display: flex;
+      align-items: center;
+      font-size: 11px;
+      line-height: 13px;
+      margin: 3px 0;
+      &__text {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+    &__date {
+      font-size: 10px;
+      &--negative {
+        color: $negative;
+      }
+      &--positive {
+        color: $positive;
+        .body--dark & {
+          color: $white;
         }
       }
     }
+  }
+
+  &__action {
+    width: 44px;
+    text-align: right;
+  }
+
+  &__certificate {
+    height: 48px;
+    svg {
+      height: 48px;
+      width: 34px;
+    }
+  }
+}
+
+.certificate {
+  display: inline-block;
+  text-align: center;
+  svg {
+    path {
+      fill: $positive;
+    }
+  }
+}
+
+.policy-info {
+  width: 14px;
+  height: 14px;
+  font-weight: 600;
+  background-color: $primary;
+  color: $white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2px;
+  font-size: 10px;
+  cursor: pointer;
+  margin-left: 8px;
+  margin-top: -1px;
+}
+
+.create-certificate-btn {
+  background-color: $primary;
+  height: 48px;
+  width: 48px;
+  margin-right: -6px;
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: $white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .q-icon {
+    margin-bottom: 2px;
+    width: 16px;
+    height: 16px;
+    background: $yellow;
+    border-radius: 2px;
   }
 }

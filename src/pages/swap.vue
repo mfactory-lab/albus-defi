@@ -1,11 +1,6 @@
 <template>
-  <div class="main-block row">
-    <div class="row justify-center col-xs-12 col-md-6 q-px-sm q-py-md">
-      <policy-card />
-    </div>
-    <div class="row justify-center col-xs-12 col-md-6 q-px-sm q-py-md">
-      <swap-card />
-    </div>
+  <div class="main-block row justify-center">
+    <swap-card />
   </div>
   <swap-content />
 </template>

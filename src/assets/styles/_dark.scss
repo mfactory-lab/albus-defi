@@ -110,20 +110,4 @@ body.body--dark {
             color: $light-gray-middle;
         }
     }
-
-    .zkp-dialog {
-        &__header {
-            color: $light-gray-half;
-        }
-        .q-btn {
-            color: $light-gray-half;
-
-            a {
-                color: $light-gray-half;
-            }
-        }
-        .prove-link {
-            color: #fff;
-        }
-    }
 }
