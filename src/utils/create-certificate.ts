@@ -1,8 +1,8 @@
 const { emit } = useEmitter()
 
-export const CREATE_CERTIFICATE_EVENT = Symbol('CREATE_CERTIFICATE_EVENT')
+export const SHOW_CERTIFICATE_EVENT = Symbol('SHOW_CERTIFICATE_EVENT')
 
-export function startCreateCertificate() {
-  console.log('CREATE_CERTIFICATE_EVENT')
-  emit(CREATE_CERTIFICATE_EVENT)
+export function showCreateDialog() {
+  console.log('SHOW_CERTIFICATE_EVENT')
+  emit(SHOW_CERTIFICATE_EVENT)
 }
