@@ -1,8 +1,9 @@
 .policy-card {
-  height: 60px;
-  width: 191px;
+  height: 70px;
+  width: 196px;
+  min-width: 196px;
   background-color: #F9F9F9;
-  padding: 6px 12px;
+  padding: 10px 12px;
   font-size: 10px;
   color: $primary;
   .body--dark & {
@@ -18,6 +19,7 @@
     &__title {
       text-transform: uppercase;
       font-weight: 500;
+      line-height: 11px;
     }
     &__status-line {
       width: 3px;
@@ -25,10 +27,10 @@
       display: inline-block;
       margin-right: 6px;
       &--negative {
-        background-color: $negative;
+        background-color: $negative-light;
       }
       &--positive {
-        background-color: $positive;
+        background-color: $positive-light;
       }
     }
     &__policy-name {
@@ -36,7 +38,7 @@
       align-items: center;
       font-size: 11px;
       line-height: 13px;
-      margin: 3px 0;
+      margin: 6px 0 5px;
       &__text {
         overflow: hidden;
         white-space: nowrap;
@@ -46,19 +48,19 @@
     &__date {
       font-size: 10px;
       &--negative {
-        color: $negative;
+        color: $negative-light;
       }
       &--positive {
         color: $positive;
         .body--dark & {
-          color: $white;
+          color: $positive-light;
         }
       }
     }
   }
 
   &__action {
-    width: 44px;
+    width: 48px;
     text-align: right;
   }
 
@@ -77,8 +79,15 @@
   svg {
     path {
       fill: $positive;
+      .body--dark & {
+        fill: $positive-light;
+      }
     }
   }
+}
+
+.certificate-card {
+  width: 400px;
 }
 
 .policy-info {
@@ -98,23 +107,28 @@
 }
 
 .create-certificate-btn {
-  background-color: $primary;
+  background-color: $white;
   height: 48px;
   width: 48px;
-  margin-right: -6px;
   font-size: 9px;
   font-weight: 500;
   text-transform: uppercase;
-  color: $white;
+  color: $black;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  border: 1px solid #e8e8e8;
+  .body--dark & {
+    color: $white;
+    background-color: $primary;
+    border: 1px solid $primary;
+  }
 
   .q-icon {
     margin-bottom: 2px;
     width: 16px;
     height: 16px;
-    background: $yellow;
+    background: $light-gray;
     border-radius: 2px;
   }
 }

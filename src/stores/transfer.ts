@@ -7,7 +7,7 @@ import { getAccount, getAssociatedTokenAddress } from '@solana/spl-token'
 import BN from 'bn.js'
 import type { SwapData } from './swap'
 import type { IProofRequestStatus } from '@/stores'
-import { createTransaction, startCreateCertificate, transactionFee, validateAddress } from '@/utils'
+import { createTransaction, showCreateDialog, transactionFee, validateAddress } from '@/utils'
 import { MIN_TRANSFER_FEE, TRANSFER_FEE_CONST } from '@/config'
 
 export const useTransferStore = defineStore('transfer', () => {
@@ -103,47 +103,46 @@ export const useTransferStore = defineStore('transfer', () => {
     const fee = await transactionFee(transaction, connectionStore.connection) + TRANSFER_FEE_CONST
     return state.fee = !hasTokenAccount.value ? fee + MIN_TRANSFER_FEE : fee
     // TODO: fee from sdk
-    const policy = new PublicKey(requiredPolicy.value)
-    if (!publicKey.value) {
-      return
-    }
-    if (state.token.label === 'sol') {
-      const amount = new BN(Number(state.value) * LAMPORTS_PER_SOL)
-      const receiver = new PublicKey(state.address)
-      state.fee = await transferClient.value.getTransferFee({
-        policy,
-        amount,
-        receiver,
-        proofRequest: certificate.value.pubkey,
-      }) / LAMPORTS_PER_SOL
-    } else {
-      if (!publicKey.value || !state.token.mint) {
-        return
-      }
-      const tokenInfo = tokenState.tokens.find(t => t.mint === state.token.mint)
-      if (!tokenInfo || !tokenMint.value || !receiver.value || !wallet.value) {
-        return
-      }
+    // const policy = new PublicKey(requiredPolicy.value)
+    // if (!publicKey.value) {
+    //   return
+    // }
+    // if (state.token.label === 'sol') {
+    //   const amount = new BN(Number(state.value) * LAMPORTS_PER_SOL)
+    //   const receiver = new PublicKey(state.address)
+    //   state.fee = await transferClient.value.getTransferFee({
+    //     policy,
+    //     amount,
+    //     receiver,
+    //     proofRequest: certificate.value.pubkey,
+    //   }) / LAMPORTS_PER_SOL
+    // } else {
+    //   if (!publicKey.value || !state.token.mint) {
+    //     return
+    //   }
+    //   const tokenInfo = tokenState.tokens.find(t => t.mint === state.token.mint)
+    //   if (!tokenInfo || !tokenMint.value || !receiver.value || !wallet.value) {
+    //     return
+    //   }
 
-      const source = await getAssociatedTokenAddress(tokenMint.value, publicKey.value)
-      const amount = new BN(Number(state.value) * (10 ** tokenInfo.decimals))
+    //   const source = await getAssociatedTokenAddress(tokenMint.value, publicKey.value)
+    //   const amount = new BN(Number(state.value) * (10 ** tokenInfo.decimals))
 
-      state.fee = await transferClient.value.getTransferTokenFee({
-        policy,
-        destination: destinationTokenAcc.value,
-        source,
-        tokenMint: tokenMint.value,
-        amount,
-        receiver: receiver.value,
-        proofRequest: certificate.value.pubkey,
-      }) / LAMPORTS_PER_SOL
-    }
+    //   state.fee = await transferClient.value.getTransferTokenFee({
+    //     policy,
+    //     destination: destinationTokenAcc.value,
+    //     source,
+    //     tokenMint: tokenMint.value,
+    //     amount,
+    //     receiver: receiver.value,
+    //     proofRequest: certificate.value.pubkey,
+    //   }) / LAMPORTS_PER_SOL
+    // }
   }
 
   async function verifyTransfer() {
     try {
       state.loading = true
-      // TODO: change check
       console.log('[debug] on transfer certificate === ', certificate.value)
       if (certificateValid.value) {
         let signature
@@ -167,14 +166,14 @@ export const useTransferStore = defineStore('transfer', () => {
         reset()
         await getUserTokens()
       } else {
-        startCreateCertificate()
+        showCreateDialog()
       }
     } catch (e) {
       console.error('verifyTransfer error: ', e)
-      notify({
-        type: 'negative',
-        message: `${e}`,
-      })
+      // notify({
+      //   type: 'negative',
+      //   message: `${e}`,
+      // })
     } finally {
       state.loading = false
     }

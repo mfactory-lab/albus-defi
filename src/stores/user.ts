@@ -71,7 +71,7 @@ export const useUserStore = defineStore('user', () => {
   const state = reactive<UserState>({
     tokens: [],
     loading: false,
-    certificateLoading: true,
+    certificateLoading: false,
     certificates: undefined,
   })
 

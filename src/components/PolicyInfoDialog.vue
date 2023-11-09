@@ -1,18 +1,22 @@
 <script lang="ts" setup>
 import { evaRefresh } from '@quasar/extras/eva-icons'
 import { useWallet } from 'solana-wallets-vue'
-import { formatDate } from '@/utils'
+import { SHOW_CERTIFICATE_EVENT, formatDate } from '@/utils'
 import { ALBUS_APP_URL } from '@/config'
 import { COUNTRIES_LIST } from '@/config/countries'
 
+const emitter = useEmitter()
 const dialog = ref(false)
+emitter.on(SHOW_CERTIFICATE_EVENT, () => {
+  dialog.value = true
+})
+
 const userStore = useUserStore()
 const serviceData = computed(() => userStore.serviceData)
 const requiredPolicyData = computed(() => userStore.requiredPolicyData)
 const serviceLoading = computed(() => userStore.serviceLoading)
 
 const { connected } = useWallet()
-// const isProved = computed(() => !!userStore.certificate?.data.proof)
 const certificate = computed(() => userStore.certificate)
 const certificateValid = computed(() => userStore.certificateValid)
 const certificateLoading = computed(() => userStore.state?.certificateLoading)
@@ -46,14 +50,8 @@ function formatRule(key: string, label: string, value: number[]) {
 </script>
 
 <template>
-  <div class="policy-info" @click="dialog = true">
-    i
-  </div>
   <q-dialog v-model="dialog" transition-duration="100" transition-show="fade" transition-hide="fade">
-    <q-card class="swap-card">
-      <q-card-section class="swap-card__header">
-        Certificate
-      </q-card-section>
+    <q-card class="certificate-card">
       <div>
         <q-inner-loading :showing="serviceLoading" label-class="text-teal" label-style="font-size: 1.1em" />
         <q-card-section v-if="requiredPolicyData" class="swap-field__label">
@@ -81,8 +79,6 @@ function formatRule(key: string, label: string, value: number[]) {
               :loading="certificateLoading"
               unelevated
               class="create-certificate-btn q-ml-md"
-              color="primary"
-              text-color="white"
               @click="userStore.getCertificates"
             >
               <span>reload</span>
