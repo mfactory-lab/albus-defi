@@ -125,7 +125,7 @@ export const useUserStore = defineStore('user', () => {
     return state.tokens.find(t => [lowerCase(t.symbol), lowerCase(t.name)].includes(lowerCase(token)))?.balance ?? 0
   }
 
-  async function getCertificates() {
+  const getCertificates = debounce(async () => {
     if (!publicKey.value) {
       return
     }
@@ -142,7 +142,7 @@ export const useUserStore = defineStore('user', () => {
     } finally {
       state.certificateLoading = false
     }
-  }
+  }, 500)
 
   const certificate = computed(() => {
     if (requiredPolicy.value) {
@@ -169,7 +169,10 @@ export const useUserStore = defineStore('user', () => {
       state.tokens = []
     }
   }, { immediate: true })
-  emitter.on(ACCOUNT_CHANGE_EVENT, getUserTokens)
+  emitter.on(ACCOUNT_CHANGE_EVENT, () => {
+    getUserTokens()
+    getCertificates()
+  })
 
   return {
     state,
