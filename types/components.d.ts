@@ -13,9 +13,7 @@ declare module 'vue' {
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     CopyToClipboard: typeof import('./../src/components/CopyToClipboard.vue')['default']
     CreateCertificateBtn: typeof import('./../src/components/CreateCertificateBtn.vue')['default']
-    CreateCertificateDialog: typeof import('./../src/components/CreateCertificateDialog.vue')['default']
     DarkThemeToggle: typeof import('./../src/components/DarkThemeToggle.vue')['default']
-    HeaderCertificate: typeof import('./../src/components/Header/HeaderCertificate.vue')['default']
     HeaderNotifications: typeof import('./../src/components/Header/HeaderNotifications.vue')['default']
     HomeNav: typeof import('./../src/components/Home/HomeNav.vue')['default']
     IAppCertificate: typeof import('~icons/app/certificate')['default']
@@ -24,7 +22,6 @@ declare module 'vue' {
     IAppTwitter: typeof import('~icons/app/twitter')['default']
     MobileMenu: typeof import('./../src/components/Menu/MobileMenu.vue')['default']
     PolicyCard: typeof import('./../src/components/PolicyCard.vue')['default']
-    PolicyInfoCard: typeof import('./../src/components/PolicyInfoCard.vue')['default']
     PolicyInfoDialog: typeof import('./../src/components/PolicyInfoDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
@@ -41,6 +38,5 @@ declare module 'vue' {
     SwapContent: typeof import('./../src/components/Swap/SwapContent.vue')['default']
     TransferCard: typeof import('./../src/components/Transfer/TransferCard.vue')['default']
     TransferContent: typeof import('./../src/components/Transfer/TransferContent.vue')['default']
-    ZkpRequestDialog: typeof import('./../src/components/ZkpRequestDialog.vue')['default']
   }
 }
