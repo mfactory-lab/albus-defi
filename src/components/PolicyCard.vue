@@ -23,31 +23,31 @@ const expiredAt = computed(() => {
 </script>
 
 <template>
-  <q-card flat class="policy-card">
+  <q-card flat class="certificate-card">
     <q-inner-loading :showing="serviceLoading || certificateLoading" label-class="text-teal" label-style="font-size: 1.1em" />
     <div class="row">
-      <div class="policy-card__info">
-        <div class="policy-card__info__title">
+      <div class="certificate-card__info">
+        <div class="certificate-card__info__title">
           Required certificate
         </div>
-        <div class="policy-card__info__policy-name">
+        <div class="certificate-card__info__policy-name">
           <span
             v-if="connected"
-            class="policy-card__info__status-line"
-            :class="certificateValid ? 'policy-card__info__status-line--positive' : 'policy-card__info__status-line--negative'"
+            class="certificate-card__info__status-line"
+            :class="certificateValid ? 'certificate-card__info__status-line--positive' : 'certificate-card__info__status-line--negative'"
           />
           <span>{{ serviceData?.name }} {{ serviceData?.name && requiredPolicyData?.name && ',' }} {{ requiredPolicyData?.name }}</span>
         </div>
         <div v-if="connected" class="row">
           <div
             v-if="certificateValid"
-            class="policy-card__info__date policy-card__info__date--positive"
+            class="certificate-card__info__date certificate-card__info__date--positive"
           >
             Valid until <span v-html="expiredAt" />
           </div>
           <div
             v-else
-            class="policy-card__info__date policy-card__info__date--negative"
+            class="certificate-card__info__date certificate-card__info__date--negative"
           >
             certificate invalid
           </div>
@@ -56,11 +56,11 @@ const expiredAt = computed(() => {
           </div>
         </div>
       </div>
-      <div v-if="connected" class="policy-card__action">
+      <div v-if="connected" class="certificate-card__action">
         <div v-if="!certificateValid">
           <create-certificate-btn />
         </div>
-        <a v-else :href="`${ALBUS_APP_URL}/holder`" class="policy-card__certificate certificate" target="_blank">
+        <a v-else :href="`${ALBUS_APP_URL}/holder`" class="certificate-card__certificate certificate" target="_blank">
           <i-app-certificate />
         </a>
       </div>

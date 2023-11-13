@@ -134,7 +134,6 @@ export const useUserStore = defineStore('user', () => {
       state.certificates = await client.value?.proofRequest.find({
         user: publicKey.value,
         serviceProviderCode: appConfig.value?.serviceCode,
-        // find by policy specified for action/token
       })
       console.log('[debug] certificates === ', state.certificates)
     } catch (e) {

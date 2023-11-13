@@ -32,8 +32,8 @@ function select(e: Endpoint) {
     text-color="black"
     rounded
     unelevated
-    class="claster-selector"
-    content-class="claster-selector__menu"
+    class="cluster-selector"
+    content-class="cluster-selector__menu"
     :ripple="false"
   >
     <q-list>
