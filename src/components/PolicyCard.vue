@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { useWallet } from 'solana-wallets-vue'
-import { formatDate, showCreateDialog } from '@/utils'
-import { ALBUS_APP_URL } from '@/config'
+import { showCreateDialog } from '@/utils'
 
 const userStore = useUserStore()
 const serviceData = computed(() => userStore.serviceData)
@@ -9,17 +8,10 @@ const requiredPolicyData = computed(() => userStore.requiredPolicyData)
 const serviceLoading = computed(() => userStore.serviceLoading)
 
 const { connected } = useWallet()
-const certificate = computed(() => userStore.certificate)
 const certificateValid = computed(() => userStore.certificateValid)
 const certificateLoading = computed(() => userStore.state?.certificateLoading)
 
-const expiredAt = computed(() => {
-  if (!certificate.value) {
-    return
-  }
-  const date = new Date(Number(certificate.value.data.expiredAt) * 1000)
-  return Number(certificate.value?.data.expiredAt) === 0 ? '&infin;' : formatDate(date)
-})
+const { certificateLink } = useCertificateLink()
 </script>
 
 <template>
@@ -38,29 +30,18 @@ const expiredAt = computed(() => {
           />
           <span>{{ serviceData?.name }} {{ serviceData?.name && requiredPolicyData?.name && ',' }} {{ requiredPolicyData?.name }}</span>
         </div>
-        <div v-if="connected" class="row">
-          <div
-            v-if="certificateValid"
-            class="certificate-card__info__date certificate-card__info__date--positive"
-          >
-            Valid until <span v-html="expiredAt" />
-          </div>
-          <div
-            v-else
-            class="certificate-card__info__date certificate-card__info__date--negative"
-          >
-            certificate invalid
-          </div>
+        <div v-if="connected && !serviceLoading && !certificateLoading" class="row">
+          <certificate-status />
           <div class="policy-info" @click="showCreateDialog">
             i
           </div>
         </div>
       </div>
-      <div v-if="connected" class="certificate-card__action">
+      <div v-if="connected && !serviceLoading && !certificateLoading" class="certificate-card__action">
         <div v-if="!certificateValid">
           <create-certificate-btn />
         </div>
-        <a v-else :href="`${ALBUS_APP_URL}/holder`" class="certificate-card__certificate certificate" target="_blank">
+        <a v-else :href="certificateLink" class="certificate-card__certificate certificate" target="_blank">
           <i-app-certificate />
         </a>
       </div>

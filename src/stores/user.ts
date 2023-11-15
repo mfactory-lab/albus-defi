@@ -3,7 +3,7 @@ import { useWallet } from 'solana-wallets-vue'
 import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
 import debounce from 'lodash-es/debounce'
 import { lowerCase } from 'lodash-es'
-import type { Policy, ServiceProvider } from '@albus-finance/sdk'
+import type { Policy, ProofRequest, ServiceProvider } from '@albus-finance/sdk'
 import { AlbusClient, ProofRequestStatus } from '@albus-finance/sdk'
 import { getSolanaBalance, getTokensByOwner } from '@/utils'
 import { APP_CONFIG } from '@/config'
@@ -71,7 +71,7 @@ export const useUserStore = defineStore('user', () => {
   const state = reactive<UserState>({
     tokens: [],
     loading: false,
-    certificateLoading: false,
+    certificateLoading: true,
     certificates: undefined,
   })
 
@@ -133,7 +133,7 @@ export const useUserStore = defineStore('user', () => {
       state.certificateLoading = true
       state.certificates = await client.value?.proofRequest.find({
         user: publicKey.value,
-        serviceProviderCode: appConfig.value?.serviceCode,
+        // serviceProviderCode: appConfig.value?.serviceCode,
       })
       console.log('[debug] certificates === ', state.certificates)
     } catch (e) {
@@ -150,7 +150,7 @@ export const useUserStore = defineStore('user', () => {
     return null
   })
   const certificateValid = computed(() => {
-    return certificate.value && certificate.value.data.status === ProofRequestStatus.Verified
+    return certificate.value && certificate.value.data?.status === ProofRequestStatus.Verified
   })
 
   watch([client, publicKey], async () => {
@@ -190,10 +190,14 @@ export const useUserStore = defineStore('user', () => {
   }
 })
 
+interface Certificate {
+  pubkey: PublicKey
+  data: ProofRequest | null
+}
 interface UserState {
   tokens: IUserToken[]
   loading: boolean
-  certificates?: any
+  certificates?: Certificate[]
   certificateLoading: boolean
 }
 

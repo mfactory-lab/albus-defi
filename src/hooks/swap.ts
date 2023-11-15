@@ -2,7 +2,7 @@ import BN from 'bn.js'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import type { PublicKey } from '@solana/web3.js'
 import { Transaction } from '@solana/web3.js'
-import { getOrInitAssociatedTokenAddress, lamportsToSol, sendTransaction, solToLamports, showCreateDialog } from '@/utils'
+import { getOrInitAssociatedTokenAddress, lamportsToSol, sendTransaction, showCreateDialog, solToLamports } from '@/utils'
 import solToken from '@/assets/img/tokens/sol.png'
 import usdcToken from '@/assets/img/tokens/usdc.png'
 
