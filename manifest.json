@@ -1,18 +1,18 @@
 {
-  "_SelectToken.vue_vue_type_script_setup_true_lang-c3596d6d.js": {
-    "file": "assets/SelectToken.vue_vue_type_script_setup_true_lang-c3596d6d.js",
+  "_SelectToken.vue_vue_type_script_setup_true_lang-4488a5af.js": {
+    "file": "assets/SelectToken.vue_vue_type_script_setup_true_lang-4488a5af.js",
     "imports": [
       "index.html"
     ]
   },
-  "_v4-d58c7d52.js": {
-    "file": "assets/v4-d58c7d52.js",
+  "_v4-50d02ab7.js": {
+    "file": "assets/v4-50d02ab7.js",
     "imports": [
       "index.html"
     ]
   },
   "index.css": {
-    "file": "assets/index-2affbcd2.css",
+    "file": "assets/index-a8b80cee.css",
     "src": "index.css"
   },
   "index.html": {
@@ -22,7 +22,7 @@
       "assets/solana-logo-1f8bc0f3.svg"
     ],
     "css": [
-      "assets/index-2affbcd2.css"
+      "assets/index-a8b80cee.css"
     ],
     "dynamicImports": [
       "src/layouts/home.vue",
@@ -37,12 +37,12 @@
       "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js",
       "node_modules/.pnpm/@solflare-wallet+sdk@1.4.1_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/sdk/lib/esm/index.js"
     ],
-    "file": "assets/index-7be13a6e.js",
+    "file": "assets/index-3b44902b.js",
     "isEntry": true,
     "src": "index.html"
   },
   "node_modules/.pnpm/@ledgerhq+hw-transport-webhid@6.27.1/node_modules/@ledgerhq/hw-transport-webhid/lib-es/TransportWebHID.js": {
-    "file": "assets/TransportWebHID-17d3f93a.js",
+    "file": "assets/TransportWebHID-24d1f0e5.js",
     "imports": [
       "index.html"
     ],
@@ -50,25 +50,25 @@
     "src": "node_modules/.pnpm/@ledgerhq+hw-transport-webhid@6.27.1/node_modules/@ledgerhq/hw-transport-webhid/lib-es/TransportWebHID.js"
   },
   "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js": {
-    "file": "assets/index-1c0ca2d2.js",
+    "file": "assets/index-b5fdf6c6.js",
     "imports": [
       "index.html",
-      "_v4-d58c7d52.js"
+      "_v4-50d02ab7.js"
     ],
     "isDynamicEntry": true,
     "src": "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js"
   },
   "node_modules/.pnpm/@solflare-wallet+sdk@1.4.1_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/sdk/lib/esm/index.js": {
-    "file": "assets/index-16ac03cf.js",
+    "file": "assets/index-68a20f8a.js",
     "imports": [
       "index.html",
-      "_v4-d58c7d52.js"
+      "_v4-50d02ab7.js"
     ],
     "isDynamicEntry": true,
     "src": "node_modules/.pnpm/@solflare-wallet+sdk@1.4.1_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/sdk/lib/esm/index.js"
   },
   "node_modules/.pnpm/salmon-adapter-sdk@1.1.1_@solana+web3.js@1.87.6/node_modules/salmon-adapter-sdk/lib/esm/index.js": {
-    "file": "assets/index-85d50120.js",
+    "file": "assets/index-6277257b.js",
     "imports": [
       "index.html"
     ],
@@ -88,7 +88,7 @@
     "src": "src/assets/img/tokens/usdt.png"
   },
   "src/layouts/home.vue": {
-    "file": "assets/home-bfbe4a00.js",
+    "file": "assets/home-0da842a2.js",
     "imports": [
       "index.html"
     ],
@@ -103,7 +103,7 @@
     "css": [
       "assets/_...all_-f6a7ef33.css"
     ],
-    "file": "assets/_...all_-1fc1cd6e.js",
+    "file": "assets/_...all_-04b2ac98.js",
     "imports": [
       "index.html"
     ],
@@ -111,7 +111,7 @@
     "src": "src/pages/[...all].vue"
   },
   "src/pages/about.vue": {
-    "file": "assets/about-5985cd1b.js",
+    "file": "assets/about-7e4ed403.js",
     "imports": [
       "index.html"
     ],
@@ -126,7 +126,7 @@
     "css": [
       "assets/stake-ee624a95.css"
     ],
-    "file": "assets/stake-2a5cc538.js",
+    "file": "assets/stake-26258654.js",
     "imports": [
       "index.html"
     ],
@@ -134,7 +134,7 @@
     "src": "src/pages/stake.vue"
   },
   "src/pages/support.vue": {
-    "file": "assets/support-7a1b7efb.js",
+    "file": "assets/support-46bf2dce.js",
     "imports": [
       "index.html"
     ],
@@ -142,19 +142,19 @@
     "src": "src/pages/support.vue"
   },
   "src/pages/swap.vue": {
-    "file": "assets/swap-ca78eb25.js",
+    "file": "assets/swap-935f59fa.js",
     "imports": [
       "index.html",
-      "_SelectToken.vue_vue_type_script_setup_true_lang-c3596d6d.js"
+      "_SelectToken.vue_vue_type_script_setup_true_lang-4488a5af.js"
     ],
     "isDynamicEntry": true,
     "src": "src/pages/swap.vue"
   },
   "src/pages/transfer.vue": {
-    "file": "assets/transfer-839595ff.js",
+    "file": "assets/transfer-eea30153.js",
     "imports": [
       "index.html",
-      "_SelectToken.vue_vue_type_script_setup_true_lang-c3596d6d.js"
+      "_SelectToken.vue_vue_type_script_setup_true_lang-4488a5af.js"
     ],
     "isDynamicEntry": true,
     "src": "src/pages/transfer.vue"
