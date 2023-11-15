@@ -13,6 +13,7 @@ import {
   createAssociatedTokenAccountInstruction,
   getAccount, getAssociatedTokenAddress,
 } from '@solana/spl-token'
+import { sanitizeString } from './format'
 import type { IUserToken } from '@/stores/user'
 
 export function shortenAddress(address: string, chars = 4): string {
@@ -87,15 +88,6 @@ export async function getTokenAccounts(wallet: PublicKeyInitData, solanaConnecti
 
   const onlyFulfilled = (await result).filter(({ status, value }) => status === 'fulfilled' && value).map(({ value }) => value)
   return onlyFulfilled
-}
-
-/**
- * Remove all empty space, new line, etc. symbols
- * In some reason such symbols parsed back from Buffer looks weird
- * like "\x0000" instead of usual spaces.
- */
-export function sanitizeString(str: string): string {
-  return str.replace(/\0/g, '')
 }
 
 /**

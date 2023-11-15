@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { useWallet } from 'solana-wallets-vue'
+import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
 import debounce from 'lodash-es/debounce'
 import { lowerCase } from 'lodash-es'
@@ -24,11 +24,12 @@ interface PolicyItem {
 export const useUserStore = defineStore('user', () => {
   const connectionStore = useConnectionStore()
   const wallet = useWallet()
+  const anchorWallet = useAnchorWallet()
   const { publicKey } = wallet
   const route = useRoute()
   const emitter = useEmitter()
 
-  const client = computed(() => AlbusClient.fromWallet(connectionStore.connection))
+  const client = computed(() => AlbusClient.fromWallet(connectionStore.connection, anchorWallet.value).configure('debug', true))
   const { tokens } = useToken()
 
   const serviceLoading = ref(false)
@@ -113,7 +114,6 @@ export const useUserStore = defineStore('user', () => {
         return null
       })
 
-      // @ts-expect-error null filtered
       state.tokens = [solToken, ...tokensState].filter(t => !!t)
       console.log('[debug] user tokens === ', state.tokens)
     } finally {
@@ -134,6 +134,7 @@ export const useUserStore = defineStore('user', () => {
       state.certificates = await client.value?.proofRequest.find({
         user: publicKey.value,
         serviceProviderCode: appConfig.value?.serviceCode,
+        // serviceProvider: 'EhGxvHSFAG4ngXKWry3icGb18xZ8nk1h3AEfWm42bU85',
       })
       console.log('[debug] certificates === ', state.certificates)
     } catch (e) {
