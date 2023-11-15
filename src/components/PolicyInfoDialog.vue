@@ -22,13 +22,13 @@ const certificateValid = computed(() => userStore.certificateValid)
 const certificateLoading = computed(() => userStore.state?.certificateLoading)
 
 const createdAt = computed(() => {
-  const date = new Date(Number(certificate.value?.data.createdAt) * 1000)
+  const date = new Date(Number(certificate.value?.data?.createdAt) * 1000)
   return formatDate(date)
 })
 
 const expiredAt = computed(() => {
-  const date = new Date(Number(certificate.value?.data.expiredAt) * 1000)
-  return Number(certificate.value?.data.expiredAt) === 0 ? '&infin;' : formatDate(date)
+  const date = new Date(Number(certificate.value?.data?.expiredAt) * 1000)
+  return Number(certificate.value?.data?.expiredAt) === 0 ? '&infin;' : formatDate(date)
 })
 
 function formatCamelCase(str: string) {
@@ -60,19 +60,23 @@ function formatRule(key: string, label: string, value: number[]) {
             Your certificate
           </div>
 
-          <div v-if="!certificateValid" class="row">
-            <create-certificate-btn />
+          <div v-if="!certificateValid">
+            <certificate-status class="q-mb-sm" />
+            <div class="row">
+              <create-certificate-btn />
 
-            <q-btn
-              :loading="certificateLoading"
-              unelevated
-              class="create-certificate-btn q-ml-md"
-              @click="userStore.getCertificates"
-            >
-              <span>reload</span>
-              <q-icon :name="evaRefresh" size="8px" color="primary" />
-            </q-btn>
+              <q-btn
+                :loading="certificateLoading"
+                unelevated
+                class="create-certificate-btn q-ml-md"
+                @click="userStore.getCertificates"
+              >
+                <span>reload</span>
+                <q-icon :name="evaRefresh" size="8px" color="primary" />
+              </q-btn>
+            </div>
           </div>
+
           <q-card v-else flat class="certificate-card row items-center">
             <a :href="`${ALBUS_APP_URL}/holder`" class="certificate" target="_blank">
               <i-app-certificate />

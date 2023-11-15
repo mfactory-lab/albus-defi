@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./../src/components/AppFooter.vue')['default']
     AppHeader: typeof import('./../src/components/AppHeader.vue')['default']
+    CertificateStatus: typeof import('./../src/components/CertificateStatus.vue')['default']
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     CopyToClipboard: typeof import('./../src/components/CopyToClipboard.vue')['default']
