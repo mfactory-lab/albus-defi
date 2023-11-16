@@ -1,7 +1,7 @@
 import BN from 'bn.js'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { Transaction } from '@solana/web3.js'
-import { getOrInitAssociatedTokenAddress, lamportsToSol, sendTransaction, solToLamports } from '@/utils'
+import { getOrInitAssociatedTokenAddress, lamportsToSol, sendTransaction, showCreateDialog, solToLamports } from '@/utils'
 import solToken from '@/assets/img/tokens/sol.png'
 import usdcToken from '@/assets/img/tokens/usdc.png'
 import { POOL_ADDRESS } from '@/config'
@@ -71,9 +71,9 @@ export function useSwap() {
 
   async function swapSubmit() {
     const tokenSwap = swapStore.tokenSwap
-    // if (!userStore.certificateValid) {
-    //   return showCreateDialog()
-    // }
+    if (!userStore.certificateValid) {
+      return showCreateDialog()
+    }
 
     if (!tokenSwap) {
       console.log('TokenSwap is not initialized...')
