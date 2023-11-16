@@ -14,23 +14,22 @@ export const APP_CONFIG = {
     },
   },
   'devnet': {
-    serviceCode: 'leoAlbus',
+    serviceCode: 'alphaDefi',
     policy: {
       transfer: {
-        // age 18 - 100
-        // default: '6U2y9mwzH8afwmNzHZaa4Rwe5TTV7TRdrAnSybAQeWt',
-        // countries
-        default: 'Bn2XUm6UyEYxxEKDbsq51hbXTAjnbaAAruX8fExNGrnT',
-        usdc: 'Bn2XUm6UyEYxxEKDbsq51hbXTAjnbaAAruX8fExNGrnT',
-        usdt: 'Bn2XUm6UyEYxxEKDbsq51hbXTAjnbaAAruX8fExNGrnT',
+        // countries Germany, Ukraine, Switzerland
+        default: 'CjnpmL6Svfr3Vhpp1jVWCcNbJRxbyPY5ZQF8QiNXWXtT',
+        // 18+
+        usdc: 'FekBJXo2MBcesX7u2ZmT38zpnzCC4ekcAtVCkoQormtg',
+        // usdt: 'Bn2XUm6UyEYxxEKDbsq51hbXTAjnbaAAruX8fExNGrnT',
       },
       swap: {
-        // age 1 - 40
-        default: 'Co3VdBNFXxDJETPfijaokRGKnKWw5RvHFmCocgRRgL7N',
+        // countries Germany, Ukraine, Switzerland
+        default: 'CjnpmL6Svfr3Vhpp1jVWCcNbJRxbyPY5ZQF8QiNXWXtT',
       },
       stake: {
-        // age 40 - 70
-        default: '69tnNVTHMwvmG9W8s68EtgAXthhqwT112KJxp2sTSH7v',
+        // event cacf
+        default: '2itMzUroKTXmoisfZMMLVfQaW9ew7cPRkHfbzLPBQmhm',
       },
     },
   },
