@@ -1,10 +1,10 @@
 import BN from 'bn.js'
 import { useAnchorWallet } from 'solana-wallets-vue'
-import type { PublicKey } from '@solana/web3.js'
 import { Transaction } from '@solana/web3.js'
 import { getOrInitAssociatedTokenAddress, lamportsToSol, sendTransaction, showCreateDialog, solToLamports } from '@/utils'
 import solToken from '@/assets/img/tokens/sol.png'
 import usdcToken from '@/assets/img/tokens/usdc.png'
+import { POOL_ADDRESS } from '@/config'
 
 enum SwapDirection {
   ASC,
@@ -28,23 +28,46 @@ export function useSwap() {
     swapping: false,
     active: false,
     slippage: 0.01,
+    rate: 0,
     fees: { host: 0, trade: 0 },
     direction: SwapDirection.ASC,
   })
 
+  /**
+   * Get the amount of pool tokens for the deposited amount of token A or B.
+   *
+   * @see https://github.com/solana-labs/solana-program-library/blob/master/token-swap/program/src/curve/constant_product.rs#L112
+   * @param {number} amountIn In lamports
+   */
   const changeValue = async () => {
-    const amountIn = solToLamports(state.from.amount ?? 0)
+    // TODO: solToLamports ???
+    const fromAmount = solToLamports(state.from.amount ?? 0)
 
-    if (amountIn === 0 || Number.isNaN(amountIn)) {
-      state.to.value = undefined
-      return
+    if (fromAmount === 0 || Number.isNaN(fromAmount)) {
+      return state.to.amount = 0
     }
 
-    const amountOut = swapStore.withdrawSingleTokenTypeExactOut(amountIn, state.from.label)
-    // const tokenMint = state.direction === SwapDirection.ASC ? swapStore.tokenSwap?.mintA : swapStore.tokenSwap?.mintB
-    // const amountOut = await swapStore.calculateDependentAmount(String(tokenMint), Number(state.from.amount))
-    state.to.amount = lamportsToSol(amountOut)
+    const poolFrom = Number(swapStore.state.poolBalance[state.from.label] ?? 0)
+    const poolTo = Number(swapStore.state.poolBalance[state.to.label] ?? 0)
+
+    const toAmount = poolTo - (poolFrom * poolTo / (poolFrom + fromAmount))
+    state.to.amount = lamportsToSol(toAmount ?? 0)
+    state.rate = fromAmount ? toAmount / fromAmount : poolTo / poolFrom
   }
+
+  watch(
+    [
+      () => state.from.amount,
+      () => swapStore.state.poolBalance,
+    ],
+    changeValue,
+    { immediate: true },
+  )
+
+  const minimumReceived = computed(() => {
+    const toAmount = Number(solToLamports(state.to.amount ?? 0))
+    return Math.floor(toAmount - (toAmount * state.slippage))
+  })
 
   async function swapSubmit() {
     const tokenSwap = swapStore.tokenSwap
@@ -74,8 +97,6 @@ export function useSwap() {
 
     try {
       state.swapping = true
-      const tx = new Transaction()
-
       const {
         userSourceMint,
         userDestinationMint,
@@ -83,36 +104,55 @@ export function useSwap() {
         poolDestinationAddress,
       } = swapDataByDirection()
 
+      const tx = new Transaction()
+
       const userSource = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, userSourceMint, wallet.value!.publicKey)
       const userDestination = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, userDestinationMint, wallet.value!.publicKey)
-      const poolSource = poolSourceAddress
-      const poolDestination = poolDestinationAddress
-      const hostFeeAccount = null
-      const userTransferAuthority = wallet.value!.publicKey
+
+      if (tx.instructions.length > 0) {
+        await monitorTransaction(
+          sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
+          {
+            commitment: 'finalized',
+            onSuccess: reload,
+          },
+        )
+      }
 
       const sourceTokenAmount = fromAmount
-      const minimumPoolTokenAmount = Math.floor(toAmount - (toAmount * state.slippage))
 
-      const instruction = tokenSwap.swap(
+      console.log('toAmount = ', toAmount)
+      console.log('slippage = ', state.slippage)
+      console.log('slippage 2 = ', toAmount * state.slippage)
+
+      const authority = swapStore.swapClient.swapAuthority(POOL_ADDRESS)
+
+      console.log('proofRequest = ', userStore.certificate?.pubkey.toBase58())
+      console.log('swapAuthority = ', authority)
+      console.log('tokenSwap = ', POOL_ADDRESS.toBase58())
+      console.log('userSource = ', userSource.toBase58())
+      console.log('userDestination = ', userDestination.toBase58())
+      console.log('poolSource = ', poolSourceAddress.toBase58())
+      console.log('poolDestination = ', poolDestinationAddress.toBase58())
+      console.log('poolMint = ', tokenSwap.poolMint.toBase58())
+      console.log('poolFee = ', tokenSwap.poolFeeAccount.toBase58())
+      console.log('amountIn = ', sourceTokenAmount)
+      console.log('minimumAmountOut = ', minimumReceived.value)
+      await swapStore.swapClient.swap({
+        proofRequest: userStore.certificate?.pubkey,
+        authority,
+        tokenSwap: POOL_ADDRESS,
         userSource,
-        poolSource,
-        poolDestination,
         userDestination,
-        hostFeeAccount,
-        userTransferAuthority,
-        sourceTokenAmount,
-        minimumPoolTokenAmount,
-      )
-
-      tx.add(instruction)
-
-      await monitorTransaction(
-        sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
-        {
-          commitment: 'finalized',
-          onSuccess: reload,
-        },
-      )
+        poolSource: poolSourceAddress,
+        poolDestination: poolDestinationAddress,
+        poolMint: tokenSwap.poolMint,
+        poolFee: tokenSwap.poolFeeAccount,
+        // hostFeeAccount: undefined,
+        amountIn: sourceTokenAmount,
+        minimumAmountOut: minimumReceived.value,
+      })
+      reload()
     } catch (e) {
       console.log(e)
     } finally {
@@ -124,44 +164,16 @@ export function useSwap() {
     const tokenSwap = swapStore.tokenSwap!
     const direction = state.direction
     return {
-      userSourceMint: direction === SwapDirection.ASC ? tokenSwap.mintA : tokenSwap.mintB,
-      userDestinationMint: direction === SwapDirection.ASC ? tokenSwap.mintB : tokenSwap.mintA,
-      poolSourceAddress: direction === SwapDirection.ASC ? tokenSwap.tokenAccountA : tokenSwap.tokenAccountB,
-      poolDestinationAddress: direction === SwapDirection.ASC ? tokenSwap.tokenAccountB : tokenSwap.tokenAccountA,
+      userSourceMint: direction === SwapDirection.ASC ? tokenSwap.tokenAMint : tokenSwap.tokenBMint,
+      userDestinationMint: direction === SwapDirection.ASC ? tokenSwap.tokenBMint : tokenSwap.tokenAMint,
+      poolSourceAddress: direction === SwapDirection.ASC ? tokenSwap.tokenA : tokenSwap.tokenB,
+      poolDestinationAddress: direction === SwapDirection.ASC ? tokenSwap.tokenB : tokenSwap.tokenA,
     }
-  }
-
-  async function depositToken(tokenMint: PublicKey) {
-    const tx = new Transaction()
-
-    const userAccount = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, tokenMint, wallet.value!.publicKey)
-    const poolAccount = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, swapStore.tokenSwap!.poolToken, wallet.value!.publicKey)
-
-    const amountIn = solToLamports(5)
-    const minimumPoolTokenAmount = Math.floor(amountIn - (amountIn * state.slippage))
-
-    const instructions = swapStore.tokenSwap!.depositSingleTokenTypeExactAmountIn(
-      userAccount,
-      poolAccount,
-      wallet.value!.publicKey,
-      amountIn,
-      minimumPoolTokenAmount,
-    )
-
-    tx.add(instructions)
-
-    await monitorTransaction(
-      sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
-    )
-  }
-
-  async function verifySwap() {
-    // swapState.status = await verifyStatus()
-    // verifiedTransferToken()
   }
 
   function changeDirection() {
     const { from, to } = state
+    state.rate = 0
     state.to = { ...from, amount: undefined }
     state.from = { ...to, amount: undefined }
     state.direction = state.direction === SwapDirection.ASC ? SwapDirection.DESC : SwapDirection.ASC
@@ -201,21 +213,19 @@ export function useSwap() {
     if (!ts) {
       return
     }
-    state.fees.host = new BN(ts.hostFeeNumerator).mul(new BN(ts.hostFeeDenominator)).toNumber()
-    state.fees.trade = new BN(ts.tradeFeeNumerator).mul(new BN(ts.tradeFeeDenominator)).toNumber()
+    state.fees.host = new BN(ts.fees.hostFeeNumerator).mul(new BN(ts.fees.hostFeeDenominator)).toNumber()
+    state.fees.trade = new BN(ts.fees.tradeFeeNumerator).mul(new BN(ts.fees.tradeFeeDenominator)).toNumber()
   })
   return {
     state,
     tokenSwap: swapStore.tokenSwap,
     swapState: swapStore.state,
+    minimumReceived,
     setMax,
     closeSlippage,
     openSlippage,
     changeDirection,
-    verifySwap,
-    changeValue,
     swapSubmit,
-    depositToken,
   }
 }
 

@@ -59,6 +59,15 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
   &__body {
     padding: 20px;
   }
+
+  .q-field--disabled {
+    .q-field__inner {
+      cursor: default;
+    }
+    .q-field__control > div {
+      opacity: 1 !important;
+  }
+  }
 }
 
 .swap-widget {

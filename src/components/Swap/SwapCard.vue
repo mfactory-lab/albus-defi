@@ -4,9 +4,13 @@ import { useWallet } from 'solana-wallets-vue'
 import { formatBalance, formatPct, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { SwapData } from '@/stores/swap'
+import { createTokenSwap } from '@/utils/createTokenSwap'
 
-const { state, swapState, changeDirection, openSlippage, closeSlippage, setMax, changeValue, swapSubmit } = useSwap()
+const { state, swapState, minimumReceived, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit } = useSwap()
 const { handleSearchToken, tokens } = useToken()
+const swapStore = useSwapStore()
+const poolBalanceA = computed(() => swapStore.state.poolBalance.TOKEN_A / LAMPORTS_PER_SOL)
+const poolBalanceB = computed(() => swapStore.state.poolBalance.TOKEN_B / LAMPORTS_PER_SOL)
 
 const { connected } = useWallet()
 
@@ -26,7 +30,6 @@ const symbolFrom = computed(() => state.from.label)
 const symbolTo = computed(() => state.to.label)
 const balanceFrom = computed(() => tokenBalance(symbolFrom.value))
 const balanceTo = computed(() => tokenBalance(symbolTo.value))
-
 const swapFee = computed(() => state.fees.host + state.fees.trade)
 
 function handleChangeDirection() {
@@ -43,12 +46,8 @@ function setMaxAmount() {
 }
 
 const insufficientError = computed(() => {
-  const insufficient = Number(state.from.amount) > balanceFrom.value
-  const minimum = Number(state.from.amount) < 1
-  if (insufficient) {
+  if (Number(state.from.amount) > balanceFrom.value) {
     return 'Insufficient funds'
-  } else if (minimum) {
-    return 'Minimum Received 1'
   } else {
     return false
   }
@@ -56,6 +55,7 @@ const insufficientError = computed(() => {
 
 watch(() => state.from.amount, (a) => {
   state.active = Number(a) >= 1 && !insufficientError.value
+  console.log(swapStore.state)
 })
 </script>
 
@@ -83,14 +83,14 @@ watch(() => state.from.amount, (a) => {
           </div>
           <q-input
             v-model="state.from.amount" :maxlength="14" outlined placeholder="0.0" class="swap-input" :disable="!connected"
-            @keypress="onlyNumber" @keyup="changeValue"
+            @keypress="onlyNumber"
           >
             <template #append>
               <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount">
                 MAX
               </q-btn>
               <select-token
-                :options="filterTokens" :token="state.from" :swap-token="String(state.to.value)"
+                :options="filterTokens" disable :token="state.from" :swap-token="String(state.to.value)"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -115,7 +115,7 @@ watch(() => state.from.amount, (a) => {
           <q-input v-model="state.to.amount" :disable="!connected" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
             <template #append>
               <select-token
-                :swap-token="String(state.from.value)" :options="filterTokens" :direction="true" :token="state.to"
+                :swap-token="String(state.from.value)" disable :options="filterTokens" :direction="true" :token="state.to"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -127,7 +127,7 @@ watch(() => state.from.amount, (a) => {
         <dl>
           <dt>Minimum Received::</dt>
           <dd>
-            1 {{ symbolFrom.toUpperCase() }}
+            {{ formatBalance(minimumReceived / LAMPORTS_PER_SOL) }} {{ symbolFrom.toUpperCase() }}
           </dd>
         </dl>
         <dl>
@@ -143,14 +143,27 @@ watch(() => state.from.amount, (a) => {
       </div>
 
       <div class="swap-submit">
-        <q-btn :loading="state.swapping" :disable="!state.active" rounded :ripple="false" @click="swapSubmit">
+        <q-btn :loading="state.swapping" rounded :ripple="false" @click="swapSubmit">
           Swap {{ state.from.label }} / {{ state.to.label }}
         </q-btn>
       </div>
 
       <div class="swap-rate">
-        1 JPLT ≈ <!-- {{ rate }} -->0 JPLU
+        1 {{ state.from.label }} ≈ {{ formatBalance(state.rate) }} {{ state.to.label }}
       </div>
+
+      <div class="q-mt-lg">
+        DEBUG:
+      </div>
+      <div>
+        Pool Token_A balance: {{ formatBalance(poolBalanceA) }}
+      </div>
+      <div>
+        Pool Token_B balance: {{ formatBalance(poolBalanceB) }}
+      </div>
+      <q-btn @click="createTokenSwap">
+        Create Swap
+      </q-btn>
     </q-card-section>
 
     <q-inner-loading :showing="swapState?.loading" class="swap-loading" color="grey" />

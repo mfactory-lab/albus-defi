@@ -37,3 +37,12 @@ export function lamportsToSol(lamports: number | bigint | BN) {
   const solString = `${lamportsString.slice(0, splitIndex)}.${lamportsString.slice(splitIndex)}`
   return signMultiplier * Number.parseFloat(solString)
 }
+
+/**
+ * Remove all empty space, new line, etc. symbols
+ * In some reason such symbols parsed back from Buffer looks weird
+ * like "\x0000" instead of usual spaces.
+ */
+export function sanitizeString(str: string): string {
+  return str.replace(/\0/g, '')
+}
