@@ -6,11 +6,13 @@ import { AnchorProvider } from '@coral-xyz/anchor'
 import { AlbusSwapClient, CurveType } from '@albus-finance/swap-sdk'
 
 export enum PoolTokenSymbol {
-  TOKEN_A = 'TOKEN_AA',
-  TOKEN_B = 'TOKEN_BB',
+  TOKEN_A = 'TOKEN_A',
+  TOKEN_B = 'TOKEN_B',
 }
 
 const connection = new Connection('https://polished-damp-dust.solana-devnet.quiknode.pro/e3fdb5a9915e3c3c47709465b4b5fa9f0153b674')
+const payer = Keypair.fromSecretKey(bs58.decode(''))
+const user = Keypair.fromSecretKey(bs58.decode(''))
 
 function newProvider(keypair: Keypair) {
   const opts = AnchorProvider.defaultOptions()
@@ -22,11 +24,7 @@ function newProvider(keypair: Keypair) {
 }
 
 export async function createTokenSwap() {
-  const payer = Keypair.fromSecretKey(bs58.decode(''))
   const provider = newProvider(payer)
-
-  const user = Keypair.fromSecretKey(bs58.decode(''))
-
   const swapClient = new AlbusSwapClient(provider)
 
   const tokenSwap = Keypair.generate()
@@ -58,7 +56,7 @@ export async function createTokenSwap() {
   // initial balances
   await mintTo(provider.connection, payer, tokenA, swapTokenA.address, payer, 100_000_000_000)
   await mintTo(provider.connection, payer, tokenB, swapTokenB.address, payer, 100_000_000_000)
-  await mintTo(provider.connection, payer, tokenA, userTokenA.address, payer, 13_000_000_000)
+  await mintTo(provider.connection, payer, tokenA, userTokenA.address, payer, 21_000_000_000)
 
   const tokenSwapRes = await swapClient.createTokenSwap({
     tokenSwap,
@@ -71,15 +69,22 @@ export async function createTokenSwap() {
     curveType: CurveType.ConstantProduct,
     curveParameters: [],
     fees: {
-      tradeFeeNumerator: 0,
-      tradeFeeDenominator: 0,
-      ownerTradeFeeNumerator: 0,
-      ownerTradeFeeDenominator: 0,
-      ownerWithdrawFeeNumerator: 0,
-      ownerWithdrawFeeDenominator: 0,
-      hostFeeNumerator: 0,
-      hostFeeDenominator: 0,
+      tradeFeeNumerator: 1,
+      tradeFeeDenominator: 1000,
+      ownerTradeFeeNumerator: 2,
+      ownerTradeFeeDenominator: 1000,
+      ownerWithdrawFeeNumerator: 4,
+      ownerWithdrawFeeDenominator: 1000,
+      hostFeeNumerator: 8,
+      hostFeeDenominator: 1000,
     },
   })
   console.log('[create swap] tokenSwap result = ', tokenSwapRes)
+}
+
+export async function mintToken() {
+  const mint = new PublicKey('7pzAmiDUmASVTCLpLA2Q8bfDZDiiNCwiPsAkLnAQVFhX')
+  const userTokenAсс = await getOrCreateAssociatedTokenAccount(connection, user, mint, user.publicKey)
+  await mintTo(connection, payer, mint, userTokenAсс.address, payer, 113_000_000_000)
+  console.log('[create swap] mintTo  = ')
 }

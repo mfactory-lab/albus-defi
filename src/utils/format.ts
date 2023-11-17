@@ -7,7 +7,7 @@ const SOL_DECIMALS = 9
 export const formatPct = new Intl.NumberFormat('en-US', {
   style: 'percent',
   minimumFractionDigits: 2,
-  maximumFractionDigits: 5,
+  maximumFractionDigits: 2,
 })
 
 export function formatDate(date: Date) {
@@ -45,4 +45,14 @@ export function lamportsToSol(lamports: number | bigint | BN) {
  */
 export function sanitizeString(str: string): string {
   return str.replace(/\0/g, '')
+}
+
+export function divideBnToNumber(numerator: BN, denominator: BN): number {
+  if (denominator.isZero()) {
+    return 0
+  }
+  const quotient = numerator.div(denominator).toNumber()
+  const rem = numerator.umod(denominator)
+  const gcd = rem.gcd(denominator)
+  return quotient + rem.div(gcd).toNumber() / denominator.div(gcd).toNumber()
 }

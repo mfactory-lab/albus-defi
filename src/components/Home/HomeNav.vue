@@ -18,19 +18,19 @@ const routeNames = router.options.routes
 
 <style lang="scss">
 .main-page-nav {
-    margin: 0 auto;
-    height: 605px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
+  margin: 0 auto;
+  height: 605px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 
-    a {
-        font-size: 20px;
-        text-decoration: none;
-        text-transform: uppercase;
-        color: $primary;
-    }
+  a {
+    font-size: 20px;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: $primary;
+  }
 }
 </style>
