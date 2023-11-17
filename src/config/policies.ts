@@ -31,10 +31,6 @@ export const APP_CONFIG = {
         // countries Germany, Ukraine, Switzerland
         default: 'CjnpmL6Svfr3Vhpp1jVWCcNbJRxbyPY5ZQF8QiNXWXtT',
       },
-      stake: {
-        // event cacf
-        default: '2itMzUroKTXmoisfZMMLVfQaW9ew7cPRkHfbzLPBQmhm',
-      },
     },
   },
 }
