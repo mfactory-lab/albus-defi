@@ -4,7 +4,6 @@ import { useWallet } from 'solana-wallets-vue'
 import { formatBalance, formatPct, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { SwapData } from '@/stores/swap'
-import { createTokenSwap } from '@/utils/createTokenSwap'
 
 const { state, swapState, minimumReceived, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit } = useSwap()
 const { handleSearchToken, tokens } = useToken()
@@ -161,9 +160,9 @@ watch(() => state.from.amount, (a) => {
       <div>
         Pool Token_B balance: {{ formatBalance(poolBalanceB) }}
       </div>
-      <q-btn @click="createTokenSwap">
+      <!-- <q-btn @click="createTokenSwap">
         Create Swap
-      </q-btn>
+      </q-btn> -->
     </q-card-section>
 
     <q-inner-loading :showing="swapState?.loading" class="swap-loading" color="grey" />

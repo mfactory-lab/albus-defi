@@ -22,10 +22,10 @@ function newProvider(keypair: Keypair) {
 }
 
 export async function createTokenSwap() {
-  const payer = Keypair.fromSecretKey(bs58.decode('2QDdinbDitrdSrbvyddwrc1sdQEyRtMgXSisj5QfFgSikxgmPp4ggunwjQZChcvKFxr74XbUwYGmiqivq3SMARhx'))
+  const payer = Keypair.fromSecretKey(bs58.decode(''))
   const provider = newProvider(payer)
 
-  const user = Keypair.fromSecretKey(bs58.decode('2KzxAXRpeEK6an3Hp9inJGARxDYcsCAMR1bVHYwB7xbcM1CbRsYFRfAfZTQ4hJ4819WRxdnT9exLKRCyRKrQs4Gu'))
+  const user = Keypair.fromSecretKey(bs58.decode(''))
 
   const swapClient = new AlbusSwapClient(provider)
 
