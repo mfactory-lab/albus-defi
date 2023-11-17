@@ -27,6 +27,7 @@ export const useUserStore = defineStore('user', () => {
   const anchorWallet = useAnchorWallet()
   const { publicKey } = wallet
   const route = useRoute()
+  const router = useRouter()
   const emitter = useEmitter()
 
   const client = computed(() => AlbusClient.fromWallet(connectionStore.connection, anchorWallet.value).configure('debug', true))
@@ -37,6 +38,9 @@ export const useUserStore = defineStore('user', () => {
   // @ts-expect-error not all of clusters in config
   const appConfig = computed(() => APP_CONFIG[connectionStore.cluster])
   const requiredPolicy = computed<string>(() => {
+    if (route.name === 'index') {
+      router.push('/transfer')
+    }
     if (route.name) {
       const pagePolicy = appConfig.value?.policy[route.name]
       if (pagePolicy) {

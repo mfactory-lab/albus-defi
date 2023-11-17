@@ -1,7 +1,6 @@
-import BN from 'bn.js'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { Transaction } from '@solana/web3.js'
-import { getOrInitAssociatedTokenAddress, lamportsToSol, sendTransaction, showCreateDialog, solToLamports } from '@/utils'
+import { divideBnToNumber, getOrInitAssociatedTokenAddress, lamportsToSol, sendTransaction, showCreateDialog, solToLamports } from '@/utils'
 import solToken from '@/assets/img/tokens/sol.png'
 import usdcToken from '@/assets/img/tokens/usdc.png'
 import { POOL_ADDRESS } from '@/config'
@@ -29,7 +28,13 @@ export function useSwap() {
     active: false,
     slippage: 0.01,
     rate: 0,
-    fees: { host: 0, trade: 0 },
+    impact: 0,
+    fees: {
+      host: 0,
+      trade: 0,
+      ownerTrade: 0,
+      ownerWithdraw: 0,
+    },
     direction: SwapDirection.ASC,
   })
 
@@ -39,20 +44,25 @@ export function useSwap() {
    * @see https://github.com/solana-labs/solana-program-library/blob/master/token-swap/program/src/curve/constant_product.rs#L112
    * @param {number} amountIn In lamports
    */
-  const changeValue = async () => {
+  const calcRate = async () => {
     // TODO: solToLamports ???
     const fromAmount = solToLamports(state.from.amount ?? 0)
-
-    if (fromAmount === 0 || Number.isNaN(fromAmount)) {
-      return state.to.amount = 0
-    }
 
     const poolFrom = Number(swapStore.state.poolBalance[state.from.label] ?? 0)
     const poolTo = Number(swapStore.state.poolBalance[state.to.label] ?? 0)
 
+    if (fromAmount === 0 || Number.isNaN(fromAmount)) {
+      state.to.amount = 0
+      state.rate = poolTo / poolFrom
+      state.impact = 0
+      return
+    }
+
+    console.log(state.fees)
     const toAmount = poolTo - (poolFrom * poolTo / (poolFrom + fromAmount))
-    state.to.amount = lamportsToSol(toAmount ?? 0)
     state.rate = fromAmount ? toAmount / fromAmount : poolTo / poolFrom
+    state.to.amount = lamportsToSol(toAmount ? toAmount * (1 - state.fees.ownerTrade - state.fees.trade) : 0)
+    state.impact = fromAmount ? 1 - (toAmount / fromAmount) / (poolTo / poolFrom) : 0
   }
 
   watch(
@@ -60,7 +70,7 @@ export function useSwap() {
       () => state.from.amount,
       () => swapStore.state.poolBalance,
     ],
-    changeValue,
+    calcRate,
     { immediate: true },
   )
 
@@ -151,7 +161,7 @@ export function useSwap() {
         // hostFeeAccount: undefined,
         amountIn: sourceTokenAmount,
         minimumAmountOut: minimumReceived.value,
-      })
+      }, { commitment: 'confirmed' })
       reload()
     } catch (e) {
       console.log(e)
@@ -193,6 +203,7 @@ export function useSwap() {
 
   function reload() {
     swapStore.loadUserTokenAccounts()
+    swapStore.loadPoolTokenAccounts()
     state.from.amount = undefined
     state.to.amount = undefined
   }
@@ -213,8 +224,22 @@ export function useSwap() {
     if (!ts) {
       return
     }
-    state.fees.host = new BN(ts.fees.hostFeeNumerator).mul(new BN(ts.fees.hostFeeDenominator)).toNumber()
-    state.fees.trade = new BN(ts.fees.tradeFeeNumerator).mul(new BN(ts.fees.tradeFeeDenominator)).toNumber()
+    state.fees.host = divideBnToNumber(
+      ts.fees.hostFeeNumerator,
+      ts.fees.hostFeeDenominator,
+    )
+    state.fees.ownerTrade = divideBnToNumber(
+      ts.fees.ownerTradeFeeNumerator,
+      ts.fees.ownerTradeFeeDenominator,
+    )
+    state.fees.ownerWithdraw = divideBnToNumber(
+      ts.fees.ownerWithdrawFeeNumerator,
+      ts.fees.ownerWithdrawFeeDenominator,
+    )
+    state.fees.trade = divideBnToNumber(
+      ts.fees.tradeFeeNumerator,
+      ts.fees.tradeFeeDenominator,
+    )
   })
   return {
     state,

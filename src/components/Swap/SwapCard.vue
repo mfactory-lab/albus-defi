@@ -29,7 +29,7 @@ const symbolFrom = computed(() => state.from.label)
 const symbolTo = computed(() => state.to.label)
 const balanceFrom = computed(() => tokenBalance(symbolFrom.value))
 const balanceTo = computed(() => tokenBalance(symbolTo.value))
-const swapFee = computed(() => state.fees.host + state.fees.trade)
+const swapFee = computed(() => state.fees.ownerTrade + state.fees.trade)
 
 function handleChangeDirection() {
   changeDirection()
@@ -147,8 +147,11 @@ watch(() => state.from.amount, (a) => {
         </q-btn>
       </div>
 
-      <div class="swap-rate">
+      <div class="swap-rate q-mt-md">
         1 {{ state.from.label }} ≈ {{ formatBalance(state.rate) }} {{ state.to.label }}
+      </div>
+      <div class="swap-rate">
+        Price impact: {{ formatPercent(state.impact) }}
       </div>
 
       <div class="q-mt-lg">

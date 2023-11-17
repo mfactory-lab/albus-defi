@@ -67,6 +67,8 @@ export const useSwapStore = defineStore('swap', () => {
       tokenSwap.value = await swapClient.value.load(POOL_ADDRESS)
       console.log('Token SWAP: ', tokenSwap.value)
       await loadPoolTokenAccounts()
+      const swaps = await swapClient.value.loadAll()
+      console.log('swaps ================: ', swaps)
     } catch (e) {
       console.log(e)
       tokenSwap.value = undefined
@@ -76,6 +78,7 @@ export const useSwapStore = defineStore('swap', () => {
   }
 
   async function loadPoolTokenAccounts() {
+    console.log('loadPoolTokenAccounts ========= ')
     if (!tokenSwap.value) {
       return
     }
@@ -88,9 +91,11 @@ export const useSwapStore = defineStore('swap', () => {
     }
     const poolMint = await getMint(connectionStore.connection, tokenSwap.value.poolMint)
     state.poolTokenSupply = Number(poolMint.supply)
+    console.log('[Pool Balance]', state.poolBalance)
   }
 
   async function loadUserTokenAccounts() {
+    console.log('loadUserTokenAccounts ========= ')
     if (!tokenSwap.value) {
       return
     }
@@ -113,7 +118,6 @@ export const useSwapStore = defineStore('swap', () => {
       }
     }
     state.userBalance = balances
-    console.log('[Pool Balance]', state.poolBalance)
     console.log('[User Balance]', state.userBalance)
   }
 
