@@ -180,14 +180,16 @@ export const useTransferStore = defineStore('transfer', () => {
   }
 
   async function verifiedTransferSOL() {
-    const amount = new BN(Number(state.value) * LAMPORTS_PER_SOL)
-    const receiver = new PublicKey(state.address)
-    return await transferClient.value.transfer({
-      amount,
-      receiver,
-      proofRequest: certificate.value.pubkey,
-      policy: new PublicKey(requiredPolicy.value),
-    })
+    if (certificate.value) {
+      const amount = new BN(Number(state.value) * LAMPORTS_PER_SOL)
+      const receiver = new PublicKey(state.address)
+      return await transferClient.value.transfer({
+        amount,
+        receiver,
+        proofRequest: certificate.value.pubkey,
+        policy: new PublicKey(requiredPolicy.value),
+      })
+    }
   }
 
   async function verifiedTransferToken() {
@@ -195,7 +197,7 @@ export const useTransferStore = defineStore('transfer', () => {
       return
     }
     const tokenInfo = tokenState.tokens.find(t => t.mint === state.token.mint)
-    if (!tokenInfo || !tokenMint.value || !receiver.value || !wallet.value) {
+    if (!tokenInfo || !tokenMint.value || !receiver.value || !wallet.value || !certificate.value) {
       return
     }
 

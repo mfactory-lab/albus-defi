@@ -150,6 +150,7 @@ declare global {
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
   const useConnectionStore: typeof import('../src/stores/connection')['useConnectionStore']
   const useCounter: typeof import('@vueuse/core')['useCounter']
+  const useCreateSwap: typeof import('../src/hooks/create-swap')['useCreateSwap']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVar: typeof import('@vueuse/core')['useCssVar']
   const useCssVars: typeof import('vue')['useCssVars']

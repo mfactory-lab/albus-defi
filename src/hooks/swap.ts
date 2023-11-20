@@ -225,18 +225,22 @@ export function useSwap() {
       return
     }
     state.fees.host = divideBnToNumber(
+      // @ts-expect-error is BN
       ts.fees.hostFeeNumerator,
       ts.fees.hostFeeDenominator,
     )
     state.fees.ownerTrade = divideBnToNumber(
+      // @ts-expect-error is BN
       ts.fees.ownerTradeFeeNumerator,
       ts.fees.ownerTradeFeeDenominator,
     )
     state.fees.ownerWithdraw = divideBnToNumber(
+      // @ts-expect-error is BN
       ts.fees.ownerWithdrawFeeNumerator,
       ts.fees.ownerWithdrawFeeDenominator,
     )
     state.fees.trade = divideBnToNumber(
+      // @ts-expect-error is BN
       ts.fees.tradeFeeNumerator,
       ts.fees.tradeFeeDenominator,
     )

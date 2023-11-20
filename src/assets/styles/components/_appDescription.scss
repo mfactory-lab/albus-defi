@@ -1,0 +1,18 @@
+
+.app-description {
+  position: relative;
+  padding: 0 20px 0;
+
+  &__title {
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 16px;
+    margin-bottom: 16px;
+  }
+
+  &__details {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+  }
+}
