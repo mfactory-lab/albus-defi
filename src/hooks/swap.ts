@@ -1,6 +1,6 @@
-import { useAnchorWallet } from 'solana-wallets-vue'
-import { Transaction } from '@solana/web3.js'
-import { divideBnToNumber, getOrInitAssociatedTokenAddress, lamportsToSol, sendTransaction, showCreateDialog, solToLamports } from '@/utils'
+import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
+import { getAssociatedTokenAddress } from '@solana/spl-token'
+import { divideBnToNumber, lamportsToSol, showCreateDialog, solToLamports } from '@/utils'
 import solToken from '@/assets/img/tokens/sol.png'
 import usdcToken from '@/assets/img/tokens/usdc.png'
 import { POOL_ADDRESS } from '@/config'
@@ -14,12 +14,11 @@ export function useSwap() {
   const userStore = useUserStore()
   const swapStore = useSwapStore()
   const wallet = useAnchorWallet()
-  const connectionStore = useConnectionStore()
-  const { monitorTransaction } = useMonitorTransaction()
+  const { publicKey } = useWallet()
   const { notify } = useQuasar()
 
-  const fromToken = reactive<SwapData>({ image: solToken, value: PoolTokenSymbol.TOKEN_A, label: PoolTokenSymbol.TOKEN_A })
-  const toToken = reactive<SwapData>({ image: usdcToken, value: PoolTokenSymbol.TOKEN_B, label: PoolTokenSymbol.TOKEN_B })
+  const fromToken = reactive<TokenData>({ image: solToken, symbol: PoolTokenSymbol.TOKEN_A, name: PoolTokenSymbol.TOKEN_A })
+  const toToken = reactive<TokenData>({ image: usdcToken, symbol: PoolTokenSymbol.TOKEN_B, name: PoolTokenSymbol.TOKEN_B })
 
   const state = reactive({
     from: fromToken,
@@ -48,8 +47,8 @@ export function useSwap() {
     // TODO: solToLamports ???
     const fromAmount = solToLamports(state.from.amount ?? 0)
 
-    const poolFrom = Number(swapStore.state.poolBalance[state.from.label] ?? 0)
-    const poolTo = Number(swapStore.state.poolBalance[state.to.label] ?? 0)
+    const poolFrom = Number(swapStore.state.poolBalance[state.from.name] ?? 0)
+    const poolTo = Number(swapStore.state.poolBalance[state.to.name] ?? 0)
 
     if (fromAmount === 0 || Number.isNaN(fromAmount)) {
       state.to.amount = 0
@@ -85,7 +84,7 @@ export function useSwap() {
       return showCreateDialog()
     }
 
-    if (!tokenSwap) {
+    if (!tokenSwap || !publicKey.value) {
       console.log('TokenSwap is not initialized...')
       return
     }
@@ -97,7 +96,7 @@ export function useSwap() {
     }
 
     const fromAmount = Number(solToLamports(state.from.amount ?? 0))
-    const fromBalance = Number(swapStore.state.userBalance[state.from.label] ?? 0)
+    const fromBalance = Number(swapStore.state.userBalance[state.from.name] ?? 0)
     const toAmount = Number(solToLamports(state.to.amount ?? 0))
 
     if (fromAmount > fromBalance) {
@@ -114,21 +113,8 @@ export function useSwap() {
         poolDestinationAddress,
       } = swapDataByDirection()
 
-      const tx = new Transaction()
-
-      const userSource = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, userSourceMint, wallet.value!.publicKey)
-      const userDestination = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, userDestinationMint, wallet.value!.publicKey)
-
-      if (tx.instructions.length > 0) {
-        await monitorTransaction(
-          sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
-          {
-            commitment: 'finalized',
-            onSuccess: reload,
-          },
-        )
-      }
-
+      const userSource = await getAssociatedTokenAddress(userSourceMint, wallet.value!.publicKey)
+      const userDestination = await getAssociatedTokenAddress(userDestinationMint, wallet.value!.publicKey)
       const sourceTokenAmount = fromAmount
 
       console.log('toAmount = ', toAmount)
@@ -158,9 +144,11 @@ export function useSwap() {
         poolDestination: poolDestinationAddress,
         poolMint: tokenSwap.poolMint,
         poolFee: tokenSwap.poolFeeAccount,
-        // hostFeeAccount: undefined,
         amountIn: sourceTokenAmount,
         minimumAmountOut: minimumReceived.value,
+        // hostFeeAccount: undefined,
+        receiver: publicKey.value,
+        destinationTokenMint: userDestinationMint,
       }, { commitment: 'confirmed' })
       reload()
     } catch (e) {
@@ -258,10 +246,11 @@ export function useSwap() {
   }
 }
 
-export interface SwapData {
-  value?: number | string
+export interface TokenData {
+  symbol: string
   image: string
   balance?: number
-  label: string
+  name: string
+  mint?: string
   amount?: number
 }

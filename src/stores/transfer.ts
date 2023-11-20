@@ -5,14 +5,15 @@ import { AnchorProvider } from '@coral-xyz/anchor'
 import { AlbusTransferClient } from '@albus-finance/transfer-sdk'
 import { getAccount, getAssociatedTokenAddress } from '@solana/spl-token'
 import BN from 'bn.js'
-import type { SwapData } from './swap'
 import type { IProofRequestStatus } from '@/stores'
 import { createTransaction, showCreateDialog, transactionFee, validateAddress } from '@/utils'
-import { MIN_TRANSFER_FEE, TRANSFER_FEE_CONST } from '@/config'
+import { MIN_TRANSFER_FEE, SOL_MINT, TRANSFER_FEE_CONST } from '@/config'
+import type { TokenData } from '@/hooks/swap'
 
 export const useTransferStore = defineStore('transfer', () => {
   const connectionStore = useConnectionStore()
-  const { tokens } = useTokenStore()
+  const tokenStore = useTokenStore()
+  const tokens = computed(() => tokenStore.tokens)
   const userStore = useUserStore()
   const { state: tokenState, getUserTokens } = useUserStore()
   const certificate = computed(() => userStore.certificate)
@@ -24,16 +25,21 @@ export const useTransferStore = defineStore('transfer', () => {
   const { publicKey } = useWallet()
   const { notify } = useQuasar()
 
-  const token = reactive<SwapData>(tokens[0])
-
   const state = reactive<TransferState>({
     address: '',
     value: undefined,
     loading: false,
-    token,
+    token: undefined,
     fee: defaultFee,
     valid: false,
   })
+
+  watch(tokens, () => {
+    if (!state.token && tokens.value[0]) {
+      state.token = tokens.value[0]
+      console.log('transfer token ============= ', state.token)
+    }
+  }, { immediate: true })
 
   function reset() {
     state.value = undefined
@@ -42,7 +48,7 @@ export const useTransferStore = defineStore('transfer', () => {
 
   watch(() => state.token, () => {
     reset()
-    userStore.policySpec = state.token.name
+    userStore.policySpec = state.token?.name ?? ''
   })
 
   watch(() => wallet.value?.publicKey, (p) => {
@@ -57,14 +63,14 @@ export const useTransferStore = defineStore('transfer', () => {
   })
 
   const tokenMint = computed(() => {
-    const mint = state.token.mint ?? ''
+    const mint = state.token?.mint ?? ''
     return validateAddress(mint) ? new PublicKey(mint) : ''
   })
   const receiver = computed(() => validateAddress(state.address) ? new PublicKey(state.address) : '')
   const destinationTokenAcc = ref()
   const hasTokenAccount = ref(false)
   watch([tokenMint, receiver, () => state.valid], async () => {
-    if (state.token.label === 'sol') {
+    if (state.token?.mint === SOL_MINT) {
       return hasTokenAccount.value = true
     }
     if (tokenMint.value && receiver.value && state.valid) {
@@ -107,7 +113,7 @@ export const useTransferStore = defineStore('transfer', () => {
     // if (!publicKey.value) {
     //   return
     // }
-    // if (state.token.label === 'sol') {
+    // if (state.token.mint === SOL_MINT) {
     //   const amount = new BN(Number(state.value) * LAMPORTS_PER_SOL)
     //   const receiver = new PublicKey(state.address)
     //   state.fee = await transferClient.value.getTransferFee({
@@ -146,12 +152,12 @@ export const useTransferStore = defineStore('transfer', () => {
       console.log('[debug] on transfer certificate === ', certificate.value)
       if (certificateValid.value) {
         let signature
-        if (state.token.label === 'sol') {
+        if (state.token?.mint === SOL_MINT) {
           signature = await verifiedTransferSOL()
         } else {
           signature = await verifiedTransferToken()
         }
-        // TODO: refactory notifications
+        // TODO: refactor notifications
         notify({
           type: 'positive',
           message: 'Transaction confirmed',
@@ -193,10 +199,10 @@ export const useTransferStore = defineStore('transfer', () => {
   }
 
   async function verifiedTransferToken() {
-    if (!publicKey.value || !state.token.mint) {
+    if (!publicKey.value || !state.token?.mint) {
       return
     }
-    const tokenInfo = tokenState.tokens.find(t => t.mint === state.token.mint)
+    const tokenInfo = tokenState.tokens.find(t => t.mint === state.token?.mint)
     if (!tokenInfo || !tokenMint.value || !receiver.value || !wallet.value || !certificate.value) {
       return
     }
@@ -218,7 +224,7 @@ export const useTransferStore = defineStore('transfer', () => {
     state.value = amount
   }
 
-  function setToken(t: SwapData) {
+  function setToken(t: TokenData) {
     state.token = t
   }
 
@@ -234,7 +240,7 @@ interface TransferState {
   address: string
   value?: number
   loading: boolean
-  token: SwapData
+  token?: TokenData
   fee: number
   valid: boolean
   status?: IProofRequestStatus

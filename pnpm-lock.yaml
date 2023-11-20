@@ -6,11 +6,11 @@ settings:
 
 dependencies:
   '@albus-finance/sdk':
-    specifier: 0.2.2-next.9
-    version: 0.2.2-next.9
+    specifier: 0.2.2
+    version: 0.2.2
   '@albus-finance/swap-sdk':
-    specifier: ^0.1.1
-    version: 0.1.1
+    specifier: ^0.1.2
+    version: 0.1.2
   '@albus-finance/transfer-sdk':
     specifier: ^0.2.3
     version: 0.2.3
@@ -162,8 +162,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /@albus-finance/core@0.3.3-next.1:
-    resolution: {integrity: sha512-+mMOUywKVqiTOK8t4TLfFBkVLWA2IzY8zkdEFeQnlBXHh9twc/PBDmFMv5ASUaDmuXoQzLfp2kjfUx8s/618zQ==}
+  /@albus-finance/core@0.3.3:
+    resolution: {integrity: sha512-afsatwnlTq0trKj5RGQj4FlG94cVK85gnzIW1YSknoGccaHQp8P2L71zyYwPE7PJncTpRuKJ3WNBr7wCwaYZJw==}
     dependencies:
       '@metaplex-foundation/mpl-token-metadata': 2.13.0
       '@solana/web3.js': 1.87.1
@@ -186,12 +186,12 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@albus-finance/sdk@0.2.2-next.9:
-    resolution: {integrity: sha512-9o7+w3GuEuprwqX0zVYY5Z9k+euKmfYMFadi+aDqTChqFdhuy55bhVON2YSYNafO/nYkDHw5xEklLuOUiLH90A==}
+  /@albus-finance/sdk@0.2.2:
+    resolution: {integrity: sha512-YhxHYuihFNq5iNMKhM919fVMT+xySJrxxQUoj1ufiGUSBhUc3s2Ksxjjhs49LWdFwvuoMa9po1bLutkdQJaYUA==}
     peerDependencies:
       snarkjs: '*'
     dependencies:
-      '@albus-finance/core': 0.3.3-next.1
+      '@albus-finance/core': 0.3.3
       '@coral-xyz/anchor': 0.29.0
       '@metaplex-foundation/beet': 0.7.1
       '@metaplex-foundation/beet-solana': 0.4.0
@@ -206,11 +206,12 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@albus-finance/swap-sdk@0.1.1:
-    resolution: {integrity: sha512-R/SafP35TUMfw3E7SDkswkXKTi6/pMx1/qvqE/zw7Yz2AN50Q7NgMGmEXyVPJbEXaf/MSEyJdTbqzyUxcZUphw==}
+  /@albus-finance/swap-sdk@0.1.2:
+    resolution: {integrity: sha512-kX85YCN6UUXBVLymRtZuLqHpcJ/Ixn27v6lXwEYJvFZRk2C8320jElVeEX8wEXjVOPsCaCFSH89aLxkIOMUcFg==}
     dependencies:
       '@coral-xyz/anchor': 0.29.0
       '@metaplex-foundation/beet': 0.7.1
+      '@solana/spl-token': 0.3.8(@solana/web3.js@1.87.1)
       '@solana/web3.js': 1.87.1
     transitivePeerDependencies:
       - bufferutil

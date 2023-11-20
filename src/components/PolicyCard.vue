@@ -16,7 +16,7 @@ const { certificateLink } = useCertificateLink()
 
 <template>
   <q-card flat class="certificate-card">
-    <q-inner-loading :showing="serviceLoading || certificateLoading" label-class="text-teal" label-style="font-size: 1.1em" />
+    <q-inner-loading :showing="serviceLoading || (connected && certificateLoading)" label-class="text-teal" label-style="font-size: 1.1em" />
     <div class="row">
       <div class="certificate-card__info">
         <div class="certificate-card__info__title">

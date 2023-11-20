@@ -148,14 +148,3 @@ export const useSwapStore = defineStore('swap', () => {
     swapClient,
   }
 })
-
-export interface SwapData {
-  name: string
-  symbol: string
-  value?: number | string
-  image: string
-  balance?: number
-  label: string
-  amount?: number
-  mint?: string
-}

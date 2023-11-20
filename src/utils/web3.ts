@@ -1,17 +1,19 @@
 /* eslint-disable n/prefer-global/buffer */
 import type { ConfirmOptions, Connection, ParsedAccountData, PublicKeyInitData, Signer, TransactionInstruction } from '@solana/web3.js'
-import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 
 import { PROGRAM_ID as METADATA_PROGRAM_ID, Metadata } from '@metaplex-foundation/mpl-token-metadata'
 import { type AnchorWallet } from 'solana-wallets-vue'
 import type { Address } from '@coral-xyz/anchor'
 import { AnchorProvider } from '@coral-xyz/anchor'
 import {
+  MINT_SIZE,
   TOKEN_PROGRAM_ID,
   TokenAccountNotFoundError,
   TokenInvalidAccountOwnerError,
   createAssociatedTokenAccountInstruction,
-  getAccount, getAssociatedTokenAddress,
+  createInitializeMint2Instruction,
+  getAccount, getAssociatedTokenAddress, getMinimumBalanceForRentExemptMint,
 } from '@solana/spl-token'
 import { sanitizeString } from './format'
 import type { IUserToken } from '@/stores/user'
@@ -213,8 +215,9 @@ export async function getOrInitAssociatedTokenAddress(
   mint: PublicKey,
   owner: PublicKey,
   payer?: PublicKey,
+  allowOwnerOffCurve = false,
 ) {
-  const associatedToken = await getAssociatedTokenAddress(mint, owner)
+  const associatedToken = await getAssociatedTokenAddress(mint, owner, allowOwnerOffCurve)
   try {
     await getAccount(connection, associatedToken)
   } catch (error: unknown) {
@@ -236,4 +239,28 @@ export async function getNumberDecimals(connection: Connection, mintAddress: str
   const info = await connection.getParsedAccountInfo(new PublicKey(mintAddress))
   const result = (info.value?.data as ParsedAccountData).parsed.info.decimals as number
   return result
+}
+
+export async function getCreateMintTx(
+  connection: Connection,
+  transaction: Transaction,
+  payer: PublicKey,
+  mintAuthority: PublicKey,
+  decimals = 9,
+) {
+  const lamports = await getMinimumBalanceForRentExemptMint(connection)
+  const keypair = Keypair.generate()
+
+  transaction.add(
+    SystemProgram.createAccount({
+      fromPubkey: payer,
+      newAccountPubkey: keypair.publicKey,
+      space: MINT_SIZE,
+      lamports,
+      programId: TOKEN_PROGRAM_ID,
+    }),
+    createInitializeMint2Instruction(keypair.publicKey, decimals, mintAuthority, null, TOKEN_PROGRAM_ID),
+  )
+
+  return keypair.publicKey
 }
