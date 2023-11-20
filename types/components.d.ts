@@ -7,11 +7,14 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AppDescription: typeof import('./../src/components/AppDescription.vue')['default']
+    AppDescriptionTop: typeof import('./../src/components/AppDescriptionTop.vue')['default']
     AppFooter: typeof import('./../src/components/AppFooter.vue')['default']
     AppHeader: typeof import('./../src/components/AppHeader.vue')['default']
     CertificateStatus: typeof import('./../src/components/CertificateStatus.vue')['default']
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
+    copy: typeof import('./../src/components/AppDescription copy.vue')['default']
     CopyToClipboard: typeof import('./../src/components/CopyToClipboard.vue')['default']
     CreateCertificateBtn: typeof import('./../src/components/CreateCertificateBtn.vue')['default']
     DarkThemeToggle: typeof import('./../src/components/DarkThemeToggle.vue')['default']
@@ -36,7 +39,7 @@ declare module 'vue' {
     StakeCard: typeof import('./../src/components/Stake/StakeCard.vue')['default']
     StakeContent: typeof import('./../src/components/Stake/StakeContent.vue')['default']
     SwapCard: typeof import('./../src/components/Swap/SwapCard.vue')['default']
-    SwapContent: typeof import('./../src/components/Swap/SwapContent.vue')['default']
+    SwapContent: typeof import('./../src/components/SwapContent.vue')['default']
     TransferCard: typeof import('./../src/components/Transfer/TransferCard.vue')['default']
     TransferContent: typeof import('./../src/components/Transfer/TransferContent.vue')['default']
   }

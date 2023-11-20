@@ -283,41 +283,6 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
   font-size: 13px;
 }
 
-.swap-content {
-  position: relative;
-  padding: 10px 0 60px;
-
-  @media (max-width: $breakpoint-md) {
-    width: 95%;
-  }
-
-  @media (max-width: $breakpoint-sm) {
-    width: 92%;
-  }
-
-  @media (max-width: $breakpoint-xs) {
-    width: 90%;
-    margin: 0 auto;
-  }
-
-  &__title {
-    padding: 20px 0;
-    font-weight: 600;
-    font-size: 15px;
-    line-height: 16px;
-  }
-
-  &__details {
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 16px;
-
-    p {
-      margin: 0;
-    }
-  }
-}
-
 .swap-card {
   .token-select {
     width: auto;
