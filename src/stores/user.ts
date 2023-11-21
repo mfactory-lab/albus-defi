@@ -7,14 +7,6 @@ import { AlbusClient, ProofRequestStatus } from '@albus-finance/sdk'
 import { getSolanaBalance, getTokensByOwner } from '@/utils'
 import { APP_CONFIG, SOL_MINT } from '@/config'
 
-export enum IProofRequestStatus {
-  Pending,
-  Proved,
-  Verified,
-  Rejected,
-  Empty,
-}
-
 interface PolicyItem {
   pubkey: PublicKey
   data: Policy | null
@@ -208,6 +200,6 @@ export interface IUserToken {
   symbol: string
   name: string
   balance: number
-  mint: PublicKey | PublicKeyInitData
+  mint: string
   decimals: number
 }

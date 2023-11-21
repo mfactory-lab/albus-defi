@@ -1,9 +1,8 @@
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import { getAssociatedTokenAddress } from '@solana/spl-token'
 import { divideBnToNumber, lamportsToSol, showCreateDialog, solToLamports } from '@/utils'
-import solToken from '@/assets/img/tokens/sol.png'
-import usdcToken from '@/assets/img/tokens/usdc.png'
-import { POOL_ADDRESS } from '@/config'
+import type { TokenData } from '@/config'
+import { POOL_ADDRESS, TOKEN_A, TOKEN_B } from '@/config'
 
 enum SwapDirection {
   ASC,
@@ -17,12 +16,9 @@ export function useSwap() {
   const { publicKey } = useWallet()
   const { notify } = useQuasar()
 
-  const fromToken = reactive<TokenData>({ image: solToken, symbol: PoolTokenSymbol.TOKEN_A, name: PoolTokenSymbol.TOKEN_A })
-  const toToken = reactive<TokenData>({ image: usdcToken, symbol: PoolTokenSymbol.TOKEN_B, name: PoolTokenSymbol.TOKEN_B })
-
-  const state = reactive({
-    from: fromToken,
-    to: toToken,
+  const state = reactive<SwapState>({
+    from: TOKEN_A,
+    to: TOKEN_B,
     swapping: false,
     active: false,
     slippage: 0.01,
@@ -44,11 +40,10 @@ export function useSwap() {
    * @param {number} amountIn In lamports
    */
   const calcRate = async () => {
-    // TODO: solToLamports ???
-    const fromAmount = solToLamports(state.from.amount ?? 0)
+    const fromAmount = solToLamports(state.from.amount ?? 0, state.from.decimals)
 
-    const poolFrom = Number(swapStore.state.poolBalance[state.from.name] ?? 0)
-    const poolTo = Number(swapStore.state.poolBalance[state.to.name] ?? 0)
+    const poolFrom = Number(swapStore.state.poolBalance[state.from.mint] ?? 0)
+    const poolTo = Number(swapStore.state.poolBalance[state.to.mint] ?? 0)
 
     if (fromAmount === 0 || Number.isNaN(fromAmount)) {
       state.to.amount = 0
@@ -60,7 +55,7 @@ export function useSwap() {
     console.log(state.fees)
     const toAmount = poolTo - (poolFrom * poolTo / (poolFrom + fromAmount))
     state.rate = fromAmount ? toAmount / fromAmount : poolTo / poolFrom
-    state.to.amount = lamportsToSol(toAmount ? toAmount * (1 - state.fees.ownerTrade - state.fees.trade) : 0)
+    state.to.amount = lamportsToSol(toAmount ? toAmount * (1 - state.fees.ownerTrade - state.fees.trade) : 0, state.to.decimals)
     state.impact = fromAmount ? 1 - (toAmount / fromAmount) / (poolTo / poolFrom) : 0
   }
 
@@ -74,7 +69,7 @@ export function useSwap() {
   )
 
   const minimumReceived = computed(() => {
-    const toAmount = Number(solToLamports(state.to.amount ?? 0))
+    const toAmount = Number(solToLamports(state.to.amount ?? 0, state.to.decimals))
     return Math.floor(toAmount - (toAmount * state.slippage))
   })
 
@@ -95,9 +90,9 @@ export function useSwap() {
       notify({ type: 'info', message: 'Please connect your wallet first' })
     }
 
-    const fromAmount = Number(solToLamports(state.from.amount ?? 0))
-    const fromBalance = Number(swapStore.state.userBalance[state.from.name] ?? 0)
-    const toAmount = Number(solToLamports(state.to.amount ?? 0))
+    const fromAmount = Number(solToLamports(state.from.amount ?? 0, state.from.decimals))
+    const fromBalance = Number(solToLamports(userStore.tokenBalance(state.from.mint) ?? 0, state.from.decimals))
+    const toAmount = Number(solToLamports(state.to.amount ?? 0, state.to.decimals))
 
     if (fromAmount > fromBalance) {
       notify({ type: 'negative', message: 'Insufficient balance.' })
@@ -190,7 +185,6 @@ export function useSwap() {
   }
 
   function reload() {
-    swapStore.loadUserTokenAccounts()
     swapStore.loadPoolTokenAccounts()
     state.from.amount = undefined
     state.to.amount = undefined
@@ -246,11 +240,21 @@ export function useSwap() {
   }
 }
 
-export interface TokenData {
-  symbol: string
-  image: string
-  balance?: number
-  name: string
-  mint?: string
-  amount?: number
+interface PoolFees {
+  host: number
+  trade: number
+  ownerTrade: number
+  ownerWithdraw: number
+}
+
+interface SwapState {
+  from: TokenData
+  to: TokenData
+  slippage: number
+  rate: number
+  impact: number
+  swapping: boolean
+  active: boolean
+  fees: PoolFees
+  direction: SwapDirection
 }
