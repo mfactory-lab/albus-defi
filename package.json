@@ -13,8 +13,8 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@albus-finance/sdk": "0.2.2-next.9",
-    "@albus-finance/swap-sdk": "^0.1.1",
+    "@albus-finance/sdk": "0.2.2",
+    "@albus-finance/swap-sdk": "^0.1.2",
     "@albus-finance/transfer-sdk": "^0.2.3",
     "@coral-xyz/anchor": "^0.28.0",
     "@metaplex-foundation/beet": "^0.7.1",

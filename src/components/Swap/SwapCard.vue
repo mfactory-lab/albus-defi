@@ -3,7 +3,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useWallet } from 'solana-wallets-vue'
 import { formatBalance, formatPct, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
-import type { SwapData } from '@/stores/swap'
+import type { TokenData } from '@/hooks/swap'
 
 const { state, swapState, minimumReceived, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit } = useSwap()
 const { handleSearchToken, tokens } = useToken()
@@ -25,8 +25,8 @@ const changeButtonRotate = ref(0)
 
 const rotateBtnStyle = computed(() => `transform: rotate(${changeButtonRotate.value * 180}deg)`)
 
-const symbolFrom = computed(() => state.from.label)
-const symbolTo = computed(() => state.to.label)
+const symbolFrom = computed(() => state.from.name)
+const symbolTo = computed(() => state.to.name)
 const balanceFrom = computed(() => tokenBalance(symbolFrom.value))
 const balanceTo = computed(() => tokenBalance(symbolTo.value))
 const swapFee = computed(() => state.fees.ownerTrade + state.fees.trade)
@@ -36,7 +36,7 @@ function handleChangeDirection() {
   changeButtonRotate.value++
 }
 
-function setToken(t: SwapData, direction: true) {
+function setToken(t: TokenData, direction: true) {
   state[direction ? 'to' : 'from'] = t
 }
 
@@ -89,7 +89,7 @@ watch(() => state.from.amount, (a) => {
                 MAX
               </q-btn>
               <select-token
-                :options="filterTokens" disable :token="state.from" :swap-token="String(state.to.value)"
+                :options="filterTokens" disable :token="state.from" :swap-token="String(state.to.symbol)"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -114,7 +114,7 @@ watch(() => state.from.amount, (a) => {
           <q-input v-model="state.to.amount" :disable="!connected" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
             <template #append>
               <select-token
-                :swap-token="String(state.from.value)" disable :options="filterTokens" :direction="true" :token="state.to"
+                :swap-token="String(state.from.symbol)" disable :options="filterTokens" :direction="true" :token="state.to"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -143,12 +143,12 @@ watch(() => state.from.amount, (a) => {
 
       <div class="swap-submit">
         <q-btn :loading="state.swapping" rounded :ripple="false" @click="swapSubmit">
-          Swap {{ state.from.label }} / {{ state.to.label }}
+          Swap {{ state.from.name }} / {{ state.to.name }}
         </q-btn>
       </div>
 
       <div class="swap-rate q-mt-md">
-        1 {{ state.from.label }} ≈ {{ formatBalance(state.rate) }} {{ state.to.label }}
+        1 {{ state.from.name }} ≈ {{ formatBalance(state.rate) }} {{ state.to.name }}
       </div>
       <div class="swap-rate">
         Price impact: {{ formatPercent(state.impact) }}
@@ -163,9 +163,6 @@ watch(() => state.from.amount, (a) => {
       <div>
         Pool Token_B balance: {{ formatBalance(poolBalanceB) }}
       </div>
-      <!-- <q-btn @click="createTokenSwap">
-        Create Swap
-      </q-btn> -->
     </q-card-section>
 
     <q-inner-loading :showing="swapState?.loading" class="swap-loading" color="grey" />

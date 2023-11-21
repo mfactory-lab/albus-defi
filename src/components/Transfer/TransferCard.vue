@@ -1,24 +1,25 @@
 <script setup lang="ts">
 import { Notify } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
-import { lowerCase } from 'lodash-es'
 import { formatBalance, onlyNumber, validateAddress } from '@/utils'
 import { MIN_FEE, RENT_FEE, TRANSFER_FEE_CONST } from '@/config/common'
+import { SOL_MINT } from '@/config/tokens'
 
 const { state, setMax, setToken, verifyTransfer } = useTransferStore()
 const { state: userState, tokenBalance } = useUserStore()
-const { tokens } = useToken()
+const { handleSearchToken, tokens } = useToken()
 
 const filterTokenExist = computed(() => {
-  const tokensFiltered = tokens.value.filter(token => userState.tokens.find(t => token.name === lowerCase(t.symbol)))
-  // return tokens.length !== 0 ? tokens : [options.value.find(t => t.value === 'sol')]
-  return tokensFiltered.length !== 0 ? tokens.value : [tokens.value.find(t => t.symbol === 'sol')]
+  return [...tokens.value].sort((a, b) => tokenBalance(b.symbol) - tokenBalance(a.symbol))
+  // const tokensFiltered = tokens.value.filter(token => userState.tokens.find(t => token.name === lowerCase(t.symbol)))
+  // // return tokens.length !== 0 ? tokens : [options.value.find(t => t.mint === SOL_MINT)]
+  // return tokensFiltered.length !== 0 ? tokens.value : [tokens.value.find(t => t.mint === SOL_MINT)]
 },
 )
 
 const { connected } = useWallet()
 
-const balance = computed(() => tokenBalance(state.token.label))
+const balance = computed(() => state.token?.mint ? tokenBalance(state.token.mint) : 0)
 
 const emptyBalance = computed(() => balance.value === 0)
 
@@ -38,7 +39,7 @@ async function transferSubmit() {
 
 function setMaxCurrency() {
   setMax(balance.value)
-  if (state.token.value === 'sol') {
+  if (state.token?.mint === SOL_MINT) {
     // save additional 2 min fee for next transaction
     state.value = balance.value - RENT_FEE - 3 * MIN_FEE - TRANSFER_FEE_CONST
     // Notify.create({
@@ -93,6 +94,7 @@ const active = computed(() => Number(state.value) > 0 && validateAddress(state.a
             <select-token
               :disable="!connected"
               :options="filterTokenExist"
+              @handle-search-token="handleSearchToken"
               @set-token="setToken"
             />
           </div>

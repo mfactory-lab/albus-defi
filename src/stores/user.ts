@@ -2,11 +2,10 @@ import { defineStore } from 'pinia'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
 import debounce from 'lodash-es/debounce'
-import { lowerCase } from 'lodash-es'
 import type { Policy, ProofRequest, ServiceProvider } from '@albus-finance/sdk'
 import { AlbusClient, ProofRequestStatus } from '@albus-finance/sdk'
 import { getSolanaBalance, getTokensByOwner } from '@/utils'
-import { APP_CONFIG } from '@/config'
+import { APP_CONFIG, SOL_MINT } from '@/config'
 
 export enum IProofRequestStatus {
   Pending,
@@ -90,14 +89,14 @@ export const useUserStore = defineStore('user', () => {
       state.loading = true
 
       const solBalance = await getSolanaBalance(publicKey.value?.toBase58() as PublicKeyInitData, connectionStore.connection)
-      const solConf = tokens.value.find(t => t.symbol === 'sol')
+      const solConf = tokens.value.find(t => t.mint === SOL_MINT)
       const solToken = solConf
         ? {
             name: solConf.name,
             symbol: solConf.symbol,
             balance: solBalance,
             decimals: 9,
-            mint: solConf.mint?.[connectionStore.cluster],
+            mint: SOL_MINT,
           }
         : null
 
@@ -126,7 +125,7 @@ export const useUserStore = defineStore('user', () => {
   }, 500)
 
   const tokenBalance = (token: string) => {
-    return state.tokens.find(t => [lowerCase(t.symbol), lowerCase(t.name)].includes(lowerCase(token)))?.balance ?? 0
+    return state.tokens.find(t => t.mint === token)?.balance ?? 0
   }
 
   const getCertificates = debounce(async () => {

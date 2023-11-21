@@ -2,9 +2,9 @@
 import { evaClose } from '@quasar/extras/eva-icons'
 import type { PropType } from 'vue'
 import { lowerCase } from 'lodash-es'
-import type { SwapData } from '@/stores/swap'
+import type { TokenData } from '@/hooks/swap'
 
-interface OptionsInactive extends SwapData {
+interface OptionsInactive extends TokenData {
   inactive: boolean
 }
 
@@ -15,7 +15,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  token: Object as PropType<SwapData>,
+  token: Object as PropType<TokenData>,
   swapToken: String,
   disable: {
     type: Boolean,
@@ -30,7 +30,7 @@ const searchToken = ref(props.searchToken)
 const model = ref(props.token ?? props.options[0])
 
 watch(() => props.token, (m) => {
-  model.value = m
+  model.mint = m
 })
 
 function clearSearch() {
@@ -38,7 +38,7 @@ function clearSearch() {
 }
 
 const checkedTokens = computed(() =>
-  props.options.map((o: OptionsInactive) => ({ ...o, inactive: lowerCase(String(o.value)) === lowerCase(props.swapToken) })))
+  props.options.map((o: OptionsInactive) => ({ ...o, inactive: lowerCase(String(o?.symbol)) === lowerCase(props.swapToken) })))
 
 watch(searchToken, (s) => {
   emits('handleSearchToken', s)
@@ -54,12 +54,23 @@ watch(model, (m) => {
     <q-select
       v-model="model" option-disable="inactive" popup-content-class="transition-duration" outlined
       :options="checkedTokens" dense :options-dense="false" :disable="disable"
+      option-value="mint" option-label="name"
       @popup-hide="clearSearch"
     >
       <template #prepend>
         <q-avatar>
-          <img :src="model.image">
+          <img :src="model?.image" :alt="model?.symbol">
         </q-avatar>
+      </template>
+      <template #before-options>
+        <q-input v-model="searchToken" :maxlength="8" outlined class="token-search" placeholder="search">
+          <template #append>
+            <q-icon
+              v-if="searchToken" :name="evaClose" class="cursor-pointer token-search__close"
+              @click="clearSearch"
+            />
+          </template>
+        </q-input>
       </template>
       <template #option="scope">
         <q-item v-bind="scope.itemProps" class="token-select__token">
@@ -69,7 +80,7 @@ watch(model, (m) => {
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ scope.opt.label }}</q-item-label>
+            <q-item-label>{{ scope.opt.symbol }}</q-item-label>
           </q-item-section>
         </q-item>
       </template>

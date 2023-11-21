@@ -2,15 +2,24 @@ import solToken from '@/assets/img/tokens/sol.png'
 import usdcToken from '@/assets/img/tokens/usdc.png'
 import usdtToken from '@/assets/img/tokens/usdt.png'
 
+export const SOL_MINT = 'So11111111111111111111111111111111111111111'
+
+export const SOL_TOKEN = {
+  image: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
+  inactive: false,
+  mint: SOL_MINT,
+  name: 'SOL',
+  symbol: 'SOL',
+}
 export const TOKENS = [
   {
     symbol: 'sol',
     name: 'sol',
     img: solToken,
     mint: {
-      'mainnet-beta': 'So11111111111111111111111111111111111111111',
-      'testnet': 'So11111111111111111111111111111111111111111',
-      'devnet': 'So11111111111111111111111111111111111111111',
+      'mainnet-beta': SOL_MINT,
+      'testnet': SOL_MINT,
+      'devnet': SOL_MINT,
     },
   },
   {
