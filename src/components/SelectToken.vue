@@ -2,7 +2,7 @@
 import { evaClose } from '@quasar/extras/eva-icons'
 import type { PropType } from 'vue'
 import { lowerCase } from 'lodash-es'
-import type { TokenData } from '@/hooks/swap'
+import type { TokenData } from '@/config'
 
 interface OptionsInactive extends TokenData {
   inactive: boolean
@@ -30,7 +30,7 @@ const searchToken = ref(props.searchToken)
 const model = ref(props.token ?? props.options[0])
 
 watch(() => props.token, (m) => {
-  model.mint = m
+  model.value = m
 })
 
 function clearSearch() {

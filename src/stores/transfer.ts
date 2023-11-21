@@ -5,10 +5,10 @@ import { AnchorProvider } from '@coral-xyz/anchor'
 import { AlbusTransferClient } from '@albus-finance/transfer-sdk'
 import { getAccount, getAssociatedTokenAddress } from '@solana/spl-token'
 import BN from 'bn.js'
-import type { IProofRequestStatus } from '@/stores'
+import type { ProofRequestStatus } from '@albus-finance/sdk'
 import { createTransaction, showCreateDialog, transactionFee, validateAddress } from '@/utils'
+import type { TokenData } from '@/config'
 import { MIN_TRANSFER_FEE, SOL_MINT, TRANSFER_FEE_CONST } from '@/config'
-import type { TokenData } from '@/hooks/swap'
 
 export const useTransferStore = defineStore('transfer', () => {
   const connectionStore = useConnectionStore()
@@ -37,7 +37,6 @@ export const useTransferStore = defineStore('transfer', () => {
   watch(tokens, () => {
     if (!state.token && tokens.value[0]) {
       state.token = tokens.value[0]
-      console.log('transfer token ============= ', state.token)
     }
   }, { immediate: true })
 
@@ -243,5 +242,5 @@ interface TransferState {
   token?: TokenData
   fee: number
   valid: boolean
-  status?: IProofRequestStatus
+  status?: ProofRequestStatus
 }

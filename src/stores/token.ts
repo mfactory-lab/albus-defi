@@ -33,13 +33,14 @@ export const useTokenStore = defineStore('token', () => {
           symbol: t.symbol,
           image: t.logoURI,
           mint: t.address,
+          decimals: t.decimals,
         }))]
       : TOKENS.map(t => ({
         name: t.name,
         symbol: t.symbol,
-        image: t.img,
-        // @ts-expect-error ...
-        mint: t.mint?.[connectionStore.cluster],
+        image: t.image,
+        mint: t.mint,
+        decimals: t.decimals,
       }))
   })
 

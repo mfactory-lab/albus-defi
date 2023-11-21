@@ -1,7 +1,9 @@
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
 import { CurveType } from '@albus-finance/swap-sdk'
-import { getCreateMintTx, getOrInitAssociatedTokenAddress, sendTransaction } from '@/utils'
+import { createMint, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token'
+import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
+import { sendTransaction } from '@/utils'
 
 export function useCreateSwap() {
   const swapStore = useSwapStore()
@@ -29,22 +31,26 @@ export function useCreateSwap() {
     if (!publicKey.value || !state.tokenA || !state.tokenB) {
       return
     }
-    const tokenA = new PublicKey(state.tokenA)
-    const tokenB = new PublicKey(state.tokenB)
+    // const tokenA = new PublicKey(state.tokenA)
+    // const tokenB = new PublicKey(state.tokenB)
     const tokenSwap = Keypair.generate()
     console.log('[create swap] token swap pk = ', tokenSwap.publicKey.toBase58())
     console.log('[create swap] token swap sk = ', tokenSwap.secretKey.toString())
     const swapAuthority = swapStore.swapClient.swapAuthority(tokenSwap.publicKey)
 
-    // const poolMint = await createMint(connectionStore.connection, payer, swapAuthority, null, 9)
+    const payer = Keypair.fromSecretKey(bs58.decode('2KzxAXRpeEK6an3Hp9inJGARxDYcsCAMR1bVHYwB7xbcM1CbRsYFRfAfZTQ4hJ4819WRxdnT9exLKRCyRKrQs4Gu'))
+    const tokenA = await createMint(connectionStore.connection, payer, payer.publicKey, null, 9)
+    console.log('[create swap] tokenA = ', tokenA.toBase58())
+    const tokenB = await createMint(connectionStore.connection, payer, payer.publicKey, null, 9)
+    const poolMint = await createMint(connectionStore.connection, payer, swapAuthority, null, 9)
     let tx = new Transaction()
-    const poolMint = await getCreateMintTx(connectionStore.connection, tx, publicKey.value, swapAuthority, 9)
+    // const poolMint = await getCreateMintTx(connectionStore.connection, tx, publicKey.value, swapAuthority, 9)
     console.log('[create swap] poolMint = ', poolMint.toBase58())
+    console.log('[create swap] tx = ', tx)
     if (tx.instructions.length > 0) {
       await monitorTransaction(
         sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
         {
-          commitment: 'finalized',
           onSuccess: () => notify({
             type: 'positive',
             message: `Pool created successfully. ${tokenSwap.publicKey.toBase58()}`,
@@ -53,15 +59,21 @@ export function useCreateSwap() {
       )
     }
 
+    const poolFeeAccount = await getOrCreateAssociatedTokenAccount(connectionStore.connection, payer, poolMint, payer.publicKey)
+    const swapTokenA = await getOrCreateAssociatedTokenAccount(connectionStore.connection, payer, tokenA, swapAuthority, true)
+    const swapTokenB = await getOrCreateAssociatedTokenAccount(connectionStore.connection, payer, tokenB, swapAuthority, true)
     // create associated token accounts
     tx = new Transaction()
-    const poolFeeAccount = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, poolMint, publicKey.value)
-    const swapTokenA = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, tokenA, swapAuthority, publicKey.value, true)
-    const swapTokenB = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, tokenB, swapAuthority, publicKey.value, true)
+    // const poolFeeAccount = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, poolMint, publicKey.value)
+    // const swapTokenA = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, tokenA, swapAuthority, publicKey.value, true)
+    // const swapTokenB = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, tokenB, swapAuthority, publicKey.value, true)
+    console.log('[create swap] poolFeeAccount = ', poolFeeAccount)
+    console.log('[create swap] swapTokenA = ', swapTokenA)
+    console.log('[create swap] swapTokenB = ', swapTokenB)
 
-    console.log('[create swap] poolFeeAccount = ', poolFeeAccount.toBase58())
-    console.log('[create swap] swapTokenA = ', swapTokenA.toBase58())
-    console.log('[create swap] swapTokenB = ', swapTokenB.toBase58())
+    // console.log('[create swap] poolFeeAccount = ', poolFeeAccount.toBase58())
+    // console.log('[create swap] swapTokenA = ', swapTokenA.toBase58())
+    // console.log('[create swap] swapTokenB = ', swapTokenB.toBase58())
     if (tx.instructions.length > 0) {
       await monitorTransaction(
         sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
@@ -74,11 +86,14 @@ export function useCreateSwap() {
         },
       )
     }
+    await mintTo(connectionStore.connection, payer, tokenA, swapTokenA.address, payer, 100_000_000_000)
+    await mintTo(connectionStore.connection, payer, tokenB, swapTokenB.address, payer, 100_000_000_000)
 
     const tokenSwapRes = await swapStore.swapClient.createTokenSwap({
+      tokenSwap,
       poolMint,
-      poolFee: poolFeeAccount,
-      destination: poolFeeAccount,
+      poolFee: poolFeeAccount.address,
+      destination: poolFeeAccount.address,
       tokenA,
       tokenB,
       policy: new PublicKey(requiredPolicy.value),

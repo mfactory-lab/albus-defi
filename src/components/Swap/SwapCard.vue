@@ -1,23 +1,18 @@
 <script setup lang="ts">
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useWallet } from 'solana-wallets-vue'
-import { formatBalance, formatPct, onlyNumber } from '@/utils'
+import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
-import type { TokenData } from '@/hooks/swap'
+import type { TokenData } from '@/config'
 
 const { state, swapState, minimumReceived, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit } = useSwap()
 const { handleSearchToken, tokens } = useToken()
 const swapStore = useSwapStore()
-const poolBalanceA = computed(() => swapStore.state.poolBalance.TOKEN_A / LAMPORTS_PER_SOL)
-const poolBalanceB = computed(() => swapStore.state.poolBalance.TOKEN_B / LAMPORTS_PER_SOL)
+const userStore = useUserStore()
+const poolBalanceA = computed(() => swapStore.state.poolBalance[state.from.mint] ? lamportsToSol(swapStore.state.poolBalance[state.from.mint], state.from.decimals) : 0)
+const poolBalanceB = computed(() => swapStore.state.poolBalance[state.to.mint] ? lamportsToSol(swapStore.state.poolBalance[state.to.mint], state.to.decimals) : 0)
 
 const { connected } = useWallet()
-
-const filterTokens = computed(() => [...tokens.value].splice(-2))
-
-function tokenBalance(symbol: string) {
-  return swapState.userBalance[symbol] / LAMPORTS_PER_SOL
-}
 
 const formatPercent = (n: number) => formatPct.format(n)
 
@@ -27,8 +22,8 @@ const rotateBtnStyle = computed(() => `transform: rotate(${changeButtonRotate.va
 
 const symbolFrom = computed(() => state.from.name)
 const symbolTo = computed(() => state.to.name)
-const balanceFrom = computed(() => tokenBalance(symbolFrom.value))
-const balanceTo = computed(() => tokenBalance(symbolTo.value))
+const balanceFrom = computed(() => userStore.tokenBalance(state.from.mint))
+const balanceTo = computed(() => userStore.tokenBalance(state.to.mint))
 const swapFee = computed(() => state.fees.ownerTrade + state.fees.trade)
 
 function handleChangeDirection() {
@@ -54,7 +49,6 @@ const insufficientError = computed(() => {
 
 watch(() => state.from.amount, (a) => {
   state.active = Number(a) >= 1 && !insufficientError.value
-  console.log(swapStore.state)
 })
 </script>
 
@@ -89,7 +83,7 @@ watch(() => state.from.amount, (a) => {
                 MAX
               </q-btn>
               <select-token
-                :options="filterTokens" disable :token="state.from" :swap-token="String(state.to.symbol)"
+                :options="tokens" :token="state.from" :swap-token="String(state.to.symbol)"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -114,7 +108,7 @@ watch(() => state.from.amount, (a) => {
           <q-input v-model="state.to.amount" :disable="!connected" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
             <template #append>
               <select-token
-                :swap-token="String(state.from.symbol)" disable :options="filterTokens" :direction="true" :token="state.to"
+                :swap-token="String(state.from.symbol)" :options="tokens" :direction="true" :token="state.to"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -158,10 +152,10 @@ watch(() => state.from.amount, (a) => {
         DEBUG:
       </div>
       <div>
-        Pool Token_A balance: {{ formatBalance(poolBalanceA) }}
+        Pool {{ state.from.symbol }} balance: {{ formatBalance(poolBalanceA) }}
       </div>
       <div>
-        Pool Token_B balance: {{ formatBalance(poolBalanceB) }}
+        Pool {{ state.to.symbol }} balance: {{ formatBalance(poolBalanceB) }}
       </div>
     </q-card-section>
 
