@@ -5,12 +5,11 @@ import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { TokenData } from '@/config'
 
-const { state, swapState, minimumReceived, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit } = useSwap()
+const { state, minimumReceived, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit } = useSwapStore()
 const { handleSearchToken, tokens } = useToken()
-const swapStore = useSwapStore()
 const userStore = useUserStore()
-const poolBalanceA = computed(() => swapStore.state.poolBalance[state.from.mint] ? lamportsToSol(swapStore.state.poolBalance[state.from.mint], state.from.decimals) : 0)
-const poolBalanceB = computed(() => swapStore.state.poolBalance[state.to.mint] ? lamportsToSol(swapStore.state.poolBalance[state.to.mint], state.to.decimals) : 0)
+const poolBalanceA = computed(() => state.poolBalance[state.from.mint] ? lamportsToSol(state.poolBalance[state.from.mint], state.from.decimals) : 0)
+const poolBalanceB = computed(() => state.poolBalance[state.to.mint] ? lamportsToSol(state.poolBalance[state.to.mint], state.to.decimals) : 0)
 
 const { connected } = useWallet()
 
@@ -159,9 +158,9 @@ watch(() => state.from.amount, (a) => {
       </div>
     </q-card-section>
 
-    <q-inner-loading :showing="swapState?.loading" class="swap-loading" color="grey" />
+    <q-inner-loading :showing="state?.loading" class="swap-loading" color="grey" />
   </q-card>
-  <q-dialog v-model="swapState.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
+  <q-dialog v-model="state.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
     <q-card>
       <q-card-section>
         <q-btn-toggle
