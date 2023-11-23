@@ -351,6 +351,7 @@ export const useSwapStore = defineStore('swap', () => {
 
   return {
     state,
+    tokenSwaps,
     tokenSwap,
     swapClient,
     loadingPoolTokens,

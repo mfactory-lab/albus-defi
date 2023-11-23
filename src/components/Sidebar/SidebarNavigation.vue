@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import swapIcon from '@/assets/img/icons/swap-icon.svg?raw'
 import transferIcon from '@/assets/img/icons/transfer-icon.svg?raw'
+import stakeIcon from '@/assets/img/icons/stake-icon.svg?raw'
 
 const router = useRoute()
 
@@ -12,7 +13,12 @@ const routes = [
   {
     name: 'swap',
     icon: swapIcon,
-  }]
+  },
+  {
+    name: 'pools',
+    icon: stakeIcon,
+  },
+]
 
 const currentRoute = ref('')
 
