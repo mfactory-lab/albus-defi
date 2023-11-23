@@ -12,7 +12,7 @@
   }
 
   @media (max-width: $breakpoint-sm) {
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
 
   @media (max-width: $breakpoint-xs) {
@@ -46,10 +46,6 @@
       margin-right: auto;
     }
 
-    @media (max-width: $breakpoint-sm) {
-      order: 1;
-    }
-
     .cluster-selector,
     .connect-button {
       font-weight: 400;
@@ -59,6 +55,9 @@
       text-transform: uppercase;
       width: 182px;
       height: 32px;
+      @media (max-width: $breakpoint-sm) {
+        margin-bottom: 16px;
+      }
       @media(max-width: $breakpoint-xs) {
         width: 140px;
         font-size: 12px;
