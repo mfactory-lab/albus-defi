@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { evaRefresh } from '@quasar/extras/eva-icons'
 import { useWallet } from 'solana-wallets-vue'
 import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { TokenData } from '@/config'
 
 const swapStore = useSwapStore()
-const { state, minimumReceived, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit } = swapStore
+const { state, minimumReceived, loadingPoolTokens, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
 const { handleSearchToken, tokens } = useToken()
 const userStore = useUserStore()
@@ -142,15 +143,28 @@ watch(() => state.from.amount, (a) => {
         </q-btn>
       </div>
 
-      <div v-if="!tokenSwap" class="swap-rate q-mt-md text-negative">
+      <div v-if="!tokenSwap" class="swap-rate text-center q-mt-md text-negative">
         Pool not found
       </div>
-      <div v-else>
-        <div class="swap-rate q-mt-md">
-          1 {{ state.from.name }} ≈ {{ formatBalance(state.rate) }} {{ state.to.name }}
+      <div v-else class="row q-mt-md">
+        <div>
+          <div class="swap-rate">
+            1 {{ state.from.name }} ≈ {{ formatBalance(state.rate) }} {{ state.to.name }}
+          </div>
+          <div class="swap-rate">
+            Price impact: {{ formatPercent(state.impact) }}
+          </div>
         </div>
-        <div class="swap-rate">
-          Price impact: {{ formatPercent(state.impact) }}
+        <div class="q-ml-auto">
+          <q-btn
+            :loading="loadingPoolTokens"
+            unelevated
+            size="sm"
+            round
+            @click="loadPoolTokenAccounts"
+          >
+            <q-icon :name="evaRefresh" color="primary" />
+          </q-btn>
         </div>
       </div>
 
