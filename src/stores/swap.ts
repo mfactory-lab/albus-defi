@@ -88,9 +88,8 @@ export const useSwapStore = defineStore('swap', () => {
   })
 
   watch(wallet, async (w) => {
-    if (w) {
-      init().then()
-    } else {
+    init().then()
+    if (!w) {
       resetStore()
     }
   }, { immediate: true })
@@ -98,6 +97,7 @@ export const useSwapStore = defineStore('swap', () => {
   async function init() {
     state.loading = true
     try {
+      console.log('swapClient ================: ', swapClient.value)
       // @ts-expect-error data is not null
       tokenSwaps.value = await swapClient.value.loadAll()
       console.log('swaps ================: ', tokenSwaps.value)
@@ -124,12 +124,14 @@ export const useSwapStore = defineStore('swap', () => {
         return (tokenA === state.from.mint && tokenB === state.to.mint) || (tokenA === state.to.mint && tokenB === state.from.mint)
       })
       console.log('Token SWAP: ', tokenSwap.value)
+      userStore.setContractPolicy(tokenSwap.value?.data.policy?.toBase58() ?? '')
       await loadPoolTokenAccounts()
     } else {
       tokenSwap.value = undefined
+      userStore.setContractPolicy('')
       state.poolBalance = {}
     }
-  })
+  }, { immediate: true })
 
   async function loadPoolTokenAccounts() {
     console.log('loadPoolTokenAccounts ========= ')
