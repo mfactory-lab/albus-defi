@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { PublicKey } from '@solana/web3.js'
+import debounce from 'lodash-es/debounce'
 import { getAssociatedTokenAddress, getMint } from '@solana/spl-token'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { TokenSwap } from '@albus-finance/swap-sdk'
@@ -88,9 +89,8 @@ export const useSwapStore = defineStore('swap', () => {
   })
 
   watch(wallet, async (w) => {
-    if (w) {
-      init().then()
-    } else {
+    init().then()
+    if (!w) {
       resetStore()
     }
   }, { immediate: true })
@@ -98,6 +98,7 @@ export const useSwapStore = defineStore('swap', () => {
   async function init() {
     state.loading = true
     try {
+      console.log('swapClient ================: ', swapClient.value)
       // @ts-expect-error data is not null
       tokenSwaps.value = await swapClient.value.loadAll()
       console.log('swaps ================: ', tokenSwaps.value)
@@ -108,6 +109,31 @@ export const useSwapStore = defineStore('swap', () => {
       state.loading = false
     }
   }
+
+  const loadingPoolTokens = ref(false)
+  const loadPoolTokenAccounts = debounce(async () => {
+    console.log('loadPoolTokenAccounts ========= ')
+    if (!tokenSwap.value) {
+      return
+    }
+    loadingPoolTokens.value = true
+    try {
+      const accs = await getTokensByOwner(connectionStore.connection, swapClient.value.swapAuthority(tokenSwap.value.pubkey))
+      for (const acc of accs) {
+        state.poolBalance[`${acc.mint}`] = acc.amount
+      }
+      const poolMint = await getMint(connectionStore.connection, tokenSwap.value.data.poolMint)
+      state.poolTokenSupply = Number(poolMint.supply)
+      console.log('[Pool Balance]', state.poolBalance)
+      console.log('[Pool Balance] poolTokenSupply', state.poolTokenSupply)
+    } catch (e) {
+      console.log('[Pool Balance] error', e)
+    } finally {
+      loadingPoolTokens.value = false
+    }
+  }, 500)
+
+  setInterval(loadPoolTokenAccounts, 60000)
 
   watch([
     tokenSwaps,
@@ -124,27 +150,14 @@ export const useSwapStore = defineStore('swap', () => {
         return (tokenA === state.from.mint && tokenB === state.to.mint) || (tokenA === state.to.mint && tokenB === state.from.mint)
       })
       console.log('Token SWAP: ', tokenSwap.value)
-      await loadPoolTokenAccounts()
+      userStore.setContractPolicy(tokenSwap.value?.data.policy?.toBase58() ?? '')
+      loadPoolTokenAccounts()
     } else {
       tokenSwap.value = undefined
+      userStore.setContractPolicy('')
       state.poolBalance = {}
     }
-  })
-
-  async function loadPoolTokenAccounts() {
-    console.log('loadPoolTokenAccounts ========= ')
-    if (!tokenSwap.value) {
-      return
-    }
-    const accs = await getTokensByOwner(connectionStore.connection, swapClient.value.swapAuthority(tokenSwap.value.pubkey))
-    for (const acc of accs) {
-      state.poolBalance[`${acc.mint}`] = acc.amount
-    }
-    const poolMint = await getMint(connectionStore.connection, tokenSwap.value.data.poolMint)
-    state.poolTokenSupply = Number(poolMint.supply)
-    console.log('[Pool Balance]', state.poolBalance)
-    console.log('[Pool Balance] poolTokenSupply', state.poolTokenSupply)
-  }
+  }, { immediate: true })
 
   function resetStore() {
     state.loading = false
@@ -338,8 +351,10 @@ export const useSwapStore = defineStore('swap', () => {
 
   return {
     state,
+    tokenSwaps,
     tokenSwap,
     swapClient,
+    loadingPoolTokens,
     loadPoolTokenAccounts,
     minimumReceived,
     setMax,

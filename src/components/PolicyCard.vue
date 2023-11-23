@@ -4,6 +4,7 @@ import { showCreateDialog } from '@/utils'
 
 const userStore = useUserStore()
 const serviceData = computed(() => userStore.serviceData)
+const requiredPolicy = computed(() => userStore.requiredPolicy)
 const requiredPolicyData = computed(() => userStore.requiredPolicyData)
 const serviceLoading = computed(() => userStore.serviceLoading)
 
@@ -17,7 +18,10 @@ const { certificateLink } = useCertificateLink()
 <template>
   <q-card flat class="certificate-card">
     <q-inner-loading :showing="serviceLoading || (connected && certificateLoading)" label-class="text-teal" label-style="font-size: 1.1em" />
-    <div class="row">
+    <div v-if="!serviceLoading && !requiredPolicy" class="certificate-card__info__title q-mt-md q-pt-xs text-center">
+      No certificate required
+    </div>
+    <div v-else class="row">
       <div class="certificate-card__info">
         <div class="certificate-card__info__title">
           Required certificate

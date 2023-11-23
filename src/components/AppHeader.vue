@@ -4,8 +4,8 @@
     <!-- <header-notifications /> -->
 
     <div class="app-header__buttons">
-      <cluster-selector class="q-mt-md" />
-      <connect-wallet class="q-mt-md q-ml-sm" />
+      <cluster-selector />
+      <connect-wallet class="q-ml-sm" />
     </div>
 
     <policy-info-dialog />

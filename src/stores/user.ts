@@ -28,10 +28,13 @@ export const useUserStore = defineStore('user', () => {
   const policySpec = ref('')
   // @ts-expect-error not all of clusters in config
   const appConfig = computed(() => APP_CONFIG[connectionStore.cluster])
-  const requiredPolicy = computed<string>(() => {
+
+  watch(route, () => {
     if (route.name === 'index') {
       router.push('/transfer')
     }
+  }, { immediate: true })
+  const pagePolicy = computed<string>(() => {
     if (route.name) {
       const pagePolicy = appConfig.value?.policy[route.name]
       if (pagePolicy) {
@@ -40,6 +43,17 @@ export const useUserStore = defineStore('user', () => {
     }
     return ''
   })
+  const contractPolicy = ref<{ [key: string]: string }>({})
+  const requiredPolicy = computed<string>(() => {
+    if (route.name) {
+      return contractPolicy.value[route.name] ?? pagePolicy.value
+    }
+    return ''
+  })
+  function setContractPolicy(policy: string) {
+    contractPolicy.value[route.name] = policy
+  }
+
   const servicePolicy = ref<PolicyItem[]>()
   const serviceData = ref<ServiceProvider>()
   watch([appConfig, client], async () => {
@@ -145,7 +159,8 @@ export const useUserStore = defineStore('user', () => {
     return null
   })
   const certificateValid = computed(() => {
-    return certificate.value && certificate.value.data?.status === ProofRequestStatus.Verified
+    console.log('========== requiredPolicy.value = ', requiredPolicy.value)
+    return !requiredPolicy.value || (certificate.value && certificate.value.data?.status === ProofRequestStatus.Verified)
   })
 
   watch([client, publicKey], async () => {
@@ -174,6 +189,9 @@ export const useUserStore = defineStore('user', () => {
     certificateValid,
 
     serviceLoading,
+
+    contractPolicy,
+    setContractPolicy,
     requiredPolicy,
     requiredPolicyData,
     policySpec,

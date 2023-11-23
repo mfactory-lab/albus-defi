@@ -1,4 +1,4 @@
-import { type Commitment, clusterApiUrl } from '@solana/web3.js'
+import { type Commitment } from '@solana/web3.js'
 
 // import { clusterApiUrl } from '@solana/web3.js'
 import type { Endpoint } from '@/stores'
@@ -15,30 +15,12 @@ export const ENDPOINTS: Endpoint[] = [
     wsEndpoint: import.meta.env.DEV ? undefined : 'wss://sleek-solemn-rain.solana-mainnet.quiknode.pro/6e7118f20a84b8d10c8f00ec8f16ab6878f00fb8/',
     getToken: getJFRpcToken,
   },
-  {
-    id: 'serum-mainnet',
-    name: 'Serum RPC',
-    cluster: 'mainnet-beta',
-    url: 'https://solana-api.projectserum.com/',
-  },
-  {
-    id: 'rpcpool-mainnet',
-    name: 'RPCPool RPC',
-    cluster: 'mainnet-beta',
-    url: 'https://mainnet.rpcpool.com/',
-  },
-  /* {
-    id: 'mainnet',
-    name: 'Solana RPC',
-    cluster: 'mainnet-beta',
-    url: clusterApiUrl('mainnet-beta'),
-  }, */
-  {
-    id: 'testnet',
-    name: 'TestNet',
-    cluster: 'testnet',
-    url: clusterApiUrl('testnet'),
-  },
+  // {
+  //   id: 'testnet',
+  //   name: 'TestNet',
+  //   cluster: 'testnet',
+  //   url: clusterApiUrl('testnet'),
+  // },
   {
     id: 'devnet',
     name: 'DevNet',
