@@ -6,7 +6,7 @@ import type { TokenSwap } from '@albus-finance/swap-sdk'
 import { AlbusSwapClient } from '@albus-finance/swap-sdk'
 import { AnchorProvider } from '@coral-xyz/anchor'
 import { divideBnToNumber, getTokensByOwner, lamportsToSol, showCreateDialog, solToLamports } from '@/utils'
-import { POOL_ADDRESS, TOKEN_A, TOKEN_B } from '@/config'
+import { TOKEN_A, TOKEN_B } from '@/config'
 import type { TokenData } from '@/config'
 
 interface PoolFees {
@@ -36,7 +36,7 @@ interface SwapState {
 
 interface SwapPool {
   pubkey: PublicKey
-  data: TokenSwap | null
+  data: TokenSwap
 }
 
 enum SwapDirection {
@@ -62,7 +62,7 @@ export const useSwapStore = defineStore('swap', () => {
   })
 
   const tokenSwaps = ref<SwapPool[]>([])
-  const tokenSwap = ref<TokenSwap | undefined>()
+  const tokenSwap = ref<SwapPool | undefined>()
 
   const state = reactive<SwapState>({
     loading: false,
@@ -98,6 +98,7 @@ export const useSwapStore = defineStore('swap', () => {
   async function init() {
     state.loading = true
     try {
+      // @ts-expect-error data is not null
       tokenSwaps.value = await swapClient.value.loadAll()
       console.log('swaps ================: ', tokenSwaps.value)
     } catch (e) {
@@ -108,10 +109,26 @@ export const useSwapStore = defineStore('swap', () => {
     }
   }
 
-  watch([tokenSwaps], async () => {
-    tokenSwap.value = await swapClient.value.load(POOL_ADDRESS)
-    console.log('Token SWAP: ', tokenSwap.value)
-    await loadPoolTokenAccounts()
+  watch([
+    tokenSwaps,
+    () => state.from.mint,
+    () => state.to.mint,
+  ], async () => {
+    console.log('tokenSwaps ================: ', tokenSwaps.value)
+    console.log('from.mint ================: ', state.from.mint)
+    console.log('to.mint ================: ', state.to.mint)
+    if (tokenSwaps.value && state.from.mint && state.to.mint && state.from.mint !== state.to.mint) {
+      tokenSwap.value = tokenSwaps.value.find((p) => {
+        const tokenA = p.data?.tokenAMint.toBase58()
+        const tokenB = p.data?.tokenBMint.toBase58()
+        return (tokenA === state.from.mint && tokenB === state.to.mint) || (tokenA === state.to.mint && tokenB === state.from.mint)
+      })
+      console.log('Token SWAP: ', tokenSwap.value)
+      await loadPoolTokenAccounts()
+    } else {
+      tokenSwap.value = undefined
+      state.poolBalance = {}
+    }
   })
 
   async function loadPoolTokenAccounts() {
@@ -119,11 +136,11 @@ export const useSwapStore = defineStore('swap', () => {
     if (!tokenSwap.value) {
       return
     }
-    const accs = await getTokensByOwner(connectionStore.connection, swapClient.value.swapAuthority(POOL_ADDRESS))
+    const accs = await getTokensByOwner(connectionStore.connection, swapClient.value.swapAuthority(tokenSwap.value.pubkey))
     for (const acc of accs) {
       state.poolBalance[`${acc.mint}`] = acc.amount
     }
-    const poolMint = await getMint(connectionStore.connection, tokenSwap.value.poolMint)
+    const poolMint = await getMint(connectionStore.connection, tokenSwap.value.data.poolMint)
     state.poolTokenSupply = Number(poolMint.supply)
     console.log('[Pool Balance]', state.poolBalance)
     console.log('[Pool Balance] poolTokenSupply', state.poolTokenSupply)
@@ -205,10 +222,10 @@ export const useSwapStore = defineStore('swap', () => {
     try {
       state.swapping = true
 
-      const userSourceMint = state.direction === SwapDirection.ASC ? tokenSwap.value.tokenAMint : tokenSwap.value.tokenBMint
-      const userDestinationMint = state.direction === SwapDirection.ASC ? tokenSwap.value.tokenBMint : tokenSwap.value.tokenAMint
-      const poolSourceAddress = state.direction === SwapDirection.ASC ? tokenSwap.value.tokenA : tokenSwap.value.tokenB
-      const poolDestinationAddress = state.direction === SwapDirection.ASC ? tokenSwap.value.tokenB : tokenSwap.value.tokenA
+      const userSourceMint = state.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenAMint : tokenSwap.value.data.tokenBMint
+      const userDestinationMint = state.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenBMint : tokenSwap.value.data.tokenAMint
+      const poolSourceAddress = state.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenA : tokenSwap.value.data.tokenB
+      const poolDestinationAddress = state.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenB : tokenSwap.value.data.tokenA
 
       const userSource = await getAssociatedTokenAddress(userSourceMint, wallet.value!.publicKey)
       const userDestination = await getAssociatedTokenAddress(userDestinationMint, wallet.value!.publicKey)
@@ -218,29 +235,29 @@ export const useSwapStore = defineStore('swap', () => {
       console.log('slippage = ', state.slippage)
       console.log('slippage 2 = ', toAmount * state.slippage)
 
-      const authority = swapClient.value.swapAuthority(POOL_ADDRESS)
+      const authority = swapClient.value.swapAuthority(tokenSwap.value.pubkey)
 
       console.log('proofRequest = ', userStore.certificate?.pubkey.toBase58())
       console.log('swapAuthority = ', authority)
-      console.log('tokenSwap = ', POOL_ADDRESS.toBase58())
+      console.log('tokenSwap = ', tokenSwap.value.pubkey.toBase58())
       console.log('userSource = ', userSource.toBase58())
       console.log('userDestination = ', userDestination.toBase58())
       console.log('poolSource = ', poolSourceAddress.toBase58())
       console.log('poolDestination = ', poolDestinationAddress.toBase58())
-      console.log('poolMint = ', tokenSwap.value.poolMint.toBase58())
-      console.log('poolFee = ', tokenSwap.value.poolFeeAccount.toBase58())
+      console.log('poolMint = ', tokenSwap.value.data.poolMint.toBase58())
+      console.log('poolFee = ', tokenSwap.value.data.poolFeeAccount.toBase58())
       console.log('amountIn = ', sourceTokenAmount)
       console.log('minimumAmountOut = ', minimumReceived.value)
       await swapClient.value.swap({
         proofRequest: userStore.certificate?.pubkey,
         authority,
-        tokenSwap: POOL_ADDRESS,
+        tokenSwap: tokenSwap.value.pubkey,
         userSource,
         userDestination,
         poolSource: poolSourceAddress,
         poolDestination: poolDestinationAddress,
-        poolMint: tokenSwap.value.poolMint,
-        poolFee: tokenSwap.value.poolFeeAccount,
+        poolMint: tokenSwap.value.data.poolMint,
+        poolFee: tokenSwap.value.data.poolFeeAccount,
         amountIn: sourceTokenAmount,
         minimumAmountOut: minimumReceived.value,
         // hostFeeAccount: undefined,
@@ -299,23 +316,23 @@ export const useSwapStore = defineStore('swap', () => {
     }
     state.fees.host = divideBnToNumber(
       // @ts-expect-error is BN
-      ts.fees.hostFeeNumerator,
-      ts.fees.hostFeeDenominator,
+      ts.data.fees.hostFeeNumerator,
+      ts.data.fees.hostFeeDenominator,
     )
     state.fees.ownerTrade = divideBnToNumber(
       // @ts-expect-error is BN
-      ts.fees.ownerTradeFeeNumerator,
-      ts.fees.ownerTradeFeeDenominator,
+      ts.data.fees.ownerTradeFeeNumerator,
+      ts.data.fees.ownerTradeFeeDenominator,
     )
     state.fees.ownerWithdraw = divideBnToNumber(
       // @ts-expect-error i BN
-      ts.fees.ownerWithdrawFeeNumerator,
-      ts.fees.ownerWithdrawFeeDenominator,
+      ts.data.fees.ownerWithdrawFeeNumerator,
+      ts.data.fees.ownerWithdrawFeeDenominator,
     )
     state.fees.trade = divideBnToNumber(
       // @ts-expect-error is BN
-      ts.fees.tradeFeeNumerator,
-      ts.fees.tradeFeeDenominator,
+      ts.data.fees.tradeFeeNumerator,
+      ts.data.fees.tradeFeeDenominator,
     )
   })
 
