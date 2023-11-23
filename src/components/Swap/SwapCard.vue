@@ -5,7 +5,9 @@ import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { TokenData } from '@/config'
 
-const { state, minimumReceived, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit } = useSwapStore()
+const swapStore = useSwapStore()
+const { state, minimumReceived, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit } = swapStore
+const tokenSwap = computed(() => swapStore.tokenSwap)
 const { handleSearchToken, tokens } = useToken()
 const userStore = useUserStore()
 const poolBalanceA = computed(() => state.poolBalance[state.from.mint] ? lamportsToSol(state.poolBalance[state.from.mint], state.from.decimals) : 0)
@@ -47,7 +49,7 @@ const insufficientError = computed(() => {
 })
 
 watch(() => state.from.amount, (a) => {
-  state.active = Number(a) >= 1 && !insufficientError.value
+  state.active = !insufficientError.value
 })
 </script>
 
@@ -135,16 +137,21 @@ watch(() => state.from.amount, (a) => {
       </div>
 
       <div class="swap-submit">
-        <q-btn :loading="state.swapping" rounded :ripple="false" @click="swapSubmit">
+        <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap" rounded :ripple="false" @click="swapSubmit">
           Swap {{ state.from.name }} / {{ state.to.name }}
         </q-btn>
       </div>
 
-      <div class="swap-rate q-mt-md">
-        1 {{ state.from.name }} ≈ {{ formatBalance(state.rate) }} {{ state.to.name }}
+      <div v-if="!tokenSwap" class="swap-rate q-mt-md text-negative">
+        Pool not found
       </div>
-      <div class="swap-rate">
-        Price impact: {{ formatPercent(state.impact) }}
+      <div v-else>
+        <div class="swap-rate q-mt-md">
+          1 {{ state.from.name }} ≈ {{ formatBalance(state.rate) }} {{ state.to.name }}
+        </div>
+        <div class="swap-rate">
+          Price impact: {{ formatPercent(state.impact) }}
+        </div>
       </div>
 
       <div class="q-mt-lg">
