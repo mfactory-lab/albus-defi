@@ -32,6 +32,7 @@ declare module 'vue' {
     PoolsListItem: typeof import('./../src/components/pools/PoolsListItem.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SelectPool: typeof import('./../src/components/Swap/SelectPool.vue')['default']
     SelectToken: typeof import('./../src/components/SelectToken.vue')['default']
     Sidebar: typeof import('./../src/components/Sidebar/Sidebar.vue')['default']
     SidebarCopyrights: typeof import('./../src/components/Sidebar/SidebarCopyrights.vue')['default']

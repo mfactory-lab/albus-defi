@@ -17,6 +17,7 @@ defineProps({
       <div>address: {{ pubkey }}</div>
       <div>mint A: {{ data.tokenAMint.toBase58() }}</div>
       <div>mint B: {{ data.tokenBMint.toBase58() }}</div>
+      <div>policy: {{ data.policy.toBase58() }}</div>
     </q-card-section>
   </q-card>
 </template>

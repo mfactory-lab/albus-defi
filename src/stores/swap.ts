@@ -35,7 +35,7 @@ interface SwapState {
   direction: SwapDirection
 }
 
-interface SwapPool {
+export interface SwapPool {
   pubkey: PublicKey
   data: TokenSwap
 }
@@ -62,6 +62,7 @@ export const useSwapStore = defineStore('swap', () => {
     )
   })
 
+  const tokenSwapsAll = ref<SwapPool[]>([])
   const tokenSwaps = ref<SwapPool[]>([])
   const tokenSwap = ref<SwapPool | undefined>()
 
@@ -100,11 +101,11 @@ export const useSwapStore = defineStore('swap', () => {
     try {
       console.log('swapClient ================: ', swapClient.value)
       // @ts-expect-error data is not null
-      tokenSwaps.value = await swapClient.value.loadAll()
-      console.log('swaps ================: ', tokenSwaps.value)
+      tokenSwapsAll.value = await swapClient.value.loadAll()
+      console.log('swaps ================: ', tokenSwapsAll.value)
     } catch (e) {
       console.log(e)
-      tokenSwaps.value = []
+      tokenSwapsAll.value = []
     } finally {
       state.loading = false
     }
@@ -135,27 +136,43 @@ export const useSwapStore = defineStore('swap', () => {
 
   setInterval(loadPoolTokenAccounts, 60000)
 
+  function setTokenSwap(swap: SwapPool) {
+    tokenSwap.value = swap
+    console.log('setTokenSwap ========================== ', tokenSwap.value)
+  }
   watch([
-    tokenSwaps,
+    tokenSwapsAll,
     () => state.from.mint,
     () => state.to.mint,
   ], async () => {
-    console.log('tokenSwaps ================: ', tokenSwaps.value)
+    console.log('tokenSwapsAll ================: ', tokenSwapsAll.value)
     console.log('from.mint ================: ', state.from.mint)
     console.log('to.mint ================: ', state.to.mint)
-    if (tokenSwaps.value && state.from.mint && state.to.mint && state.from.mint !== state.to.mint) {
-      tokenSwap.value = tokenSwaps.value.find((p) => {
+    if (tokenSwapsAll.value && state.from.mint && state.to.mint && state.from.mint !== state.to.mint) {
+      tokenSwaps.value = tokenSwapsAll.value.filter((p) => {
         const tokenA = p.data?.tokenAMint.toBase58()
         const tokenB = p.data?.tokenBMint.toBase58()
         return (tokenA === state.from.mint && tokenB === state.to.mint) || (tokenA === state.to.mint && tokenB === state.from.mint)
       })
-      console.log('Token SWAP: ', tokenSwap.value)
-      userStore.setContractPolicy(tokenSwap.value?.data.policy?.toBase58() ?? '')
-      loadPoolTokenAccounts()
+      if (tokenSwaps.value.length) {
+        tokenSwap.value = tokenSwaps.value[0]
+      } else {
+        tokenSwap.value = undefined
+      }
     } else {
+      tokenSwaps.value = []
       tokenSwap.value = undefined
       userStore.setContractPolicy('')
       state.poolBalance = {}
+    }
+  }, { immediate: true })
+  watch([
+    tokenSwap,
+  ], async () => {
+    console.log('Token SWAP: ', tokenSwap.value)
+    if (tokenSwap.value) {
+      userStore.setContractPolicy(tokenSwap.value?.data.policy?.toBase58() ?? '')
+      loadPoolTokenAccounts()
     }
   }, { immediate: true })
 
@@ -352,12 +369,14 @@ export const useSwapStore = defineStore('swap', () => {
 
   return {
     state,
+    tokenSwapsAll,
     tokenSwaps,
     tokenSwap,
     swapClient,
     loadingPoolTokens,
     loadPoolTokenAccounts,
     minimumReceived,
+    setTokenSwap,
     setMax,
     closeSlippage,
     openSlippage,

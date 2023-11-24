@@ -170,6 +170,8 @@ watch(() => state.from.amount, (a) => {
 
       <policy-card class="q-mt-md q-mx-auto" />
 
+      <select-pool class="q-mt-md" />
+
       <div class="q-mt-md">
         Pool {{ state.from.symbol }} balance: {{ formatBalance(poolBalanceA) }}
       </div>
