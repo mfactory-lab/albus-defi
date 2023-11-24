@@ -1,5 +1,10 @@
 .token-select {
-    width: 104px;
+    width: 135px;
+
+    &--inactive {
+        opacity: 0.6;
+    }
+
     .q-field__control:before {
         border: 1px solid $swap-info-border-color;
     }

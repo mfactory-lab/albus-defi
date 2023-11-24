@@ -163,6 +163,7 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
   &__balance {
     text-align: right;
     font-size: 11px;
+    line-height: 19px;
     text-transform: uppercase;
     color: $secondary;
     flex-wrap: nowrap;
@@ -284,8 +285,6 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
 
 .swap-card {
   .token-select {
-    width: auto;
-
     .q-field__native {
       width: fit-content;
     }
