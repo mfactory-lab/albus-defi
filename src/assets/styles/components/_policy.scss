@@ -51,6 +51,9 @@
     }
     &__date {
       font-size: 10px;
+      .policy-card & {
+        font-size: 14px;
+      }
       &--negative {
         color: $negative-light;
       }

@@ -21,6 +21,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  destinationUnavailable: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emits = defineEmits(['handleSearchToken', 'setToken'])
@@ -50,7 +54,7 @@ watch(model, (m) => {
 </script>
 
 <template>
-  <div class="token-select">
+  <div class="token-select" :class="{ 'token-select--inactive': destinationUnavailable }">
     <q-select
       v-model="model" option-disable="inactive" popup-content-class="transition-duration" outlined
       :options="checkedTokens" dense :options-dense="false" :disable="disable"

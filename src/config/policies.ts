@@ -1,7 +1,3 @@
-import { PublicKey } from '@solana/web3.js'
-
-export const POOL_ADDRESS = new PublicKey('2rGkUVnvaaorW3B3MTg2j4mvvg8rb2MDZXjA74WEXkfR')
-
 export const APP_CONFIG = {
   'mainnet-beta': {
     serviceCode: '',

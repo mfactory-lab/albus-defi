@@ -347,6 +347,7 @@ export const useSwapStore = defineStore('swap', () => {
       ts.data.fees.tradeFeeNumerator,
       ts.data.fees.tradeFeeDenominator,
     )
+    console.log('fees ==== ', state.fees)
   })
 
   return {

@@ -110,7 +110,7 @@ watch(() => state.from.amount, (a) => {
           <q-input v-model="state.to.amount" :disable="!connected" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
             <template #append>
               <select-token
-                :swap-token="String(state.from.symbol)" :options="tokens" :direction="true" :token="state.to"
+                :swap-token="String(state.from.symbol)" :options="tokens" :direction="true" :token="state.to" :destination-unavailable="!tokenSwap"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -168,10 +168,9 @@ watch(() => state.from.amount, (a) => {
         </div>
       </div>
 
-      <div class="q-mt-lg">
-        DEBUG:
-      </div>
-      <div>
+      <policy-card class="q-mt-md q-mx-auto" />
+
+      <div class="q-mt-md">
         Pool {{ state.from.symbol }} balance: {{ formatBalance(poolBalanceA) }}
       </div>
       <div>

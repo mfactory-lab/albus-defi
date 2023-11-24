@@ -56,7 +56,7 @@ function formatRule(key: string, label: string, value: number[]) {
         <q-inner-loading :showing="serviceLoading" label-class="text-teal" label-style="font-size: 1.1em" />
         <div v-if="connected" class="q-pl-md q-pt-md">
           <q-inner-loading :showing="certificateLoading" label-class="text-teal" label-style="font-size: 1.1em" />
-          <div class="policy-card__title q-mb-sm">
+          <div class="policy-card__title q-mb-xs">
             Your certificate
           </div>
 
@@ -77,7 +77,7 @@ function formatRule(key: string, label: string, value: number[]) {
             </div>
           </div>
 
-          <q-card v-else flat class="certificate-card row items-center">
+          <q-card v-else flat class="certificate-card row items-center q-mt-sm">
             <a :href="`${ALBUS_APP_URL}/holder`" class="certificate" target="_blank">
               <i-app-certificate />
             </a>
