@@ -1,5 +1,6 @@
 <script setup lang="ts">
-// import { createTokenSwap } from '@/utils/create-token-swap'
+// import { createSwap } from '@/utils/create-token-swap'
+
 const { state, createTokenSwap } = useCreateSwap()
 </script>
 
