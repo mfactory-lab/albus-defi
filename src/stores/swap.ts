@@ -28,6 +28,7 @@ interface SwapState {
   to: TokenData
   slippage: number
   rate: number
+  minimumReceived: number
   impact: number
   swapping: boolean
   active: boolean
@@ -79,6 +80,7 @@ export const useSwapStore = defineStore('swap', () => {
     active: false,
     slippage: 0.01,
     rate: 0,
+    minimumReceived: 0,
     impact: 0,
     fees: {
       host: 0,
@@ -155,6 +157,15 @@ export const useSwapStore = defineStore('swap', () => {
         return (tokenA === state.from.mint && tokenB === state.to.mint) || (tokenA === state.to.mint && tokenB === state.from.mint)
       })
       if (tokenSwaps.value.length) {
+        if (tokenSwaps.value.length > 1) {
+          /**
+           * find if there is a pool for which the user already has a certificate
+           */
+          const userHasPolicy = tokenSwaps.value.find(pool => userStore.state.certificates?.find(cert => cert.data?.policy.toBase58() === pool.data.policy?.toBase58()))
+          if (userHasPolicy) {
+            tokenSwap.value = userHasPolicy
+          }
+        }
         tokenSwap.value = tokenSwaps.value[0]
       } else {
         tokenSwap.value = undefined
@@ -170,8 +181,8 @@ export const useSwapStore = defineStore('swap', () => {
     tokenSwap,
   ], async () => {
     console.log('Token SWAP: ', tokenSwap.value)
+    userStore.setContractPolicy(tokenSwap.value?.data.policy?.toBase58() ?? '')
     if (tokenSwap.value) {
-      userStore.setContractPolicy(tokenSwap.value?.data.policy?.toBase58() ?? '')
       loadPoolTokenAccounts()
     }
   }, { immediate: true })
@@ -200,6 +211,7 @@ export const useSwapStore = defineStore('swap', () => {
       state.to.amount = 0
       state.rate = poolTo / poolFrom
       state.impact = 0
+      state.minimumReceived = 0
       return
     }
 
@@ -208,6 +220,8 @@ export const useSwapStore = defineStore('swap', () => {
     state.rate = fromAmount ? toAmount / fromAmount : poolTo / poolFrom
     state.to.amount = lamportsToSol(toAmount ? toAmount * (1 - state.fees.ownerTrade - state.fees.trade) : 0, state.to.decimals)
     state.impact = fromAmount ? 1 - (toAmount / fromAmount) / (poolTo / poolFrom) : 0
+    const toAmountNumber = Number(solToLamports(state.to.amount ?? 0, state.to.decimals))
+    state.minimumReceived = Math.floor(toAmountNumber - (toAmountNumber * state.slippage))
   }
 
   watch(
@@ -218,11 +232,6 @@ export const useSwapStore = defineStore('swap', () => {
     calcRate,
     { immediate: true },
   )
-
-  const minimumReceived = computed(() => {
-    const toAmount = Number(solToLamports(state.to.amount ?? 0, state.to.decimals))
-    return Math.floor(toAmount - (toAmount * state.slippage))
-  })
 
   async function swapSubmit() {
     if (!userStore.certificateValid) {
@@ -277,7 +286,7 @@ export const useSwapStore = defineStore('swap', () => {
       console.log('poolMint = ', tokenSwap.value.data.poolMint.toBase58())
       console.log('poolFee = ', tokenSwap.value.data.poolFeeAccount.toBase58())
       console.log('amountIn = ', sourceTokenAmount)
-      console.log('minimumAmountOut = ', minimumReceived.value)
+      console.log('minimumAmountOut = ', state.minimumReceived)
       await swapClient.value.swap({
         proofRequest: userStore.certificate?.pubkey,
         authority,
@@ -289,7 +298,7 @@ export const useSwapStore = defineStore('swap', () => {
         poolMint: tokenSwap.value.data.poolMint,
         poolFee: tokenSwap.value.data.poolFeeAccount,
         amountIn: sourceTokenAmount,
-        minimumAmountOut: minimumReceived.value,
+        minimumAmountOut: state.minimumReceived,
         // hostFeeAccount: undefined,
         receiver: publicKey.value,
         destinationTokenMint: userDestinationMint,
@@ -340,30 +349,40 @@ export const useSwapStore = defineStore('swap', () => {
     }
   })
 
+  function getPoolFee(tokenSwap: TokenSwap) {
+    return {
+      host: divideBnToNumber(
+        // @ts-expect-error is BN
+        tokenSwap.fees.hostFeeNumerator,
+        tokenSwap.fees.hostFeeDenominator,
+      ),
+      trade: divideBnToNumber(
+        // @ts-expect-error is BN
+        tokenSwap.fees.tradeFeeNumerator,
+        tokenSwap.fees.tradeFeeDenominator,
+      ),
+      ownerTrade: divideBnToNumber(
+        // @ts-expect-error i BN
+        tokenSwap.fees.ownerTradeFeeNumerator,
+        tokenSwap.fees.ownerTradeFeeDenominator,
+      ),
+      ownerWithdraw: divideBnToNumber(
+        // @ts-expect-error is BN
+        tokenSwap.fees.ownerWithdrawFeeNumerator,
+        tokenSwap.fees.ownerWithdrawFeeDenominator,
+      ),
+    }
+  }
+
   watch(tokenSwap, (ts) => {
     if (!ts) {
       return
     }
-    state.fees.host = divideBnToNumber(
-      // @ts-expect-error is BN
-      ts.data.fees.hostFeeNumerator,
-      ts.data.fees.hostFeeDenominator,
-    )
-    state.fees.ownerTrade = divideBnToNumber(
-      // @ts-expect-error is BN
-      ts.data.fees.ownerTradeFeeNumerator,
-      ts.data.fees.ownerTradeFeeDenominator,
-    )
-    state.fees.ownerWithdraw = divideBnToNumber(
-      // @ts-expect-error i BN
-      ts.data.fees.ownerWithdrawFeeNumerator,
-      ts.data.fees.ownerWithdrawFeeDenominator,
-    )
-    state.fees.trade = divideBnToNumber(
-      // @ts-expect-error is BN
-      ts.data.fees.tradeFeeNumerator,
-      ts.data.fees.tradeFeeDenominator,
-    )
+    const fees = getPoolFee(ts.data)
+    state.fees.host = fees.host
+    state.fees.trade = fees.trade
+    state.fees.ownerTrade = fees.ownerTrade
+    state.fees.ownerWithdraw = fees.ownerWithdraw
     console.log('fees ==== ', state.fees)
   })
 
@@ -375,12 +394,12 @@ export const useSwapStore = defineStore('swap', () => {
     swapClient,
     loadingPoolTokens,
     loadPoolTokenAccounts,
-    minimumReceived,
     setTokenSwap,
     setMax,
     closeSlippage,
     openSlippage,
     changeDirection,
     swapSubmit,
+    getPoolFee,
   }
 })

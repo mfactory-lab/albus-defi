@@ -8,6 +8,7 @@
   color: $primary;
   .body--dark & {
     color: $white;
+    background-color: $primary !important;
   }
   &__status {
     text-decoration: none;
@@ -155,6 +156,10 @@
   cursor: pointer;
   margin-left: 8px;
   margin-top: -1px;
+
+  .body--dark & {
+    background-color: $secondary;
+  }
 }
 
 .create-certificate-btn {
@@ -172,7 +177,7 @@
   .body--dark & {
     color: $white;
     background-color: $primary;
-    border: 1px solid $primary;
+    border: 1px solid $secondary;
   }
 
   .q-icon {

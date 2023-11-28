@@ -1,18 +1,22 @@
 <script lang="ts" setup>
 import { useWallet } from 'solana-wallets-vue'
-import { showCreateDialog } from '@/utils'
+import type { Policy } from '@albus-finance/sdk'
+
+const props = defineProps({
+  requiredPolicy: String,
+  requiredPolicyData: Object as PropType<Policy | null>,
+})
 
 const userStore = useUserStore()
 const serviceData = computed(() => userStore.serviceData)
-const requiredPolicy = computed(() => userStore.requiredPolicy)
-const requiredPolicyData = computed(() => userStore.requiredPolicyData)
 const serviceLoading = computed(() => userStore.serviceLoading)
-
-const { connected } = useWallet()
-const certificateValid = computed(() => userStore.certificateValid)
 const certificateLoading = computed(() => userStore.state?.certificateLoading)
 
-const { certificateLink } = useCertificateLink()
+const dialog = ref(false)
+
+const { connected } = useWallet()
+
+const { certificate, certificateLink, certificateValid } = useCertificate(props.requiredPolicy)
 </script>
 
 <template>
@@ -35,8 +39,8 @@ const { certificateLink } = useCertificateLink()
           <span>{{ serviceData?.name }} {{ serviceData?.name && requiredPolicyData?.name && ',' }} {{ requiredPolicyData?.name }}</span>
         </div>
         <div v-if="connected && !serviceLoading && !certificateLoading" class="row">
-          <certificate-status />
-          <div class="policy-info" @click="showCreateDialog">
+          <certificate-status :certificate="certificate" :certificate-valid="!!certificateValid" />
+          <div class="policy-info" @click="dialog = true">
             i
           </div>
         </div>
@@ -50,5 +54,13 @@ const { certificateLink } = useCertificateLink()
         </a>
       </div>
     </div>
+    <q-dialog v-model="dialog" transition-duration="100" transition-show="fade" transition-hide="fade">
+      <policy-info-view
+        :required-policy-data="requiredPolicyData"
+        :certificate="certificate"
+        :certificate-valid="!!certificateValid"
+        :certificate-loading="certificateLoading"
+      />
+    </q-dialog>
   </q-card>
 </template>

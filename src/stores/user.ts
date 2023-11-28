@@ -52,9 +52,10 @@ export const useUserStore = defineStore('user', () => {
   })
   function setContractPolicy(policy: string) {
     contractPolicy.value[route.name] = policy
+    console.log('[swap] policies = ', contractPolicy.value)
   }
 
-  const servicePolicy = ref<PolicyItem[]>()
+  const servicePolicy = ref<PolicyItem[]>([])
   const serviceData = ref<ServiceProvider>()
   watch([appConfig, client], async () => {
     console.log('[debug] service Code === ', appConfig.value.serviceCode)
@@ -64,7 +65,7 @@ export const useUserStore = defineStore('user', () => {
       serviceData.value = (await client.value?.service.find({ code: appConfig.value.serviceCode }))?.[0]?.data ?? undefined
       serviceLoading.value = false
     } else {
-      servicePolicy.value = undefined
+      servicePolicy.value = []
       serviceData.value = undefined
     }
     console.log('[debug] serviceData  === ', serviceData.value)
@@ -196,6 +197,7 @@ export const useUserStore = defineStore('user', () => {
     requiredPolicyData,
     policySpec,
     serviceData,
+    servicePolicy,
 
     tokenBalance,
     getUserTokens,
@@ -203,7 +205,7 @@ export const useUserStore = defineStore('user', () => {
   }
 })
 
-interface Certificate {
+export interface Certificate {
   pubkey: PublicKey
   data: ProofRequest | null
 }

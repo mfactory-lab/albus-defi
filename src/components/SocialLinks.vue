@@ -8,7 +8,7 @@ import { DISCORD_URL, TELEGRAM_URL, TWITTER_URL } from '@/config/common'
       <i-app-telegram />
     </a>
     <a :href="TWITTER_URL" target="_blank" :title="TWITTER_URL">
-      <i-app-twitter />
+      <i-app-twitter-x />
     </a>
     <a :href="DISCORD_URL" target="_blank" :title="DISCORD_URL">
       <i-app-discord />

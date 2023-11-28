@@ -35,6 +35,10 @@ main {
     }
 }
 
+.monoscaped {
+    font-family: Courier;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -43,3 +47,8 @@ main {
 .transition-duration {
     transition-duration: .1s !important;
 }
+
+.q-dialog__inner--minimized {
+    padding: 20px;
+}
+
