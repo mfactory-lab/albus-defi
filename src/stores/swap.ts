@@ -28,6 +28,7 @@ interface SwapState {
   to: TokenData
   slippage: number
   rate: number
+  minimumReceived: number
   impact: number
   swapping: boolean
   active: boolean
@@ -79,6 +80,7 @@ export const useSwapStore = defineStore('swap', () => {
     active: false,
     slippage: 0.01,
     rate: 0,
+    minimumReceived: 0,
     impact: 0,
     fees: {
       host: 0,
@@ -200,6 +202,7 @@ export const useSwapStore = defineStore('swap', () => {
       state.to.amount = 0
       state.rate = poolTo / poolFrom
       state.impact = 0
+      state.minimumReceived = 0
       return
     }
 
@@ -208,6 +211,8 @@ export const useSwapStore = defineStore('swap', () => {
     state.rate = fromAmount ? toAmount / fromAmount : poolTo / poolFrom
     state.to.amount = lamportsToSol(toAmount ? toAmount * (1 - state.fees.ownerTrade - state.fees.trade) : 0, state.to.decimals)
     state.impact = fromAmount ? 1 - (toAmount / fromAmount) / (poolTo / poolFrom) : 0
+    const toAmountNumber = Number(solToLamports(state.to.amount ?? 0, state.to.decimals))
+    state.minimumReceived = Math.floor(toAmountNumber - (toAmountNumber * state.slippage))
   }
 
   watch(
@@ -218,11 +223,6 @@ export const useSwapStore = defineStore('swap', () => {
     calcRate,
     { immediate: true },
   )
-
-  const minimumReceived = computed(() => {
-    const toAmount = Number(solToLamports(state.to.amount ?? 0, state.to.decimals))
-    return Math.floor(toAmount - (toAmount * state.slippage))
-  })
 
   async function swapSubmit() {
     if (!userStore.certificateValid) {
@@ -277,7 +277,7 @@ export const useSwapStore = defineStore('swap', () => {
       console.log('poolMint = ', tokenSwap.value.data.poolMint.toBase58())
       console.log('poolFee = ', tokenSwap.value.data.poolFeeAccount.toBase58())
       console.log('amountIn = ', sourceTokenAmount)
-      console.log('minimumAmountOut = ', minimumReceived.value)
+      console.log('minimumAmountOut = ', state.minimumReceived)
       await swapClient.value.swap({
         proofRequest: userStore.certificate?.pubkey,
         authority,
@@ -289,7 +289,7 @@ export const useSwapStore = defineStore('swap', () => {
         poolMint: tokenSwap.value.data.poolMint,
         poolFee: tokenSwap.value.data.poolFeeAccount,
         amountIn: sourceTokenAmount,
-        minimumAmountOut: minimumReceived.value,
+        minimumAmountOut: state.minimumReceived,
         // hostFeeAccount: undefined,
         receiver: publicKey.value,
         destinationTokenMint: userDestinationMint,
@@ -375,7 +375,6 @@ export const useSwapStore = defineStore('swap', () => {
     swapClient,
     loadingPoolTokens,
     loadPoolTokenAccounts,
-    minimumReceived,
     setTokenSwap,
     setMax,
     closeSlippage,

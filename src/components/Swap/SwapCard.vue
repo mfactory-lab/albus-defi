@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { evaRefresh } from '@quasar/extras/eva-icons'
 import { useWallet } from 'solana-wallets-vue'
 import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
@@ -7,7 +6,7 @@ import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import type { TokenData } from '@/config'
 
 const swapStore = useSwapStore()
-const { state, minimumReceived, loadingPoolTokens, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit, loadPoolTokenAccounts } = swapStore
+const { state, loadingPoolTokens, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
 const { handleSearchToken, tokens } = useToken()
 const userStore = useUserStore()
@@ -22,8 +21,6 @@ const changeButtonRotate = ref(0)
 
 const rotateBtnStyle = computed(() => `transform: rotate(${changeButtonRotate.value * 180}deg)`)
 
-const symbolFrom = computed(() => state.from.name)
-const symbolTo = computed(() => state.to.name)
 const balanceFrom = computed(() => userStore.tokenBalance(state.from.mint))
 const balanceTo = computed(() => userStore.tokenBalance(state.to.mint))
 const swapFee = computed(() => state.fees.ownerTrade + state.fees.trade)
@@ -72,7 +69,7 @@ watch(() => state.from.amount, (a) => {
                 <div v-if="insufficientError" class="insufficient-error">
                   {{ insufficientError }}
                 </div>
-                Balance: {{ formatBalance(balanceFrom) }} {{ symbolFrom }}
+                Balance: {{ formatBalance(balanceFrom) }} {{ state.from.symbol }}
               </div>
             </div>
           </div>
@@ -103,7 +100,7 @@ watch(() => state.from.amount, (a) => {
                 TO:
               </div>
               <div class="col swap-field__balance">
-                Balance: {{ formatBalance(balanceTo) }} {{ symbolTo }}
+                Balance: {{ formatBalance(balanceTo) }} {{ state.to.symbol }}
               </div>
             </div>
           </div>
@@ -122,7 +119,7 @@ watch(() => state.from.amount, (a) => {
         <dl>
           <dt>Minimum Received::</dt>
           <dd>
-            {{ formatBalance(minimumReceived / LAMPORTS_PER_SOL) }} {{ symbolFrom.toUpperCase() }}
+            {{ formatBalance(lamportsToSol(state.minimumReceived, state.to.decimals)) }} {{ state.to.symbol.toUpperCase() }}
           </dd>
         </dl>
         <dl>
