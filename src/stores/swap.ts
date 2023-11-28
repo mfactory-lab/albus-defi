@@ -157,6 +157,15 @@ export const useSwapStore = defineStore('swap', () => {
         return (tokenA === state.from.mint && tokenB === state.to.mint) || (tokenA === state.to.mint && tokenB === state.from.mint)
       })
       if (tokenSwaps.value.length) {
+        if (tokenSwaps.value.length > 1) {
+          /**
+           * find if there is a pool for which the user already has a certificate
+           */
+          const userHasPolicy = tokenSwaps.value.find(pool => userStore.state.certificates?.find(cert => cert.data?.policy.toBase58() === pool.data.policy?.toBase58()))
+          if (userHasPolicy) {
+            tokenSwap.value = userHasPolicy
+          }
+        }
         tokenSwap.value = tokenSwaps.value[0]
       } else {
         tokenSwap.value = undefined
@@ -340,30 +349,40 @@ export const useSwapStore = defineStore('swap', () => {
     }
   })
 
+  function getPoolFee(tokenSwap: TokenSwap) {
+    return {
+      host: divideBnToNumber(
+        // @ts-expect-error is BN
+        tokenSwap.fees.hostFeeNumerator,
+        tokenSwap.fees.hostFeeDenominator,
+      ),
+      trade: divideBnToNumber(
+        // @ts-expect-error is BN
+        tokenSwap.fees.tradeFeeNumerator,
+        tokenSwap.fees.tradeFeeDenominator,
+      ),
+      ownerTrade: divideBnToNumber(
+        // @ts-expect-error i BN
+        tokenSwap.fees.ownerTradeFeeNumerator,
+        tokenSwap.fees.ownerTradeFeeDenominator,
+      ),
+      ownerWithdraw: divideBnToNumber(
+        // @ts-expect-error is BN
+        tokenSwap.fees.ownerWithdrawFeeNumerator,
+        tokenSwap.fees.ownerWithdrawFeeDenominator,
+      ),
+    }
+  }
+
   watch(tokenSwap, (ts) => {
     if (!ts) {
       return
     }
-    state.fees.host = divideBnToNumber(
-      // @ts-expect-error is BN
-      ts.data.fees.hostFeeNumerator,
-      ts.data.fees.hostFeeDenominator,
-    )
-    state.fees.ownerTrade = divideBnToNumber(
-      // @ts-expect-error is BN
-      ts.data.fees.ownerTradeFeeNumerator,
-      ts.data.fees.ownerTradeFeeDenominator,
-    )
-    state.fees.ownerWithdraw = divideBnToNumber(
-      // @ts-expect-error i BN
-      ts.data.fees.ownerWithdrawFeeNumerator,
-      ts.data.fees.ownerWithdrawFeeDenominator,
-    )
-    state.fees.trade = divideBnToNumber(
-      // @ts-expect-error is BN
-      ts.data.fees.tradeFeeNumerator,
-      ts.data.fees.tradeFeeDenominator,
-    )
+    const fees = getPoolFee(ts.data)
+    state.fees.host = fees.host
+    state.fees.trade = fees.trade
+    state.fees.ownerTrade = fees.ownerTrade
+    state.fees.ownerWithdraw = fees.ownerWithdraw
     console.log('fees ==== ', state.fees)
   })
 
@@ -381,5 +400,6 @@ export const useSwapStore = defineStore('swap', () => {
     openSlippage,
     changeDirection,
     swapSubmit,
+    getPoolFee,
   }
 })

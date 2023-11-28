@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { TokenSwap } from '@albus-finance/swap-sdk'
 import type { PublicKey } from '@solana/web3.js'
+import { formatPct } from '@/utils'
+import { shortenAddress } from '~/utils/web3'
 
 const props = defineProps({
   pubkey: Object as PropType<PublicKey>,
@@ -19,57 +21,41 @@ const policyData = computed(() => userStore.servicePolicy.find(t => t.pubkey.toB
 
 const swapStore = useSwapStore()
 const router = useRouter()
-function swapAction() {
+async function swapAction() {
   if (tokenAData.value && tokenBData.value && props.pubkey && props.data) {
     swapStore.state.from = tokenAData.value
     swapStore.state.to = tokenBData.value
+    await router.push('/swap')
     swapStore.setTokenSwap({
       pubkey: props.pubkey,
       data: props.data,
     })
-    router.push('/swap')
+    console.log('[swap] swapAction: ', props.pubkey.toBase58())
   }
 }
+
+const fees = computed(() => {
+  return props.data ? swapStore.getPoolFee(props.data) : {}
+})
+
+// @ts-expect-error valid params
+const swapFee = computed(() => fees.value.ownerTrade + fees.value.trade)
+
+const dialog = ref(false)
 </script>
 
 <template>
   <q-card v-if="pubkey && data && tokenAData && tokenBData" class="pool-card">
-    <q-card-section class="pool-card__head">
-      <div class="row justify-center">
-        {{ tokenAData?.symbol }} / {{ tokenBData?.symbol }}
-      </div>
-    </q-card-section>
     <q-card-section class="pool-card__body">
-      <div class="pool-card__icons row justify-center">
+      <div class="pool-card__subtitle row justify-center items-center">
+        <span>{{ tokenAData?.symbol }} / {{ tokenBData?.symbol }}</span>
+        <span class="policy-info" @click="dialog = true">
+          i
+        </span>
+      </div>
+      <div class="pool-card__icons row justify-center q-mt-xs">
         <img v-if="tokenAData?.image" :src="tokenAData?.image" :alt="tokenAData?.symbol">
         <img v-if="tokenBData?.image" :src="tokenBData?.image" :alt="tokenBData?.symbol">
-      </div>
-
-      <div class="q-mt-md">
-        <div class="pool-card__subtitle">
-          Pool info
-        </div>
-        <div class="row items-center">
-          Pool address:&nbsp;
-          <span>
-            <span class="pool-card__pubkey monoscaped">{{ pubkey }}</span>
-            <copy-to-clipboard :text="pubkey.toBase58()" />
-          </span>
-        </div>
-        <div class="row items-center">
-          Token A mint:&nbsp;
-          <span>
-            <span class="pool-card__pubkey monoscaped">{{ data.tokenAMint }}</span>
-            <copy-to-clipboard :text="data.tokenAMint.toBase58()" />
-          </span>
-        </div>
-        <div class="row items-center">
-          Token B mint:&nbsp;
-          <span>
-            <span class="pool-card__pubkey monoscaped">{{ data.tokenBMint }}</span>
-            <copy-to-clipboard :text="data.tokenBMint.toBase58()" />
-          </span>
-        </div>
       </div>
 
       <div class="q-mt-md row justify-center">
@@ -107,5 +93,34 @@ function swapAction() {
         </div>
       </div>
     </q-card-section>
+    <q-dialog v-model="dialog" transition-duration="100" transition-show="fade" transition-hide="fade">
+      <q-card class="q-pa-md">
+        <div class="row items-center">
+          Pool address:&nbsp;
+          <span>
+            <span class="pool-card__pubkey monoscaped">{{ shortenAddress(pubkey.toBase58()) }}</span>
+            <copy-to-clipboard :text="pubkey.toBase58()" />
+          </span>
+        </div>
+        <div class="row items-center">
+          Token A mint:&nbsp;
+          <span>
+            <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.tokenAMint.toBase58()) }}</span>
+            <copy-to-clipboard :text="data.tokenAMint.toBase58()" />
+          </span>
+        </div>
+        <div class="row items-center">
+          Token B mint:&nbsp;
+          <span>
+            <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.tokenBMint.toBase58()) }}</span>
+            <copy-to-clipboard :text="data.tokenBMint.toBase58()" />
+          </span>
+        </div>
+        <div class="row items-center q-mt-xs">
+          Pool fee:&nbsp;
+          <span class="pool-card__pubkey">{{ formatPct.format(swapFee) }}</span>
+        </div>
+      </q-card>
+    </q-dialog>
   </q-card>
 </template>

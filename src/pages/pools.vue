@@ -4,7 +4,7 @@
     <pools-list />
   </div>
   <div class="main-block row justify-center">
-    <create-swap-card class="q-mt-lg" />
+    <create-swap-card class="q-mt-md" />
   </div>
   <app-description class="q-mt-lg" />
 </template>

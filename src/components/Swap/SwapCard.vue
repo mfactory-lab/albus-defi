@@ -134,7 +134,10 @@ watch(() => state.from.amount, (a) => {
         </dl>
       </div>
 
-      <div class="swap-submit">
+      <select-pool class="q-mt-md" />
+      <policy-card class="q-mt-md q-mx-auto" />
+
+      <div class="swap-submit q-mt-md">
         <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap" rounded :ripple="false" @click="swapSubmit">
           Swap {{ state.from.name }} / {{ state.to.name }}
         </q-btn>
@@ -166,14 +169,10 @@ watch(() => state.from.amount, (a) => {
         </div>
       </div>
 
-      <policy-card class="q-mt-md q-mx-auto" />
-
-      <select-pool class="q-mt-md" />
-
-      <div class="q-mt-md">
+      <div class="swap-rate q-mt-sm">
         Pool {{ state.from.symbol }} balance: {{ formatBalance(poolBalanceA) }}
       </div>
-      <div>
+      <div class="swap-rate">
         Pool {{ state.to.symbol }} balance: {{ formatBalance(poolBalanceB) }}
       </div>
     </q-card-section>

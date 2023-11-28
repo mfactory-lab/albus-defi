@@ -30,19 +30,18 @@ function selectPool(pool: SwapPool) {
     </div>
 
     <q-dialog v-model="dialog" transition-duration="100" transition-show="fade" transition-hide="fade">
-      <q-card class="q-pa-lg">
+      <q-card class="q-pa-md">
         <div
-          v-for="pool in tokenSwaps"
+          v-for="(pool, idx) in tokenSwaps"
           :key="pool.pubkey.toBase58()"
           class="cursor-pointer"
-          @click="selectPool(pool)"
         >
           <pools-list-item
             :pubkey="pool.pubkey"
             :data="pool.data"
             use-emit
-            class="q-mt-md"
-            @select-pool="selectPool"
+            :class="{ 'q-mt-md': idx }"
+            @select-pool="selectPool(pool)"
           />
         </div>
       </q-card>

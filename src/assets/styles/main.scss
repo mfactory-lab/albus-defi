@@ -47,3 +47,8 @@ main {
 .transition-duration {
     transition-duration: .1s !important;
 }
+
+.q-dialog__inner--minimized {
+    padding: 20px;
+}
+

@@ -7,12 +7,14 @@ const { state } = swapStore
 <template>
   <div>
     <q-inner-loading :showing="state?.loading" class="swap-loading" color="grey" />
-    <pools-list-item
-      v-for="(pool, idx) in tokenSwapsAll"
-      :key="pool.pubkey?.toBase58() ?? idx"
-      :pubkey="pool.pubkey"
-      :data="pool.data"
-      class="q-mt-md"
-    />
+    <div class="row justify-center">
+      <pools-list-item
+        v-for="(pool, idx) in tokenSwapsAll"
+        :key="pool.pubkey?.toBase58() ?? idx"
+        :pubkey="pool.pubkey"
+        :data="pool.data"
+        class="q-mx-sm q-mb-md"
+      />
+    </div>
   </div>
 </template>
