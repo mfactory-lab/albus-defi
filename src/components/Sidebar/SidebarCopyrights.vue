@@ -1,6 +1,10 @@
+<script lang="ts" setup>
+const date = new Date().getFullYear()
+</script>
+
 <template>
   <div class="sidebar-copyrights">
-    © Copyright 2022 albus.finance
+    © Copyright {{ date }} albus.finance
     All rights reserved.
   </div>
 </template>
