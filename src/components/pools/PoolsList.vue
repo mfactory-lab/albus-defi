@@ -8,9 +8,9 @@ const { state } = swapStore
   <div>
     <q-inner-loading :showing="state?.loading" class="swap-loading" color="grey" />
     <pools-list-item
-      v-for="pool in tokenSwapsAll"
-      :key="pool.pubkey.toBase58()"
-      :pubkey="pool.pubkey.toBase58()"
+      v-for="(pool, idx) in tokenSwapsAll"
+      :key="pool.pubkey?.toBase58() ?? idx"
+      :pubkey="pool.pubkey"
       :data="pool.data"
       class="q-mt-md"
     />

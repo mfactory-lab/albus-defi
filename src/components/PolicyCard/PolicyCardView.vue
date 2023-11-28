@@ -1,18 +1,21 @@
 <script lang="ts" setup>
 import { useWallet } from 'solana-wallets-vue'
+import type { Policy } from '@albus-finance/sdk'
 import { showCreateDialog } from '@/utils'
+
+const props = defineProps({
+  requiredPolicy: String,
+  requiredPolicyData: Object as PropType<Policy | null>,
+})
 
 const userStore = useUserStore()
 const serviceData = computed(() => userStore.serviceData)
-const requiredPolicy = computed(() => userStore.requiredPolicy)
-const requiredPolicyData = computed(() => userStore.requiredPolicyData)
 const serviceLoading = computed(() => userStore.serviceLoading)
-
-const { connected } = useWallet()
-const certificateValid = computed(() => userStore.certificateValid)
 const certificateLoading = computed(() => userStore.state?.certificateLoading)
 
-const { certificateLink } = useCertificateLink()
+const { connected } = useWallet()
+
+const { certificate, certificateLink, certificateValid } = useCertificate(props.requiredPolicy)
 </script>
 
 <template>
@@ -35,7 +38,7 @@ const { certificateLink } = useCertificateLink()
           <span>{{ serviceData?.name }} {{ serviceData?.name && requiredPolicyData?.name && ',' }} {{ requiredPolicyData?.name }}</span>
         </div>
         <div v-if="connected && !serviceLoading && !certificateLoading" class="row">
-          <certificate-status />
+          <certificate-status :certificate="certificate" :certificate-valid="!!certificateValid" />
           <div class="policy-info" @click="showCreateDialog">
             i
           </div>

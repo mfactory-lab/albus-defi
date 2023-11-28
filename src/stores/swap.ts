@@ -170,8 +170,8 @@ export const useSwapStore = defineStore('swap', () => {
     tokenSwap,
   ], async () => {
     console.log('Token SWAP: ', tokenSwap.value)
+    userStore.setContractPolicy(tokenSwap.value?.data.policy?.toBase58() ?? '')
     if (tokenSwap.value) {
-      userStore.setContractPolicy(tokenSwap.value?.data.policy?.toBase58() ?? '')
       loadPoolTokenAccounts()
     }
   }, { immediate: true })

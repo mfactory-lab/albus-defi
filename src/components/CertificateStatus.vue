@@ -1,21 +1,22 @@
 <script lang="ts" setup>
 import { ProofRequestStatus } from '@albus-finance/sdk'
 import { formatDate } from '@/utils'
+import type { Certificate } from '@/stores'
 
-const userStore = useUserStore()
-
-const certificate = computed(() => userStore.certificate)
-const certificateValid = computed(() => userStore.certificateValid)
-
-const expiredAt = computed(() => {
-  if (!certificate.value) {
-    return
-  }
-  const date = new Date(Number(certificate.value.data?.expiredAt) * 1000)
-  return Number(certificate.value?.data?.expiredAt) === 0 ? '&infin;' : formatDate(date)
+const props = defineProps({
+  certificate: Object as PropType<Certificate | null>,
+  certificateValid: Boolean,
 })
 
-const { certificateLink } = useCertificateLink()
+const expiredAt = computed(() => {
+  if (!props.certificate) {
+    return
+  }
+  const date = new Date(Number(props.certificate.data?.expiredAt) * 1000)
+  return Number(props.certificate?.data?.expiredAt) === 0 ? '&infin;' : formatDate(date)
+})
+
+const { certificateLink } = useCertificate()
 </script>
 
 <template>

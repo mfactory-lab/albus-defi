@@ -1,0 +1,32 @@
+.pool-card {
+  &__head {
+    font-size: 15px;
+    font-weight: 500;
+    padding: 9px 20px;
+    background-color: $secondary;
+    color: #fff;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__subtitle {
+    font-weight: 500;
+    font-size: 16px;
+  }
+
+  &__pubkey {
+    word-break: break-all;
+  }
+
+  &__icons {
+    height: 59px;
+
+    img {
+      height: 100%;
+    }
+
+    :nth-child(2) {
+      margin-left: -10px;
+    }
+  }
+}

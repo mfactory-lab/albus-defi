@@ -160,10 +160,11 @@ watch(() => state.from.amount, (a) => {
             :loading="loadingPoolTokens"
             unelevated
             size="sm"
+            :color="$q.dark.isActive ? 'white' : 'primary'"
             round
             @click="loadPoolTokenAccounts"
           >
-            <q-icon :name="evaRefresh" color="primary" />
+            <q-icon :name="evaRefresh" :color="$q.dark.isActive ? 'primary' : 'white'" />
           </q-btn>
         </div>
       </div>

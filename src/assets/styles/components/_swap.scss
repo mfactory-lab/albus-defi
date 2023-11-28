@@ -66,7 +66,11 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
     }
     .q-field__control > div {
       opacity: 1 !important;
+    }
   }
+
+  &__select-pool-btn {
+    background-color: $light-gray;
   }
 }
 

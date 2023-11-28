@@ -21,7 +21,7 @@ function selectPool(pool: SwapPool) {
       </div>
       <q-btn
         text-color="primary"
-        class="q-ml-auto"
+        class="q-ml-auto swap-card__select-pool-btn"
         size="sm"
         @click="dialog = true"
       >
@@ -38,9 +38,11 @@ function selectPool(pool: SwapPool) {
           @click="selectPool(pool)"
         >
           <pools-list-item
-            :pubkey="pool.pubkey.toBase58()"
+            :pubkey="pool.pubkey"
             :data="pool.data"
+            use-emit
             class="q-mt-md"
+            @select-pool="selectPool"
           />
         </div>
       </q-card>

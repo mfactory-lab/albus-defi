@@ -4,7 +4,7 @@ import { evaArrowIosForwardOutline } from '@quasar/extras/eva-icons'
 const userStore = useUserStore()
 const certificate = computed(() => userStore.certificate)
 
-const { certificateLink } = useCertificateLink()
+const { certificateLink } = useCertificate()
 </script>
 
 <template>

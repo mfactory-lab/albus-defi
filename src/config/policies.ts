@@ -23,10 +23,10 @@ export const APP_CONFIG = {
         usdc: 'FekBJXo2MBcesX7u2ZmT38zpnzCC4ekcAtVCkoQormtg',
         // usdt: 'Bn2XUm6UyEYxxEKDbsq51hbXTAjnbaAAruX8fExNGrnT',
       },
-      swap: {
-        // countries Germany, Ukraine, Switzerland
-        default: 'CjnpmL6Svfr3Vhpp1jVWCcNbJRxbyPY5ZQF8QiNXWXtT',
-      },
+      // swap: {
+      //   // countries Germany, Ukraine, Switzerland
+      //   default: 'CjnpmL6Svfr3Vhpp1jVWCcNbJRxbyPY5ZQF8QiNXWXtT',
+      // },
     },
   },
 }
