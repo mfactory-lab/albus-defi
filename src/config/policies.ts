@@ -18,10 +18,11 @@ export const APP_CONFIG = {
     policy: {
       transfer: {
         // countries Germany, Ukraine, Switzerland
-        default: 'CjnpmL6Svfr3Vhpp1jVWCcNbJRxbyPY5ZQF8QiNXWXtT',
+        default: '6ZHFw4Z6A5g8ktPktzHKG7rPJHGem8HoKhxfYo9iYmhA',
+        // 22 - 55
+        usdc: 'DfmzXJY5u1VPLmG58dekQoSchhyhZRcuuHy8e3D6Wq6B',
         // 18+
-        usdc: 'FekBJXo2MBcesX7u2ZmT38zpnzCC4ekcAtVCkoQormtg',
-        // usdt: 'Bn2XUm6UyEYxxEKDbsq51hbXTAjnbaAAruX8fExNGrnT',
+        usdt: 'B6MQGcriR1XXUhs4DbHattdueqRDkfGAQ9EJHSBQbDQn',
       },
       // swap: {
       //   // countries Germany, Ukraine, Switzerland

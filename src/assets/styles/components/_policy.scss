@@ -1,7 +1,7 @@
 .certificate-card {
-  height: 70px;
-  width: 196px;
-  min-width: 196px;
+  height: 46px;
+  width: 100%;
+  min-width: 258px;
   background-color: #F9F9F9;
   padding: 10px 12px;
   font-size: 10px;
@@ -14,12 +14,26 @@
     text-decoration: none;
     display: inline-block;
   }
-
-  &__info {
+  
+  &__policy-name {
     flex-basis: 0;
     flex-grow: 1;
+    padding-left: 8px;
+    padding-right: 8px;
+    display: flex;
+    font-size: 11px;
+    line-height: 13px;
+    &__text {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__info {
+    flex-basis: 121px;
     overflow: hidden;
-    padding-right: 4px;
+    border-right: 1px solid #e1e1e1;
 
     &__title {
       text-transform: uppercase;
@@ -28,7 +42,7 @@
     }
     &__status-line {
       width: 3px;
-      height: 13px;
+      height: 26px;
       display: inline-block;
       margin-right: 6px;
       &--negative {
@@ -38,18 +52,7 @@
         background-color: $positive-light;
       }
     }
-    &__policy-name {
-      display: flex;
-      align-items: center;
-      font-size: 11px;
-      line-height: 13px;
-      margin: 6px 0 5px;
-      &__text {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-    }
+
     &__date {
       font-size: 10px;
       .policy-card & {
@@ -73,7 +76,7 @@
   }
 
   &__action {
-    width: 48px;
+    width: 80px;
     text-align: right;
   }
 
@@ -154,26 +157,30 @@
   border-radius: 2px;
   font-size: 10px;
   cursor: pointer;
-  margin-left: 8px;
-  margin-top: -1px;
 
   .body--dark & {
     background-color: $secondary;
   }
 }
 
-.create-certificate-btn {
-  background-color: $white;
-  height: 48px;
-  width: 48px;
+.create-certificate-btn.create-certificate-btn {
+  background-color: $primary;
+  color: $white;
+  border-radius: 3px;
+  min-height: 24px;
+  width: 80px;
   font-size: 9px;
   font-weight: 500;
+  padding: 0 4px 0 0;
   text-transform: uppercase;
-  color: $black;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border: 1px solid #e8e8e8;
+  align-items: center;
+  .q-btn__content {
+    min-height: 24px;
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
   .body--dark & {
     color: $white;
     background-color: $primary;
@@ -181,10 +188,10 @@
   }
 
   .q-icon {
-    margin-bottom: 2px;
     width: 16px;
     height: 16px;
-    background: $light-gray;
+    background: $warning;
     border-radius: 2px;
+    margin-left: 4px
   }
 }

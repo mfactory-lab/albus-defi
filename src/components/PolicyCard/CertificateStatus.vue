@@ -25,15 +25,15 @@ const { certificateLink } = useCertificate()
       v-if="certificateValid"
       class="certificate-card__info__date certificate-card__info__date--positive"
     >
-      Valid until <span v-html="expiredAt" />
+      valid until <span v-html="expiredAt" />
     </div>
     <div
       v-else
       class="certificate-card__info__date certificate-card__info__date--negative"
     >
-      <span v-if="!certificate">No certificate</span>
-      <span v-else-if="certificate.data?.status === ProofRequestStatus.Rejected">Invalid certificate</span>
-      <span v-else>Action required</span>
+      <span v-if="!certificate">no certificate</span>
+      <span v-else-if="certificate.data?.status === ProofRequestStatus.Rejected">invalid certificate</span>
+      <span v-else>action required</span>
     </div>
   </a>
 </template>

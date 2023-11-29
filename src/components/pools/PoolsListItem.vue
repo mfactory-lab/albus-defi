@@ -45,11 +45,11 @@ const dialog = ref(false)
 </script>
 
 <template>
-  <q-card v-if="pubkey && data && tokenAData && tokenBData" class="pool-card">
+  <q-card v-if="pubkey && data && tokenAData && tokenBData" class="pool-card" @click="useEmit ? $emit('selectPool') : undefined">
     <q-card-section class="pool-card__body">
       <div class="pool-card__subtitle row justify-center items-center">
         <span>{{ tokenAData?.symbol }} / {{ tokenBData?.symbol }}</span>
-        <span class="policy-info" @click="dialog = true">
+        <span class="policy-info q-ml-md" @click="dialog = true">
           i
         </span>
       </div>
@@ -62,18 +62,9 @@ const dialog = ref(false)
         <policy-card-view :required-policy="data.policy?.toBase58()" :required-policy-data="policyData?.data" />
       </div>
 
-      <div class="row q-mt-md">
+      <div v-if="!useEmit" class="row q-mt-md">
         <div class="col">
-          <q-btn
-            v-if="useEmit"
-            class="full-width"
-            label="SELECT"
-            color="primary"
-            text-color="white"
-            target="_blank"
-            @click="$emit('selectPool')"
-          />
-          <q-btn-group v-else spread>
+          <q-btn-group spread>
             <q-btn
               disable
               label="ADD LIQUIDITY"

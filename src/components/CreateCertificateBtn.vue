@@ -15,7 +15,7 @@ const { certificateLink } = useCertificate()
     target="_blank"
     type="a"
   >
-    <span>{{ certificate ? 'prove' : 'create' }}</span>
+    <span class="q-mx-auto">{{ certificate ? 'prove' : 'create' }}</span>
     <q-icon :name="evaArrowIosForwardOutline" size="8px" color="black" />
   </q-btn>
 </template>

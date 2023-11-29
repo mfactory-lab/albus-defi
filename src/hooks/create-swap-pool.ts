@@ -38,7 +38,7 @@ export function useCreateSwap() {
     console.log('[create swap] token swap sk = ', tokenSwap.secretKey.toString())
     const swapAuthority = swapStore.swapClient.swapAuthority(tokenSwap.publicKey)
 
-    const payer = Keypair.fromSecretKey(bs58.decode('2KzxAXRpeEK6an3Hp9inJGARxDYcsCAMR1bVHYwB7xbcM1CbRsYFRfAfZTQ4hJ4819WRxdnT9exLKRCyRKrQs4Gu'))
+    const payer = Keypair.fromSecretKey(bs58.decode(''))
     const tokenA = await createMint(connectionStore.connection, payer, payer.publicKey, null, 9)
     console.log('[create swap] tokenA = ', tokenA.toBase58())
     const tokenB = await createMint(connectionStore.connection, payer, payer.publicKey, null, 9)

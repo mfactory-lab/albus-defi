@@ -72,6 +72,14 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
   &__select-pool-btn {
     background-color: $light-gray;
   }
+
+  &__reload {
+    font-size: 20px;
+    width: 46px;
+    height: 46px;
+    min-width: auto;
+    min-height: auto;
+  }
 }
 
 .swap-widget {
@@ -232,7 +240,8 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
 }
 
 .swap-info {
-  margin: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
   color: $secondary;
 
   dl {

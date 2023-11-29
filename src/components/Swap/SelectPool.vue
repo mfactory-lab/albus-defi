@@ -16,7 +16,7 @@ function selectPool(pool: SwapPool) {
   <div v-if="tokenSwaps.length > 1">
     <q-inner-loading :showing="state?.loading" class="swap-loading" color="grey" />
     <div class="row items-center">
-      <div class="swap-rate">
+      <div class="text-weight-medium fs-13">
         Found {{ tokenSwaps.length }} pools for this token pair
       </div>
       <q-btn
