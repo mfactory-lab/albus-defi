@@ -6,7 +6,7 @@ import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { TokenSwap } from '@albus-finance/swap-sdk'
 import { AlbusSwapClient } from '@albus-finance/swap-sdk'
 import { AnchorProvider } from '@coral-xyz/anchor'
-import { divideBnToNumber, getTokensByOwner, lamportsToSol, showCreateDialog, solToLamports } from '@/utils'
+import { divideBnToNumber, formatBalance, getTokensByOwner, lamportsToSol, showCreateDialog, solToLamports } from '@/utils'
 import { TOKEN_A, TOKEN_B } from '@/config'
 import type { TokenData } from '@/config'
 
@@ -202,10 +202,10 @@ export const useSwapStore = defineStore('swap', () => {
    * @param {number} amountIn In lamports
    */
   const calcRate = async () => {
-    const fromAmount = solToLamports(state.from.amount ?? 0, state.from.decimals)
+    const fromAmount = Number(state.from.amount ?? 0)
 
-    const poolFrom = Number(state.poolBalance[state.from.mint] ?? 0)
-    const poolTo = Number(state.poolBalance[state.to.mint] ?? 0)
+    const poolFrom = lamportsToSol(Number(state.poolBalance[state.from.mint] ?? 0), state.from.decimals)
+    const poolTo = lamportsToSol(Number(state.poolBalance[state.to.mint] ?? 0), state.to.decimals)
 
     if (fromAmount === 0 || Number.isNaN(fromAmount)) {
       state.to.amount = 0
@@ -215,13 +215,11 @@ export const useSwapStore = defineStore('swap', () => {
       return
     }
 
-    console.log(state.fees)
     const toAmount = poolTo - (poolFrom * poolTo / (poolFrom + fromAmount))
     state.rate = fromAmount ? toAmount / fromAmount : poolTo / poolFrom
-    state.to.amount = lamportsToSol(toAmount ? toAmount * (1 - state.fees.ownerTrade - state.fees.trade) : 0, state.to.decimals)
+    state.to.amount = toAmount ? Number(formatBalance(toAmount * (1 - state.fees.ownerTrade - state.fees.trade), state.to.decimals)) : 0
     state.impact = fromAmount ? 1 - (toAmount / fromAmount) / (poolTo / poolFrom) : 0
-    const toAmountNumber = Number(solToLamports(state.to.amount ?? 0, state.to.decimals))
-    state.minimumReceived = Math.floor(toAmountNumber - (toAmountNumber * state.slippage))
+    state.minimumReceived = solToLamports(state.to.amount - (state.to.amount * state.slippage), state.to.decimals)
   }
 
   watch(
