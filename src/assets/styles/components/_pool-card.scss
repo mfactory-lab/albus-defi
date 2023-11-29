@@ -1,7 +1,10 @@
 .pool-card {
   min-width: 290px;
   max-width: 100%;
-  height: 234px;
+
+  @media(min-width: $breakpoint-md) {
+    min-width: 400px;
+  }
 
   &__head {
     font-size: 15px;

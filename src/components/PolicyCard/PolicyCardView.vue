@@ -22,28 +22,29 @@ const { certificate, certificateLink, certificateValid } = useCertificate(props.
 <template>
   <q-card flat class="certificate-card">
     <q-inner-loading :showing="serviceLoading || (connected && certificateLoading)" label-class="text-teal" label-style="font-size: 1.1em" />
-    <div v-if="!serviceLoading && !requiredPolicy" class="certificate-card__info__title q-mt-md q-pt-xs text-center">
+    <div v-if="!serviceLoading && !requiredPolicy" class="certificate-card__info__title q-mt-sm text-center">
       No certificate required
     </div>
-    <div v-else class="row">
-      <div class="certificate-card__info">
+    <div v-else class="row full-height">
+      <div class="policy-info q-mr-sm" @click="dialog = true">
+        i
+      </div>
+      <div class="certificate-card__info column row justify-between">
         <div class="certificate-card__info__title">
           Required certificate
         </div>
-        <div class="certificate-card__info__policy-name">
-          <span
-            v-if="connected"
-            class="certificate-card__info__status-line"
-            :class="certificateValid ? 'certificate-card__info__status-line--positive' : 'certificate-card__info__status-line--negative'"
-          />
-          <span>{{ serviceData?.name }} {{ serviceData?.name && requiredPolicyData?.name && ',' }} {{ requiredPolicyData?.name }}</span>
-        </div>
+
         <div v-if="connected && !serviceLoading && !certificateLoading" class="row">
           <certificate-status :certificate="certificate" :certificate-valid="!!certificateValid" />
-          <div class="policy-info" @click="dialog = true">
-            i
-          </div>
         </div>
+      </div>
+      <div class="certificate-card__policy-name full-height">
+        <span
+          v-if="connected"
+          class="certificate-card__info__status-line"
+          :class="certificateValid ? 'certificate-card__info__status-line--positive' : 'certificate-card__info__status-line--negative'"
+        />
+        <span>{{ serviceData?.name }} {{ serviceData?.name && requiredPolicyData?.name && ',' }} {{ requiredPolicyData?.name }}</span>
       </div>
       <div v-if="connected && !serviceLoading && !certificateLoading" class="certificate-card__action">
         <div v-if="!certificateValid">

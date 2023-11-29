@@ -58,7 +58,7 @@ function formatRule(key: string, label: string, value: number[]) {
           Your certificate
         </div>
 
-        <div v-if="!certificateValid">
+        <div v-if="!certificateValid" class="q-mb-md">
           <certificate-status class="q-mb-sm" :certificate="certificate" :certificate-valid="!!certificateValid" />
           <div class="row">
             <create-certificate-btn />
@@ -69,13 +69,13 @@ function formatRule(key: string, label: string, value: number[]) {
               class="create-certificate-btn q-ml-md"
               @click="userStore.getCertificates"
             >
-              <span>reload</span>
+              <span class="q-mx-auto">reload</span>
               <q-icon :name="evaRefresh" size="8px" color="primary" />
             </q-btn>
           </div>
         </div>
 
-        <q-card v-else flat class="certificate-card row items-center q-mt-sm">
+        <q-card v-else flat class="certificate-card row items-center q-mt-sm q-mb-md">
           <a :href="`${ALBUS_APP_URL}/holder`" class="certificate" target="_blank">
             <i-app-certificate />
           </a>
@@ -85,7 +85,7 @@ function formatRule(key: string, label: string, value: number[]) {
           </div>
         </q-card>
       </div>
-      <div v-if="requiredPolicyData" class="policy-card__policy q-py-md q-pl-md">
+      <div v-if="requiredPolicyData" class="policy-card__policy q-pb-md q-pl-md">
         <div class="policy-card__policy__title">
           Required certificate
         </div>

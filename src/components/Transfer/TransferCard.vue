@@ -108,20 +108,20 @@ const active = computed(() => Number(state.value) > 0 && validateAddress(state.a
         <q-input v-model="state.address" :disable="emptyBalance" :maxlength="50" outlined class="swap-input col" />
       </div>
 
-      <div class="swap-info">
+      <div class="swap-info q-mt-md">
         <dl>
           <dt>Transfer fee:</dt>
           <dd>{{ formatBalance(state.fee, 6) }}</dd>
         </dl>
       </div>
 
+      <policy-card class="q-my-md q-mx-auto" />
+
       <div class="swap-submit">
         <q-btn :loading="state?.loading" :disable="!active" rounded :ripple="false" @click="transferSubmit">
           Send
         </q-btn>
       </div>
-
-      <policy-card class="q-mt-md q-mx-auto" />
     </q-card-section>
 
     <q-inner-loading :showing="userState?.loading" class="swap-loading" color="grey" />

@@ -115,21 +115,21 @@ watch(() => state.from.amount, (a) => {
         </div>
       </div>
 
-      <div class="swap-info">
+      <div class="swap-info q-mt-md q-pt-xs">
         <dl>
-          <dt>Minimum Received::</dt>
+          <dt>Minimum Received</dt>
           <dd>
             {{ formatBalance(lamportsToSol(state.minimumReceived, state.to.decimals)) }} {{ state.to.symbol.toUpperCase() }}
           </dd>
         </dl>
         <dl>
-          <dt>Slippage Tolerance:</dt>
+          <dt>Slippage Tolerance</dt>
           <dd>
             <a href="#" @click="openSlippage">{{ formatPercent(state.slippage) }}</a>
           </dd>
         </dl>
         <dl>
-          <dt>Swap fee:</dt>
+          <dt>Swap fee</dt>
           <dd>{{ formatPercent(swapFee) }} SOL</dd>
         </dl>
       </div>
@@ -143,23 +143,18 @@ watch(() => state.from.amount, (a) => {
         </q-btn>
       </div>
 
-      <div v-if="!tokenSwap" class="swap-rate text-center q-mt-md text-negative">
+      <div v-if="!tokenSwap" class="text-weight-medium fs-13 text-center q-mt-md text-negative">
         Pool not found
       </div>
-      <div v-else class="row q-mt-md">
-        <div>
-          <div class="swap-rate">
-            1 {{ state.from.name }} ≈ {{ formatBalance(state.rate) }} {{ state.to.name }}
-          </div>
-          <div class="swap-rate">
-            Price impact: {{ formatPercent(state.impact) }}
-          </div>
+      <div v-else class="row q-mt-md text-center relative-position full-width">
+        <div class="swap-rate q-mx-auto">
+          1 {{ state.from.name }} ≈ {{ formatBalance(state.rate) }} {{ state.to.name }}
         </div>
-        <div class="q-ml-auto">
+        <div class="absolute-right">
           <q-btn
             :loading="loadingPoolTokens"
+            class="swap-card__reload"
             unelevated
-            size="sm"
             :color="$q.dark.isActive ? 'white' : 'primary'"
             round
             @click="loadPoolTokenAccounts"
@@ -169,11 +164,23 @@ watch(() => state.from.amount, (a) => {
         </div>
       </div>
 
-      <div class="swap-rate q-mt-sm">
-        Pool {{ state.from.symbol }} balance: {{ formatBalance(poolBalanceA) }}
-      </div>
-      <div class="swap-rate">
-        Pool {{ state.to.symbol }} balance: {{ formatBalance(poolBalanceB) }}
+      <div class="swap-info q-mt-md">
+        <dl>
+          <dt>Price impact</dt>
+          <dd>
+            {{ formatPercent(state.impact) }}
+          </dd>
+        </dl>
+        <dl>
+          <dt>Pool {{ state.from.symbol }} balance</dt>
+          <dd>
+            {{ formatBalance(poolBalanceA) }}
+          </dd>
+        </dl>
+        <dl>
+          <dt>Pool {{ state.to.symbol }} balance</dt>
+          <dd>{{ formatBalance(poolBalanceB) }}</dd>
+        </dl>
       </div>
     </q-card-section>
 
