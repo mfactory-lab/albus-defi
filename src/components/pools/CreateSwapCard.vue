@@ -7,7 +7,7 @@ const { state, createTokenSwap } = useCreateSwap()
 <template>
   <q-card class="swap-card swap-widget">
     <q-card-section class="swap-card__header">
-      Create Swap
+      Create Pool
     </q-card-section>
 
     <q-card-section class="swap-card__body">
@@ -20,7 +20,7 @@ const { state, createTokenSwap } = useCreateSwap()
       <q-input v-model="state.ownerWithdrawFee" label="Owner withdraw fee, ‰" />
       <div class="q-mt-lg row">
         <q-btn class="q-ml-auto" @click="createTokenSwap">
-          Create Swap
+          Create Pool
         </q-btn>
       </div>
     </q-card-section>

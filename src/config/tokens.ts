@@ -5,6 +5,7 @@ import usdtToken from '@/assets/img/tokens/usdt.png'
 export enum PoolTokenSymbol {
   TOKEN_A = 'TOKEN_A',
   TOKEN_B = 'TOKEN_B',
+  TOKEN_C = 'TOKEN_C',
 }
 
 export interface TokenData {
@@ -44,6 +45,14 @@ export const TOKEN_B = {
   mint: '6rdejLXbi2Ws2z3Ff1wRhRS9WqrXRDuM8YpSkiektRgw',
 }
 
+export const TOKEN_C = {
+  symbol: PoolTokenSymbol.TOKEN_C,
+  name: PoolTokenSymbol.TOKEN_C,
+  image: usdtToken,
+  decimals: 9,
+  mint: 'EkXuCiyaoToaK1VKFNrziSx9Nj171EJ2V7ksMtB6JKtW',
+}
+
 export const TOKENS = [
   {
     symbol: 'sol',
@@ -68,4 +77,5 @@ export const TOKENS = [
   },
   TOKEN_A,
   TOKEN_B,
+  TOKEN_C,
 ]

@@ -46,8 +46,8 @@ const { certificate, certificateLink, certificateValid } = useCertificate(props.
         />
         <span>{{ serviceData?.name }} {{ serviceData?.name && requiredPolicyData?.name && ',' }} {{ requiredPolicyData?.name }}</span>
       </div>
-      <div v-if="connected && !serviceLoading && !certificateLoading" class="certificate-card__action">
-        <div v-if="!certificateValid">
+      <div v-if="connected && !serviceLoading && !certificateLoading" class="certificate-card__end">
+        <div v-if="!certificateValid" class="certificate-card__action">
           <create-certificate-btn />
         </div>
         <a v-else :href="certificateLink" class="certificate-card__certificate certificate" target="_blank">
