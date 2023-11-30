@@ -10,9 +10,8 @@ emitter.on(SHOW_CERTIFICATE_EVENT, () => {
 const userStore = useUserStore()
 const requiredPolicyData = computed(() => userStore.requiredPolicyData)
 
-const certificate = computed(() => userStore.certificate)
-const certificateValid = computed(() => userStore.certificateValid)
 const certificateLoading = computed(() => userStore.state?.certificateLoading)
+const { certificateLink, certificateValid, certificate } = useCertificate()
 </script>
 
 <template>
@@ -22,6 +21,7 @@ const certificateLoading = computed(() => userStore.state?.certificateLoading)
       :certificate="certificate"
       :certificate-valid="!!certificateValid"
       :certificate-loading="certificateLoading"
+      :certificate-link="certificateLink"
     />
   </q-dialog>
 </template>

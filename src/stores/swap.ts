@@ -352,22 +352,18 @@ export const useSwapStore = defineStore('swap', () => {
   function getPoolFee(tokenSwap: TokenSwap) {
     return {
       host: divideBnToNumber(
-        // @ts-expect-error is BN
         tokenSwap.fees.hostFeeNumerator,
         tokenSwap.fees.hostFeeDenominator,
       ),
       trade: divideBnToNumber(
-        // @ts-expect-error is BN
         tokenSwap.fees.tradeFeeNumerator,
         tokenSwap.fees.tradeFeeDenominator,
       ),
       ownerTrade: divideBnToNumber(
-        // @ts-expect-error i BN
         tokenSwap.fees.ownerTradeFeeNumerator,
         tokenSwap.fees.ownerTradeFeeDenominator,
       ),
       ownerWithdraw: divideBnToNumber(
-        // @ts-expect-error is BN
         tokenSwap.fees.ownerWithdrawFeeNumerator,
         tokenSwap.fees.ownerWithdrawFeeDenominator,
       ),
