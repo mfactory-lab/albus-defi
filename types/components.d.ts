@@ -27,6 +27,7 @@ declare module 'vue' {
     IAppTelegram: typeof import('~icons/app/telegram')['default']
     IAppTwitter: typeof import('~icons/app/twitter')['default']
     IAppTwitterX: typeof import('~icons/app/twitter-x')['default']
+    MintTokenA: typeof import('./../src/components/MintTokenA.vue')['default']
     MobileMenu: typeof import('./../src/components/Menu/MobileMenu.vue')['default']
     PolicyCard: typeof import('./../src/components/PolicyCard/PolicyCard.vue')['default']
     PolicyCardView: typeof import('./../src/components/PolicyCard/PolicyCardView.vue')['default']
