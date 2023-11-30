@@ -50,5 +50,6 @@ declare module 'vue' {
     SwapContent: typeof import('./../src/components/SwapContent.vue')['default']
     TransferCard: typeof import('./../src/components/Transfer/TransferCard.vue')['default']
     TransferContent: typeof import('./../src/components/Transfer/TransferContent.vue')['default']
+    WarningDisclaimer: typeof import('./../src/components/WarningDisclaimer.vue')['default']
   }
 }
