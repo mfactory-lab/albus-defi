@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { evaArrowIosForwardOutline } from '@quasar/extras/eva-icons'
+import type { Certificate } from '@/stores'
 
-const userStore = useUserStore()
-const certificate = computed(() => userStore.certificate)
-
-const { certificateLink } = useCertificate()
+defineProps({
+  certificate: Object as PropType<Certificate | null>,
+  certificateLink: String,
+})
 </script>
 
 <template>

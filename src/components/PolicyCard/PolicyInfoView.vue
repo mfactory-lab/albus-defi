@@ -10,6 +10,7 @@ import type { Certificate } from '@/stores'
 const props = defineProps({
   requiredPolicyData: Object as PropType<Policy | null>,
   certificate: Object as PropType<Certificate | null>,
+  certificateLink: String,
   certificateValid: Boolean,
   certificateLoading: Boolean,
 })
@@ -61,7 +62,7 @@ function formatRule(key: string, label: string, value: number[]) {
         <div v-if="!certificateValid" class="q-mb-md">
           <certificate-status class="q-mb-sm" :certificate="certificate" :certificate-valid="!!certificateValid" />
           <div class="row">
-            <create-certificate-btn />
+            <create-certificate-btn :certificate="certificate" :certificate-link="certificateLink" />
 
             <q-btn
               :loading="certificateLoading"

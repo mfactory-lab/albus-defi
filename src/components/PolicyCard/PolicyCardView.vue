@@ -48,7 +48,7 @@ const { certificate, certificateLink, certificateValid } = useCertificate(props.
       </div>
       <div v-if="connected && !serviceLoading && !certificateLoading" class="certificate-card__end">
         <div v-if="!certificateValid" class="certificate-card__action">
-          <create-certificate-btn />
+          <create-certificate-btn :certificate="certificate" :certificate-link="certificateLink" />
         </div>
         <a v-else :href="certificateLink" class="certificate-card__certificate certificate" target="_blank">
           <i-app-certificate />
@@ -61,6 +61,7 @@ const { certificate, certificateLink, certificateValid } = useCertificate(props.
         :certificate="certificate"
         :certificate-valid="!!certificateValid"
         :certificate-loading="certificateLoading"
+        :certificate-link="certificateLink"
       />
     </q-dialog>
   </q-card>

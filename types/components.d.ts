@@ -16,7 +16,7 @@ declare module 'vue' {
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     copy: typeof import('./../src/components/PolicyCard/PolicyInfoDialog copy.vue')['default']
     CopyToClipboard: typeof import('./../src/components/CopyToClipboard.vue')['default']
-    CreateCertificateBtn: typeof import('./../src/components/CreateCertificateBtn.vue')['default']
+    CreateCertificateBtn: typeof import('./../src/components/PolicyCard/CreateCertificateBtn.vue')['default']
     CreateSwapCard: typeof import('./../src/components/pools/CreateSwapCard.vue')['default']
     DarkThemeToggle: typeof import('./../src/components/DarkThemeToggle.vue')['default']
     DefiItem: typeof import('./../src/components/pools/DefiItem.vue')['default']

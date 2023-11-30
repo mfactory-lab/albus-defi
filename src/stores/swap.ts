@@ -174,7 +174,7 @@ export const useSwapStore = defineStore('swap', () => {
     } else {
       tokenSwaps.value = []
       tokenSwap.value = undefined
-      userStore.setContractPolicy('')
+      userStore.setContractPolicy('', 'swap')
       state.poolBalance = {}
     }
   }, { immediate: true })
@@ -182,7 +182,7 @@ export const useSwapStore = defineStore('swap', () => {
     tokenSwap,
   ], async () => {
     console.log('Token SWAP: ', tokenSwap.value)
-    userStore.setContractPolicy(tokenSwap.value?.data.policy?.toBase58() ?? '')
+    userStore.setContractPolicy(tokenSwap.value?.data.policy?.toBase58() ?? '', 'swap')
     if (tokenSwap.value) {
       loadPoolTokenAccounts()
     }
@@ -352,22 +352,18 @@ export const useSwapStore = defineStore('swap', () => {
   function getPoolFee(tokenSwap: TokenSwap) {
     return {
       host: divideBnToNumber(
-        // @ts-expect-error is BN
         tokenSwap.fees.hostFeeNumerator,
         tokenSwap.fees.hostFeeDenominator,
       ),
       trade: divideBnToNumber(
-        // @ts-expect-error is BN
         tokenSwap.fees.tradeFeeNumerator,
         tokenSwap.fees.tradeFeeDenominator,
       ),
       ownerTrade: divideBnToNumber(
-        // @ts-expect-error i BN
         tokenSwap.fees.ownerTradeFeeNumerator,
         tokenSwap.fees.ownerTradeFeeDenominator,
       ),
       ownerWithdraw: divideBnToNumber(
-        // @ts-expect-error is BN
         tokenSwap.fees.ownerWithdrawFeeNumerator,
         tokenSwap.fees.ownerWithdrawFeeDenominator,
       ),

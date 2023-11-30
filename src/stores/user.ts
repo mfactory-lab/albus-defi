@@ -50,8 +50,8 @@ export const useUserStore = defineStore('user', () => {
     }
     return ''
   })
-  function setContractPolicy(policy: string) {
-    contractPolicy.value[route.name] = policy
+  function setContractPolicy(policy: string, page?: string) {
+    contractPolicy.value[page ?? route.name] = policy
     console.log('[swap] policies = ', contractPolicy.value)
   }
 
