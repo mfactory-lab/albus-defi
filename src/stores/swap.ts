@@ -102,7 +102,6 @@ export const useSwapStore = defineStore('swap', () => {
     state.loading = true
     try {
       console.log('swapClient ================: ', swapClient.value)
-      // @ts-expect-error data is not null
       tokenSwapsAll.value = await swapClient.value.loadAll()
       console.log('swaps ================: ', tokenSwapsAll.value)
     } catch (e) {
@@ -122,9 +121,11 @@ export const useSwapStore = defineStore('swap', () => {
     loadingPoolTokens.value = true
     try {
       const accs = await getTokensByOwner(connectionStore.connection, swapClient.value.swapAuthority(tokenSwap.value.pubkey))
+      const poolBalance: { [key: string]: any } = {}
       for (const acc of accs) {
-        state.poolBalance[`${acc.mint}`] = acc.amount
+        poolBalance[`${acc.mint}`] = acc.amount
       }
+      state.poolBalance = poolBalance
       const poolMint = await getMint(connectionStore.connection, tokenSwap.value.data.poolMint)
       state.poolTokenSupply = Number(poolMint.supply)
       console.log('[Pool Balance]', state.poolBalance)
@@ -209,7 +210,7 @@ export const useSwapStore = defineStore('swap', () => {
 
     if (fromAmount === 0 || Number.isNaN(fromAmount)) {
       state.to.amount = 0
-      state.rate = poolTo / poolFrom
+      state.rate = Number(poolTo) / Number(poolFrom)
       state.impact = 0
       state.minimumReceived = 0
       return
@@ -224,6 +225,7 @@ export const useSwapStore = defineStore('swap', () => {
 
   watch(
     [
+      () => state.direction,
       () => state.from.amount,
       () => state.poolBalance,
     ],
