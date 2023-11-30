@@ -1,32 +1,32 @@
 {
-  "_AppDescriptionTop-577eab1b.js": {
-    "file": "assets/AppDescriptionTop-577eab1b.js",
+  "_AppDescriptionTop-d94eac67.js": {
+    "file": "assets/AppDescriptionTop-d94eac67.js",
     "imports": [
       "index.html"
     ]
   },
-  "_PoolsListItem.vue_vue_type_script_setup_true_lang-386b76f2.js": {
-    "file": "assets/PoolsListItem.vue_vue_type_script_setup_true_lang-386b76f2.js",
+  "_PoolsListItem.vue_vue_type_script_setup_true_lang-a00a5d4f.js": {
+    "file": "assets/PoolsListItem.vue_vue_type_script_setup_true_lang-a00a5d4f.js",
     "imports": [
       "index.html",
-      "_AppDescriptionTop-577eab1b.js"
+      "_AppDescriptionTop-d94eac67.js"
     ]
   },
-  "_SelectToken.vue_vue_type_script_setup_true_lang-92f952ef.js": {
-    "file": "assets/SelectToken.vue_vue_type_script_setup_true_lang-92f952ef.js",
+  "_SelectToken.vue_vue_type_script_setup_true_lang-16b2eac8.js": {
+    "file": "assets/SelectToken.vue_vue_type_script_setup_true_lang-16b2eac8.js",
     "imports": [
-      "_AppDescriptionTop-577eab1b.js",
+      "_AppDescriptionTop-d94eac67.js",
       "index.html"
     ]
   },
-  "_v4-409c87b7.js": {
-    "file": "assets/v4-409c87b7.js",
+  "_v4-3f42f757.js": {
+    "file": "assets/v4-3f42f757.js",
     "imports": [
       "index.html"
     ]
   },
   "index.css": {
-    "file": "assets/index-fe27d87d.css",
+    "file": "assets/index-27c811e8.css",
     "src": "index.css"
   },
   "index.html": {
@@ -36,7 +36,7 @@
       "assets/solana-logo-1f8bc0f3.svg"
     ],
     "css": [
-      "assets/index-fe27d87d.css"
+      "assets/index-27c811e8.css"
     ],
     "dynamicImports": [
       "src/layouts/home.vue",
@@ -51,12 +51,12 @@
       "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js",
       "node_modules/.pnpm/@solflare-wallet+sdk@1.4.1_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/sdk/lib/esm/index.js"
     ],
-    "file": "assets/index-ce30933d.js",
+    "file": "assets/index-32ca508c.js",
     "isEntry": true,
     "src": "index.html"
   },
   "node_modules/.pnpm/@ledgerhq+hw-transport-webhid@6.27.1/node_modules/@ledgerhq/hw-transport-webhid/lib-es/TransportWebHID.js": {
-    "file": "assets/TransportWebHID-eeb29b09.js",
+    "file": "assets/TransportWebHID-6c86f21c.js",
     "imports": [
       "index.html"
     ],
@@ -64,25 +64,25 @@
     "src": "node_modules/.pnpm/@ledgerhq+hw-transport-webhid@6.27.1/node_modules/@ledgerhq/hw-transport-webhid/lib-es/TransportWebHID.js"
   },
   "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js": {
-    "file": "assets/index-00eacbaa.js",
+    "file": "assets/index-b2a40fea.js",
     "imports": [
       "index.html",
-      "_v4-409c87b7.js"
+      "_v4-3f42f757.js"
     ],
     "isDynamicEntry": true,
     "src": "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js"
   },
   "node_modules/.pnpm/@solflare-wallet+sdk@1.4.1_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/sdk/lib/esm/index.js": {
-    "file": "assets/index-c217ac9a.js",
+    "file": "assets/index-00b0343d.js",
     "imports": [
       "index.html",
-      "_v4-409c87b7.js"
+      "_v4-3f42f757.js"
     ],
     "isDynamicEntry": true,
     "src": "node_modules/.pnpm/@solflare-wallet+sdk@1.4.1_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/sdk/lib/esm/index.js"
   },
   "node_modules/.pnpm/salmon-adapter-sdk@1.1.1_@solana+web3.js@1.87.6/node_modules/salmon-adapter-sdk/lib/esm/index.js": {
-    "file": "assets/index-47d5c209.js",
+    "file": "assets/index-a20d66e5.js",
     "imports": [
       "index.html"
     ],
@@ -102,7 +102,7 @@
     "src": "src/assets/img/tokens/usdt.png"
   },
   "src/layouts/home.vue": {
-    "file": "assets/home-5961190b.js",
+    "file": "assets/home-bb791773.js",
     "imports": [
       "index.html"
     ],
@@ -117,7 +117,7 @@
     "css": [
       "assets/_...all_-f6a7ef33.css"
     ],
-    "file": "assets/_...all_-d0556428.js",
+    "file": "assets/_...all_-f2c54524.js",
     "imports": [
       "index.html"
     ],
@@ -125,7 +125,7 @@
     "src": "src/pages/[...all].vue"
   },
   "src/pages/about.vue": {
-    "file": "assets/about-92a974b5.js",
+    "file": "assets/about-17ad4a0b.js",
     "imports": [
       "index.html"
     ],
@@ -133,17 +133,17 @@
     "src": "src/pages/about.vue"
   },
   "src/pages/pools.vue": {
-    "file": "assets/pools-4013620f.js",
+    "file": "assets/pools-352a0b95.js",
     "imports": [
-      "_AppDescriptionTop-577eab1b.js",
-      "index.html",
-      "_PoolsListItem.vue_vue_type_script_setup_true_lang-386b76f2.js"
+      "_AppDescriptionTop-d94eac67.js",
+      "_PoolsListItem.vue_vue_type_script_setup_true_lang-a00a5d4f.js",
+      "index.html"
     ],
     "isDynamicEntry": true,
     "src": "src/pages/pools.vue"
   },
   "src/pages/support.vue": {
-    "file": "assets/support-97ba7c1a.js",
+    "file": "assets/support-cee2040d.js",
     "imports": [
       "index.html"
     ],
@@ -151,21 +151,21 @@
     "src": "src/pages/support.vue"
   },
   "src/pages/swap.vue": {
-    "file": "assets/swap-eedd52cd.js",
+    "file": "assets/swap-de486e7c.js",
     "imports": [
-      "_AppDescriptionTop-577eab1b.js",
-      "_SelectToken.vue_vue_type_script_setup_true_lang-92f952ef.js",
-      "_PoolsListItem.vue_vue_type_script_setup_true_lang-386b76f2.js",
+      "_AppDescriptionTop-d94eac67.js",
+      "_SelectToken.vue_vue_type_script_setup_true_lang-16b2eac8.js",
+      "_PoolsListItem.vue_vue_type_script_setup_true_lang-a00a5d4f.js",
       "index.html"
     ],
     "isDynamicEntry": true,
     "src": "src/pages/swap.vue"
   },
   "src/pages/transfer.vue": {
-    "file": "assets/transfer-7b5f50ae.js",
+    "file": "assets/transfer-bff5efcc.js",
     "imports": [
-      "_AppDescriptionTop-577eab1b.js",
-      "_SelectToken.vue_vue_type_script_setup_true_lang-92f952ef.js",
+      "_AppDescriptionTop-d94eac67.js",
+      "_SelectToken.vue_vue_type_script_setup_true_lang-16b2eac8.js",
       "index.html"
     ],
     "isDynamicEntry": true,
