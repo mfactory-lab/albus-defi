@@ -9,10 +9,10 @@ dependencies:
     specifier: 0.2.2-next.18
     version: 0.2.2-next.18
   '@albus-finance/swap-sdk':
-    specifier: ^0.1.2-next.2
-    version: 0.1.2
+    specifier: 0.1.2-next.2
+    version: 0.1.2-next.2
   '@albus-finance/transfer-sdk':
-    specifier: ^0.2.4-next.0
+    specifier: 0.2.4-next.0
     version: 0.2.4-next.0
   '@coral-xyz/anchor':
     specifier: ^0.29.0
@@ -206,12 +206,12 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@albus-finance/swap-sdk@0.1.2:
-    resolution: {integrity: sha512-kX85YCN6UUXBVLymRtZuLqHpcJ/Ixn27v6lXwEYJvFZRk2C8320jElVeEX8wEXjVOPsCaCFSH89aLxkIOMUcFg==}
+  /@albus-finance/swap-sdk@0.1.2-next.2:
+    resolution: {integrity: sha512-HM50HvC6WSfR3ccomsEcDuTTpfli5SK4VwNTgh7usm0Id/92WV9XeRDixAQmjWqsqoOdt8/APA1B35mEGLhyBw==}
     dependencies:
       '@coral-xyz/anchor': 0.29.0
       '@metaplex-foundation/beet': 0.7.1
-      '@solana/spl-token': 0.3.8(@solana/web3.js@1.87.1)
+      '@solana/spl-token': 0.3.9(@solana/web3.js@1.87.1)
       '@solana/web3.js': 1.87.1
     transitivePeerDependencies:
       - bufferutil

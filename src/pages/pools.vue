@@ -3,8 +3,8 @@
   <div class="main-block row justify-center">
     <pools-list />
   </div>
-  <div class="main-block row justify-center">
+  <!-- <div class="main-block row justify-center">
     <create-swap-card class="q-mt-md" />
-  </div>
+  </div> -->
   <app-description class="q-mt-lg" />
 </template>
