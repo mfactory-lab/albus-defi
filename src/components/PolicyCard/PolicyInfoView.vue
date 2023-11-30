@@ -52,7 +52,7 @@ function formatRule(key: string, label: string, value: number[]) {
   <q-card class="policy-card">
     <div>
       <q-inner-loading :showing="serviceLoading" label-class="text-teal" label-style="font-size: 1.1em" />
-      <div v-if="connected" class="q-pl-md q-pt-md">
+      <div v-if="connected" class="q-px-md q-pt-md">
         <q-inner-loading :showing="certificateLoading" label-class="text-teal" label-style="font-size: 1.1em" />
         <div class="policy-card__title q-mb-xs">
           Your certificate
@@ -85,7 +85,7 @@ function formatRule(key: string, label: string, value: number[]) {
           </div>
         </q-card>
       </div>
-      <div v-if="requiredPolicyData" class="policy-card__policy q-pb-md q-pl-md">
+      <div v-if="requiredPolicyData" class="policy-card__policy q-pb-md q-px-md">
         <div class="policy-card__policy__title">
           Required certificate
         </div>
