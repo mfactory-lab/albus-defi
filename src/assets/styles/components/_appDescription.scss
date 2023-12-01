@@ -15,4 +15,12 @@
     font-size: 12px;
     line-height: 16px;
   }
+
+  &__link {
+    color: #000;
+
+    .body--dark & {
+      color: #fff;
+    }
+  }
 }

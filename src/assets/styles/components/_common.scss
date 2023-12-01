@@ -1,10 +1,5 @@
 .main-block {
-  padding: 54px 0 50px;
-
-  @media (max-width: $breakpoint-xs) {
-    padding: 24px 0 24px;
-  }
-
+  padding: 24px 0;
   border-bottom: 1px solid #aabec8;
 }
 
