@@ -294,6 +294,12 @@ $swap-input-focused-color: rgba($secondary, 0.7) !important;
 .swap-rate {
   font-weight: 500;
   font-size: 13px;
+
+  &__refresh {
+    @media (min-width: $breakpoint-md) {
+      right: 20px;
+    }
+  }
 }
 
 .swap-card {

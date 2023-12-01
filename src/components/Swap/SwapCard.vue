@@ -150,7 +150,7 @@ watch(() => state.from.amount, (a) => {
         <div class="swap-rate q-mx-auto">
           1 {{ state.from.name }} ≈ {{ formatBalance(state.rate) }} {{ state.to.name }}
         </div>
-        <div class="absolute-right">
+        <div class="absolute-right swap-rate__refresh">
           <q-btn
             :loading="loadingPoolTokens"
             class="swap-card__reload"

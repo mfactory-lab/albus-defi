@@ -1,5 +1,5 @@
 <template>
-  <app-description-top class="q-mt-xl" />
+  <app-description-top class="q-mt-lg" />
   <div class="main-block row justify-center">
     <pools-list />
   </div>
