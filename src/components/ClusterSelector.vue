@@ -25,7 +25,7 @@ function select(e: Endpoint) {
 
 <template>
   <q-btn-dropdown
-    :label="endpoint.name"
+    :label="endpoint.cluster"
     :model-value="false"
     auto-close
     color="yellow"
@@ -41,9 +41,9 @@ function select(e: Endpoint) {
         <q-item v-for="item in items" :key="item.id" clickable @click="select(item)">
           <q-item-section :key="`${item.id}-item`">
             <q-item-label>
-              <b>{{ item.name }}</b>
+              <b>{{ item.cluster }}</b>
             </q-item-label>
-            {{ item.url }}
+            {{ item.name }}
           </q-item-section>
         </q-item>
         <q-separator v-if="index !== groups.length - 1" />
