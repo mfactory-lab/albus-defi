@@ -1,15 +1,15 @@
-name: Deploy
+name: Deploy Dev
 
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ dev ]
     paths:
       - public/**
       - src/**
 
 env:
-  URL: defi.albus.finance
+  URL: dev.defi.albus.finance
 
 jobs:
   deploy:
@@ -31,7 +31,7 @@ jobs:
           touch dist/.nojekyll
 
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        uses: JamesIves/github-pages-deploy-action@v4.5.0
         with:
           branch: gh-pages
           folder: dist

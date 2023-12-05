@@ -1,0 +1,53 @@
+name: Deploy Prod
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+#    paths:
+#      - public/**
+#      - src/**
+
+env:
+  REPO: mfactory-lab/albus-defi-prod
+  URL: defi.albus.finance
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://${{ env.URL }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+
+      - name: Bump version
+        uses: phips28/gh-action-bump-version@master
+        id: version
+        with:
+          tag-prefix:  'v'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+        run: |
+          pnpm run build
+          cp dist/index.html dist/404.html && touch dist/.nojekyll
+          echo ${{ env.URL }} > dist/CNAME
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.5.0
+        with:
+          repository-name: ${{ env.REPO }}
+          token: ${{ secrets.PAT }}
+          folder: dist
