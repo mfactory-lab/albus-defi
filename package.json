@@ -2,7 +2,7 @@
   "name": "albus-defi",
   "private": true,
   "version": "0.0.0",
-  "packageManager": "pnpm@7.13.0",
+  "packageManager": "pnpm@8.11.0",
   "scripts": {
     "dev": "vite --port 3333",
     "build": "vite build --mode production",
