@@ -1,26 +1,26 @@
 {
-  "_AppDescriptionTop-ea166bac.js": {
-    "file": "assets/AppDescriptionTop-ea166bac.js",
+  "_AppDescriptionTop-c40fae9d.js": {
+    "file": "assets/AppDescriptionTop-c40fae9d.js",
     "imports": [
       "index.html"
     ]
   },
-  "_PoolsListItem.vue_vue_type_script_setup_true_lang-5ab6cddb.js": {
-    "file": "assets/PoolsListItem.vue_vue_type_script_setup_true_lang-5ab6cddb.js",
+  "_PoolsListItem.vue_vue_type_script_setup_true_lang-85baeaf2.js": {
+    "file": "assets/PoolsListItem.vue_vue_type_script_setup_true_lang-85baeaf2.js",
     "imports": [
       "index.html",
-      "_AppDescriptionTop-ea166bac.js"
+      "_AppDescriptionTop-c40fae9d.js"
     ]
   },
-  "_SelectToken.vue_vue_type_script_setup_true_lang-db839535.js": {
-    "file": "assets/SelectToken.vue_vue_type_script_setup_true_lang-db839535.js",
+  "_SelectToken.vue_vue_type_script_setup_true_lang-da8d9643.js": {
+    "file": "assets/SelectToken.vue_vue_type_script_setup_true_lang-da8d9643.js",
     "imports": [
-      "_AppDescriptionTop-ea166bac.js",
+      "_AppDescriptionTop-c40fae9d.js",
       "index.html"
     ]
   },
-  "_v4-5d22d677.js": {
-    "file": "assets/v4-5d22d677.js",
+  "_v4-59e84085.js": {
+    "file": "assets/v4-59e84085.js",
     "imports": [
       "index.html"
     ]
@@ -47,47 +47,47 @@
       "src/pages/about.vue",
       "src/pages/[...all].vue",
       "node_modules/.pnpm/@ledgerhq+hw-transport-webhid@6.27.1/node_modules/@ledgerhq/hw-transport-webhid/lib-es/TransportWebHID.js",
-      "node_modules/.pnpm/salmon-adapter-sdk@1.1.1_@solana+web3.js@1.87.6/node_modules/salmon-adapter-sdk/lib/esm/index.js",
-      "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js",
-      "node_modules/.pnpm/@solflare-wallet+sdk@1.4.1_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/sdk/lib/esm/index.js"
+      "node_modules/.pnpm/salmon-adapter-sdk@1.1.1_@solana+web3.js@1.87.1/node_modules/salmon-adapter-sdk/lib/esm/index.js",
+      "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.1/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js",
+      "node_modules/.pnpm/@solflare-wallet+sdk@1.3.2_@solana+web3.js@1.87.1/node_modules/@solflare-wallet/sdk/lib/esm/index.js"
     ],
-    "file": "assets/index-a3a690d3.js",
+    "file": "assets/index-f639d465.js",
     "isEntry": true,
     "src": "index.html"
   },
   "node_modules/.pnpm/@ledgerhq+hw-transport-webhid@6.27.1/node_modules/@ledgerhq/hw-transport-webhid/lib-es/TransportWebHID.js": {
-    "file": "assets/TransportWebHID-7d7c7be6.js",
+    "file": "assets/TransportWebHID-c82578a4.js",
     "imports": [
       "index.html"
     ],
     "isDynamicEntry": true,
     "src": "node_modules/.pnpm/@ledgerhq+hw-transport-webhid@6.27.1/node_modules/@ledgerhq/hw-transport-webhid/lib-es/TransportWebHID.js"
   },
-  "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js": {
-    "file": "assets/index-3b09f650.js",
+  "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.1/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js": {
+    "file": "assets/index-75f8b596.js",
     "imports": [
       "index.html",
-      "_v4-5d22d677.js"
+      "_v4-59e84085.js"
     ],
     "isDynamicEntry": true,
-    "src": "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js"
+    "src": "node_modules/.pnpm/@solflare-wallet+metamask-sdk@1.0.2_@solana+web3.js@1.87.1/node_modules/@solflare-wallet/metamask-sdk/lib/esm/index.js"
   },
-  "node_modules/.pnpm/@solflare-wallet+sdk@1.4.1_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/sdk/lib/esm/index.js": {
-    "file": "assets/index-554aee2f.js",
+  "node_modules/.pnpm/@solflare-wallet+sdk@1.3.2_@solana+web3.js@1.87.1/node_modules/@solflare-wallet/sdk/lib/esm/index.js": {
+    "file": "assets/index-e6e772cb.js",
     "imports": [
       "index.html",
-      "_v4-5d22d677.js"
+      "_v4-59e84085.js"
     ],
     "isDynamicEntry": true,
-    "src": "node_modules/.pnpm/@solflare-wallet+sdk@1.4.1_@solana+web3.js@1.87.6/node_modules/@solflare-wallet/sdk/lib/esm/index.js"
+    "src": "node_modules/.pnpm/@solflare-wallet+sdk@1.3.2_@solana+web3.js@1.87.1/node_modules/@solflare-wallet/sdk/lib/esm/index.js"
   },
-  "node_modules/.pnpm/salmon-adapter-sdk@1.1.1_@solana+web3.js@1.87.6/node_modules/salmon-adapter-sdk/lib/esm/index.js": {
-    "file": "assets/index-9a4d6656.js",
+  "node_modules/.pnpm/salmon-adapter-sdk@1.1.1_@solana+web3.js@1.87.1/node_modules/salmon-adapter-sdk/lib/esm/index.js": {
+    "file": "assets/index-fead6ccc.js",
     "imports": [
       "index.html"
     ],
     "isDynamicEntry": true,
-    "src": "node_modules/.pnpm/salmon-adapter-sdk@1.1.1_@solana+web3.js@1.87.6/node_modules/salmon-adapter-sdk/lib/esm/index.js"
+    "src": "node_modules/.pnpm/salmon-adapter-sdk@1.1.1_@solana+web3.js@1.87.1/node_modules/salmon-adapter-sdk/lib/esm/index.js"
   },
   "src/assets/img/logo/albus-logo.svg": {
     "file": "assets/albus-logo-0ecbff35.svg",
@@ -102,7 +102,7 @@
     "src": "src/assets/img/tokens/usdt.png"
   },
   "src/layouts/home.vue": {
-    "file": "assets/home-29706c74.js",
+    "file": "assets/home-22e0f853.js",
     "imports": [
       "index.html"
     ],
@@ -117,7 +117,7 @@
     "css": [
       "assets/_...all_-f6a7ef33.css"
     ],
-    "file": "assets/_...all_-a8e42d75.js",
+    "file": "assets/_...all_-1961d6c2.js",
     "imports": [
       "index.html"
     ],
@@ -125,7 +125,7 @@
     "src": "src/pages/[...all].vue"
   },
   "src/pages/about.vue": {
-    "file": "assets/about-0f0b15c0.js",
+    "file": "assets/about-bd8fffc4.js",
     "imports": [
       "index.html"
     ],
@@ -133,17 +133,17 @@
     "src": "src/pages/about.vue"
   },
   "src/pages/pools.vue": {
-    "file": "assets/pools-0e223625.js",
+    "file": "assets/pools-80984d2f.js",
     "imports": [
-      "_AppDescriptionTop-ea166bac.js",
-      "_PoolsListItem.vue_vue_type_script_setup_true_lang-5ab6cddb.js",
+      "_AppDescriptionTop-c40fae9d.js",
+      "_PoolsListItem.vue_vue_type_script_setup_true_lang-85baeaf2.js",
       "index.html"
     ],
     "isDynamicEntry": true,
     "src": "src/pages/pools.vue"
   },
   "src/pages/support.vue": {
-    "file": "assets/support-10076d5d.js",
+    "file": "assets/support-2c08a530.js",
     "imports": [
       "index.html"
     ],
@@ -151,21 +151,21 @@
     "src": "src/pages/support.vue"
   },
   "src/pages/swap.vue": {
-    "file": "assets/swap-8a2c9fcf.js",
+    "file": "assets/swap-d6234902.js",
     "imports": [
       "index.html",
-      "_AppDescriptionTop-ea166bac.js",
-      "_SelectToken.vue_vue_type_script_setup_true_lang-db839535.js",
-      "_PoolsListItem.vue_vue_type_script_setup_true_lang-5ab6cddb.js"
+      "_AppDescriptionTop-c40fae9d.js",
+      "_SelectToken.vue_vue_type_script_setup_true_lang-da8d9643.js",
+      "_PoolsListItem.vue_vue_type_script_setup_true_lang-85baeaf2.js"
     ],
     "isDynamicEntry": true,
     "src": "src/pages/swap.vue"
   },
   "src/pages/transfer.vue": {
-    "file": "assets/transfer-7db97bda.js",
+    "file": "assets/transfer-5280565b.js",
     "imports": [
-      "_AppDescriptionTop-ea166bac.js",
-      "_SelectToken.vue_vue_type_script_setup_true_lang-db839535.js",
+      "_AppDescriptionTop-c40fae9d.js",
+      "_SelectToken.vue_vue_type_script_setup_true_lang-da8d9643.js",
       "index.html"
     ],
     "isDynamicEntry": true,
