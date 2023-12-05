@@ -1,5 +1,6 @@
 import { BN } from '@coral-xyz/anchor'
 import { Decimal } from 'decimal.js'
+import { COUNTRIES_LIST } from '@/config/countries'
 
 const SOL_DECIMALS = 9
 
@@ -54,4 +55,25 @@ export function divideBnToNumber(numerator: BN, denominator: BN): number {
   const rem = numerator.umod(denominator)
   const gcd = rem.gcd(denominator)
   return quotient + rem.div(gcd).toNumber() / denominator.div(gcd).toNumber()
+}
+
+export function formatCamelCase(str: string) {
+  return str.split(/(?=[A-Z])/).join(' ')
+}
+
+/**
+ * format policy rule
+ * TODO: use policy formatter from sdk
+ */
+export function formatRule(key: string, label: string, value: number[]) {
+  if (key === 'selectionMode') {
+    return `- Is${label === 'false' ? ' not' : ''} a resident of:`
+  } else if (/countryLookup/.test(key)) {
+    const items = value.filter(v => v > 0)
+    if (items.length) {
+      return items.reduce((acc, cur, idx) => `${acc}${idx > 0 ? ', ' : ''}${COUNTRIES_LIST[cur - 1]?.name}`, '')
+    }
+    return ''
+  }
+  return `- ${formatCamelCase(key)}: ${label}`
 }

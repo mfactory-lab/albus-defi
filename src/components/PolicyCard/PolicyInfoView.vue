@@ -2,9 +2,8 @@
 import { evaRefresh } from '@quasar/extras/eva-icons'
 import { useWallet } from 'solana-wallets-vue'
 import type { Policy } from '@albus-finance/sdk'
-import { formatDate } from '@/utils'
+import { formatDate, formatRule } from '@/utils'
 import { ALBUS_APP_URL } from '@/config'
-import { COUNTRIES_LIST } from '@/config/countries'
 import type { Certificate } from '@/stores'
 
 const props = defineProps({
@@ -30,23 +29,6 @@ const expiredAt = computed(() => {
   const date = new Date(Number(props.certificate?.data?.expiredAt) * 1000)
   return Number(props.certificate?.data?.expiredAt) === 0 ? '&infin;' : formatDate(date)
 })
-
-function formatCamelCase(str: string) {
-  return str.split(/(?=[A-Z])/).join(' ')
-}
-
-function formatRule(key: string, label: string, value: number[]) {
-  if (key === 'selectionMode') {
-    return `- Is${label === 'false' ? ' not' : ''} a resident of:`
-  } else if (/countryLookup/.test(key)) {
-    const items = value.filter(v => v > 0)
-    if (items.length) {
-      return items.reduce((acc, cur, idx) => `${acc}${idx > 0 ? ', ' : ''}${COUNTRIES_LIST[cur - 1]?.name}`, '')
-    }
-    return ''
-  }
-  return `- ${formatCamelCase(key)}: ${label}`
-}
 </script>
 
 <template>
@@ -99,7 +81,9 @@ function formatRule(key: string, label: string, value: number[]) {
           </div>
           <div class="q-ml-xs">
             <div v-for="(r, i) in requiredPolicyData.rules" :key="i">
-              <span v-if="r.key !== 'maxAge' || r.label !== '0'">{{ formatRule(r.key, r.label, r.value) }}</span>
+              <span v-if="(r.key !== 'maxAge' && r.key !== 'expectedDateTo') || r.label !== '0'">
+                {{ formatRule(r.key, r.label, r.value) }}
+              </span>
             </div>
           </div>
         </div>
