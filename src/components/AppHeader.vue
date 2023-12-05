@@ -1,8 +1,8 @@
 <template>
   <header class="app-header">
     <div class="app-header__buttons">
-      <cluster-selector />
-      <connect-wallet class="q-ml-sm" />
+      <cluster-selector class="q-mr-sm" />
+      <connect-wallet />
     </div>
 
     <policy-info-dialog />
