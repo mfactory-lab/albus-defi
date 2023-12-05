@@ -23,8 +23,12 @@ useHead({
 onBeforeMount(() => {
   initWallet()
 })
+
+const auth = useAuthStore()
+const isPasswordProtected = computed(() => auth.isEnabled && !auth.isAuthenticated)
 </script>
 
 <template>
-  <router-view />
+  <password-protect v-if="isPasswordProtected" />
+  <router-view v-else />
 </template>
