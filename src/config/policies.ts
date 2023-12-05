@@ -8,7 +8,7 @@ export interface PolicyItem {
 
 export const APP_CONFIG = {
   'mainnet-beta': {
-    serviceCode: '',
+    serviceCode: 'albus',
     policy: {
       transfer: {
         default: '',
