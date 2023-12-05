@@ -99,7 +99,7 @@ function formatRule(key: string, label: string, value: number[]) {
           </div>
           <div class="q-ml-xs">
             <div v-for="(r, i) in requiredPolicyData.rules" :key="i">
-              {{ formatRule(r.key, r.label, r.value) }}
+              <span v-if="r.key !== 'maxAge' || r.label !== '0'">{{ formatRule(r.key, r.label, r.value) }}</span>
             </div>
           </div>
         </div>
