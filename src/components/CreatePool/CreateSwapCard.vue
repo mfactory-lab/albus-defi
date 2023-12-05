@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // import { createSwap } from '@/utils/create-token-swap'
-import { Keypair } from '@solana/web3.js'
+import { Keypair, PublicKey } from '@solana/web3.js'
 import type { TokenData } from '@/config'
 
 const { state, createTokenSwap, createPoolAccounts, generateSwapKeypair, createPoolMint } = useCreateSwap()
@@ -20,6 +20,13 @@ const tokenSwapSecret = ref('')
 function setTokenSwap() {
   if (tokenSwapSecret.value) {
     state.tokenSwap = Keypair.fromSecretKey(Uint8Array.from(JSON.parse(`[${tokenSwapSecret.value}]`)))
+  }
+}
+
+const poolMint = ref('')
+function setPoolMint() {
+  if (poolMint.value) {
+    state.poolMint = new PublicKey(poolMint.value)
   }
 }
 </script>
@@ -112,11 +119,26 @@ function setTokenSwap() {
       </q-expansion-item>
 
       <div class="q-mt-xl row">
-        <q-btn class="q-ml-auto" @click="createPoolMint">
+        <q-btn class="q-ml-auto" :disable="!!state.poolMint" @click="createPoolMint">
           Create Pool Mint
         </q-btn>
       </div>
       <div>Pool mint: {{ state.poolMint?.toBase58() }}</div>
+      <div v-if="state.poolMint">
+        <copy-to-clipboard :text="state.poolMint?.toBase58()" />
+        Copy Pool Mint public key
+      </div>
+      <q-expansion-item
+        v-model="expandedTokenSwap"
+        label="Set pool mint manually"
+      >
+        <q-input v-model="poolMint" class="q-mr-md" label="Pool Mint" />
+        <div class="q-mt-sm row">
+          <q-btn class="q-ml-auto" :disable="!poolMint" @click="setPoolMint">
+            Set Pool Mint
+          </q-btn>
+        </div>
+      </q-expansion-item>
 
       <div class="q-mt-xl row">
         <q-btn class="q-ml-auto" @click="createPoolAccounts">
