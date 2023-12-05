@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // import { createSwap } from '@/utils/create-token-swap'
+import { Keypair } from '@solana/web3.js'
 import type { TokenData } from '@/config'
 
 const { state, createTokenSwap, createPoolAccounts, generateSwapKeypair, createPoolMint } = useCreateSwap()
@@ -12,6 +13,14 @@ const balanceB = computed(() => state.tokenB ? userStore.tokenBalance(state.toke
 
 function setToken(field: 'tokenA' | 'tokenB', t: TokenData) {
   state[field] = t
+}
+
+const expandedTokenSwap = ref(false)
+const tokenSwapSecret = ref('')
+function setTokenSwap() {
+  if (tokenSwapSecret.value) {
+    state.tokenSwap = Keypair.fromSecretKey(Uint8Array.from(JSON.parse(`[${tokenSwapSecret.value}]`)))
+  }
 }
 </script>
 
@@ -85,7 +94,22 @@ function setToken(field: 'tokenA' | 'tokenB', t: TokenData) {
         <div style="word-break: break-all">
           Secret key: {{ state.tokenSwap?.secretKey.toString() }}
         </div>
+        <div v-if="state.tokenSwap">
+          <copy-to-clipboard :text="state.tokenSwap.secretKey.toString()" />
+          Copy Token Swap secret key
+        </div>
       </div>
+      <q-expansion-item
+        v-model="expandedTokenSwap"
+        label="Set token swap from secret key"
+      >
+        <q-input v-model="tokenSwapSecret" class="q-mr-md" label="Token Swap Secret" />
+        <div class="q-mt-sm row">
+          <q-btn class="q-ml-auto" :disable="!tokenSwapSecret" @click="setTokenSwap">
+            Set Swap Keypair
+          </q-btn>
+        </div>
+      </q-expansion-item>
 
       <div class="q-mt-xl row">
         <q-btn class="q-ml-auto" @click="createPoolMint">
