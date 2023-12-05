@@ -25,7 +25,7 @@ jobs:
       - name: Install and Build
         run: |
           pnpm install
-          pnpm run build
+          pnpm run build:staging
           cp dist/index.html dist/404.html
           echo ${{ env.URL }} > dist/CNAME
           touch dist/.nojekyll

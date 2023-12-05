@@ -28,7 +28,6 @@ export const useConnectionStore = defineStore({
       return ENDPOINTS.find(e => e.id === state.rpc) ?? DEFAULT_ENDPOINT
     },
     connection(state): Connection {
-      console.log('[connection]', this.endpoint.url)
       return new Connection(this.endpoint.url, {
         confirmTransactionInitialTimeout: state.confirmTransactionInitialTimeout,
         wsEndpoint: this.endpoint.wsEndpoint,

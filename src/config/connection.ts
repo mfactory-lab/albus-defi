@@ -21,14 +21,15 @@ export const ENDPOINTS: Endpoint[] = [
   //   cluster: 'testnet',
   //   url: clusterApiUrl('testnet'),
   // },
-  {
+]
+if (import.meta.env.MODE !== 'production') {
+  ENDPOINTS.push({
     id: 'devnet',
     name: 'DevNet',
     cluster: 'devnet',
     url: 'https://polished-damp-dust.solana-devnet.quiknode.pro/e3fdb5a9915e3c3c47709465b4b5fa9f0153b674',
-    // url: clusterApiUrl('devnet'),
-  },
-]
+  })
+}
 
 export const DEFAULT_ENDPOINT = ENDPOINTS[0] as Endpoint
 

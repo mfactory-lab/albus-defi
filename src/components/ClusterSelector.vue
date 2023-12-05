@@ -25,6 +25,7 @@ function select(e: Endpoint) {
 
 <template>
   <q-btn-dropdown
+    v-if="ENDPOINTS.length > 1"
     :label="endpoint.cluster"
     :model-value="false"
     auto-close
@@ -43,7 +44,6 @@ function select(e: Endpoint) {
             <q-item-label>
               <b>{{ item.cluster }}</b>
             </q-item-label>
-            {{ item.name }}
           </q-item-section>
         </q-item>
         <q-separator v-if="index !== groups.length - 1" />
