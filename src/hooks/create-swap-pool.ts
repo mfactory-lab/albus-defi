@@ -63,6 +63,8 @@ export function useCreateSwap() {
           },
         },
       )
+    } else {
+      state.poolMint = poolMint.publicKey
     }
   }
 
@@ -100,6 +102,10 @@ export function useCreateSwap() {
           },
         },
       )
+    } else {
+      state.poolFeeAccount = poolFeeAccount
+      state.swapTokenA = swapTokenA
+      state.swapTokenB = swapTokenB
     }
     /**
      * transfer tokens to pool token accounts
