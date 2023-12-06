@@ -3,12 +3,14 @@ import { evaRefresh } from '@quasar/extras/eva-icons'
 import { useWallet } from 'solana-wallets-vue'
 import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
-import type { TokenData } from '@/config'
+import { SOL_MINT, type TokenData } from '@/config'
 
 const swapStore = useSwapStore()
 const { state, loadingPoolTokens, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
-const { handleSearchToken, tokens } = useToken()
+const { handleSearchToken, handleFilterToken, tokens } = useToken()
+handleFilterToken(SOL_MINT)
+
 const userStore = useUserStore()
 const poolBalanceA = computed(() => state.poolBalance[state.from.mint] ? lamportsToSol(state.poolBalance[state.from.mint], state.from.decimals) : 0)
 const poolBalanceB = computed(() => state.poolBalance[state.to.mint] ? lamportsToSol(state.poolBalance[state.to.mint], state.to.decimals) : 0)

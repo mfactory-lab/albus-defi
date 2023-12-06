@@ -19,13 +19,23 @@ export interface TokenData {
 }
 
 export const SOL_MINT = 'So11111111111111111111111111111111111111111'
+export const WRAPPED_SOL_MINT = 'So11111111111111111111111111111111111111112'
 
 export const SOL_TOKEN = {
   symbol: 'SOL',
   name: 'SOL',
-  image: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
+  image: solToken,
   inactive: false,
   mint: SOL_MINT,
+  decimals: 9,
+}
+
+export const WRAPPED_SOL_TOKEN = {
+  symbol: 'SOL',
+  name: 'SOL',
+  image: solToken,
+  inactive: false,
+  mint: WRAPPED_SOL_MINT,
   decimals: 9,
 }
 
@@ -54,13 +64,8 @@ export const TOKEN_C = {
 }
 
 export const TOKENS = [
-  {
-    symbol: 'sol',
-    name: 'sol',
-    image: solToken,
-    decimals: 9,
-    mint: SOL_MINT,
-  },
+  SOL_TOKEN,
+  WRAPPED_SOL_TOKEN,
   {
     symbol: 'usd-coin',
     name: 'usdc',
