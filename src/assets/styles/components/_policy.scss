@@ -64,6 +64,9 @@
       &--positive {
         background-color: $positive-light;
       }
+      &--gray {
+        background-color: $light-gray-middle;
+      }
 
       @media(max-width: 389px) {
         width: 131px;

@@ -1,3 +1,4 @@
+export * from './auth'
 export * from './connection'
 export * from './swap'
 export * from './theme'

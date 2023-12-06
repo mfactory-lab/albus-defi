@@ -262,5 +262,5 @@ export async function getCreateMintTx(
     createInitializeMint2Instruction(keypair.publicKey, decimals, mintAuthority, null, TOKEN_PROGRAM_ID),
   )
 
-  return keypair.publicKey
+  return keypair
 }

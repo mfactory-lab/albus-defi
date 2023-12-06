@@ -3,11 +3,12 @@ import { Notify } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
 import { formatBalance, onlyNumber, validateAddress } from '@/utils'
 import { MIN_FEE, RENT_FEE, TRANSFER_FEE_CONST } from '@/config/common'
-import { SOL_MINT } from '@/config/tokens'
+import { SOL_MINT, WRAPPED_SOL_MINT } from '@/config/tokens'
 
 const { state, setMax, setToken, verifyTransfer } = useTransferStore()
 const { state: userState, tokenBalance } = useUserStore()
-const { handleSearchToken, tokens } = useToken()
+const { handleSearchToken, handleFilterToken, tokens } = useToken()
+handleFilterToken(WRAPPED_SOL_MINT)
 
 const filterTokenExist = computed(() => {
   return [...tokens.value].sort((a, b) => tokenBalance(b.symbol) - tokenBalance(a.symbol))
@@ -92,6 +93,7 @@ const active = computed(() => Number(state.value) > 0 && validateAddress(state.a
             </q-input>
 
             <select-token
+              :token="state.token"
               :disable="!connected"
               :options="filterTokenExist"
               @handle-search-token="handleSearchToken"

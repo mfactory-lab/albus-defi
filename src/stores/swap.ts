@@ -7,7 +7,7 @@ import type { TokenSwap } from '@albus-finance/swap-sdk'
 import { AlbusSwapClient } from '@albus-finance/swap-sdk'
 import { AnchorProvider } from '@coral-xyz/anchor'
 import { divideBnToNumber, formatBalance, getTokensByOwner, lamportsToSol, showCreateDialog, solToLamports } from '@/utils'
-import { TOKEN_A, TOKEN_B } from '@/config'
+import { SOL_MINT, WRAPPED_SOL_TOKEN } from '@/config'
 import type { TokenData } from '@/config'
 
 interface PoolFees {
@@ -67,6 +67,8 @@ export const useSwapStore = defineStore('swap', () => {
   const tokenSwaps = ref<SwapPool[]>([])
   const tokenSwap = ref<SwapPool | undefined>()
 
+  const tokenAMint = useLocalStorage<string>('token-a', '')
+  const tokenBMint = useLocalStorage<string>('token-b', '')
   const state = reactive<SwapState>({
     loading: false,
     slippageDialog: false,
@@ -74,8 +76,8 @@ export const useSwapStore = defineStore('swap', () => {
     poolBalance: {},
     poolTokenSupply: 0,
 
-    from: TOKEN_A,
-    to: TOKEN_B,
+    from: WRAPPED_SOL_TOKEN,
+    to: WRAPPED_SOL_TOKEN,
     swapping: false,
     active: false,
     slippage: 0.01,
@@ -89,6 +91,26 @@ export const useSwapStore = defineStore('swap', () => {
       ownerWithdraw: 0,
     },
     direction: SwapDirection.ASC,
+  })
+
+  const { handleFilterToken, tokens } = useToken()
+  handleFilterToken(SOL_MINT)
+  watch(tokens, () => {
+    if (tokens.value.length >= 2) {
+      state.from = tokens.value.find(t => t.mint === tokenAMint.value) ?? tokens.value[0]
+      state.to = tokens.value.find(t => t.mint === tokenBMint.value) ?? tokens.value[1]
+    }
+  }, { immediate: true })
+
+  watch(() => state.from, () => {
+    if (state.from) {
+      tokenAMint.value = state.from.mint
+    }
+  })
+  watch(() => state.to, () => {
+    if (state.to) {
+      tokenBMint.value = state.to.mint
+    }
   })
 
   watch(wallet, async (w) => {
@@ -141,17 +163,15 @@ export const useSwapStore = defineStore('swap', () => {
 
   function setTokenSwap(swap: SwapPool) {
     tokenSwap.value = swap
-    console.log('setTokenSwap ========================== ', tokenSwap.value)
+    console.log('setTokenSwap: ', tokenSwap.value)
   }
   watch([
     tokenSwapsAll,
-    () => state.from.mint,
-    () => state.to.mint,
+    () => state.from?.mint,
+    () => state.to?.mint,
   ], async () => {
-    console.log('tokenSwapsAll ================: ', tokenSwapsAll.value)
-    console.log('from.mint ================: ', state.from.mint)
-    console.log('to.mint ================: ', state.to.mint)
-    if (tokenSwapsAll.value && state.from.mint && state.to.mint && state.from.mint !== state.to.mint) {
+    console.log('tokenSwapsAll: ', tokenSwapsAll.value)
+    if (tokenSwapsAll.value && state.from?.mint && state.to?.mint && state.from.mint !== state.to.mint) {
       tokenSwaps.value = tokenSwapsAll.value.filter((p) => {
         const tokenA = p.data?.tokenAMint.toBase58()
         const tokenB = p.data?.tokenBMint.toBase58()

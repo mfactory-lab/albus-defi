@@ -2,15 +2,11 @@ import { defineStore } from 'pinia'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
 import debounce from 'lodash-es/debounce'
-import type { Policy, ProofRequest, ServiceProvider } from '@albus-finance/sdk'
+import type { ProofRequest, ServiceProvider } from '@albus-finance/sdk'
 import { AlbusClient, ProofRequestStatus } from '@albus-finance/sdk'
 import { getSolanaBalance, getTokensByOwner } from '@/utils'
+import type { PolicyItem } from '@/config'
 import { APP_CONFIG, SOL_MINT } from '@/config'
-
-interface PolicyItem {
-  pubkey: PublicKey
-  data: Policy | null
-}
 
 export const useUserStore = defineStore('user', () => {
   const connectionStore = useConnectionStore()

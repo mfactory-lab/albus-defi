@@ -41,9 +41,8 @@ const { certificate, certificateLink, certificateValid } = useCertificate(props.
         </div>
         <div class="certificate-card__policy-name full-height">
           <span
-            v-if="connected"
             class="certificate-card__info__status-line"
-            :class="certificateValid ? 'certificate-card__info__status-line--positive' : 'certificate-card__info__status-line--negative'"
+            :class="connected ? (certificateValid ? 'certificate-card__info__status-line--positive' : 'certificate-card__info__status-line--negative') : 'certificate-card__info__status-line--gray'"
           />
           <span>{{ serviceData?.name }} {{ serviceData?.name && requiredPolicyData?.name && ',' }} {{ requiredPolicyData?.name }}</span>
         </div>

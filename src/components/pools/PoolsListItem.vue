@@ -75,7 +75,7 @@ const dialog = ref(false)
             />
             <q-btn
               label="SWAP"
-              color="info"
+              color="primary"
               text-color="white"
               target="_blank"
               @click="swapAction"

@@ -58,7 +58,7 @@ watch(model, (m) => {
     <q-select
       v-model="model" option-disable="inactive" popup-content-class="transition-duration" outlined
       :options="checkedTokens" dense :options-dense="false" :disable="disable"
-      option-value="mint" option-label="name"
+      option-value="mint" option-label="symbol"
       @popup-hide="clearSearch"
     >
       <template #prepend>

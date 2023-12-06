@@ -1,9 +1,17 @@
+import type { Policy } from '@albus-finance/sdk'
+import type { PublicKey } from '@solana/web3.js'
+
+export interface PolicyItem {
+  pubkey: PublicKey
+  data: Policy | null
+}
+
 export const APP_CONFIG = {
   'mainnet-beta': {
-    serviceCode: '',
+    serviceCode: 'albus',
     policy: {
       transfer: {
-        default: '',
+        default: '7Zes5oRAu7TCF9om8fCPstJx29nMAPQHY52u8kEnqNXr',
       },
       swap: {
         default: '',
