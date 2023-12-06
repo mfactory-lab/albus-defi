@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import type { Token } from '@/utils/tokens'
 import { getTokens } from '@/utils/tokens'
-import { SOL_TOKEN, TOKENS } from '@/config'
+import { TOKENS_DEV, TOKENS_MAIN } from '@/config'
 
 export const useTokenStore = defineStore('token', () => {
   const connectionStore = useConnectionStore()
@@ -24,24 +24,17 @@ export const useTokenStore = defineStore('token', () => {
       loading.value = false
     }
   }
-  getTokenList()
+  // getTokenList()
 
   const tokens = computed(() => {
-    return connectionStore.cluster === 'mainnet-beta'
-      ? [SOL_TOKEN, ...tokenList.value.map(t => ({
-          name: t.name,
-          symbol: t.symbol,
-          image: t.logoURI,
-          mint: t.address,
-          decimals: t.decimals,
-        }))]
-      : TOKENS.map(t => ({
-        name: t.name,
-        symbol: t.symbol,
-        image: t.image,
-        mint: t.mint,
-        decimals: t.decimals,
-      }))
+    const tokensList = connectionStore.cluster === 'mainnet-beta' ? TOKENS_MAIN : TOKENS_DEV
+    return tokensList.map(t => ({
+      name: t.name,
+      symbol: t.symbol,
+      image: t.image,
+      mint: t.mint,
+      decimals: t.decimals,
+    }))
   })
 
   return {

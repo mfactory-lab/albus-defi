@@ -11,7 +11,7 @@ export const APP_CONFIG = {
     serviceCode: 'albus',
     policy: {
       transfer: {
-        default: '',
+        default: '7Zes5oRAu7TCF9om8fCPstJx29nMAPQHY52u8kEnqNXr',
       },
       swap: {
         default: '',

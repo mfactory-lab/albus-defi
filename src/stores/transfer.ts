@@ -25,6 +25,8 @@ export const useTransferStore = defineStore('transfer', () => {
   const { publicKey } = useWallet()
   const { notify } = useQuasar()
 
+  const tokenTransfer = useLocalStorage<string>('token-transfer', '')
+
   const state = reactive<TransferState>({
     address: '',
     value: undefined,
@@ -35,8 +37,9 @@ export const useTransferStore = defineStore('transfer', () => {
   })
 
   watch(tokens, () => {
-    if (!state.token && tokens.value[0]) {
-      state.token = tokens.value[0]
+    if (tokens.value.length) {
+      console.log('find token ===================== ', tokens.value.find(t => t.mint === tokenTransfer.value))
+      state.token = tokens.value.find(t => t.mint === tokenTransfer.value) ?? tokens.value[0]
     }
   }, { immediate: true })
 
@@ -48,6 +51,11 @@ export const useTransferStore = defineStore('transfer', () => {
   watch(() => state.token, () => {
     reset()
     userStore.policySpec = state.token?.name ?? ''
+    console.log('state token ===================== ', state.token)
+    if (state.token) {
+      tokenTransfer.value = state.token.mint
+      console.log('transfer token ===================== ', tokenTransfer.value)
+    }
   })
 
   watch(() => wallet.value?.publicKey, (p) => {
@@ -224,6 +232,7 @@ export const useTransferStore = defineStore('transfer', () => {
   }
 
   function setToken(t: TokenData) {
+    console.log('set token ======== ', t)
     state.token = t
   }
 
