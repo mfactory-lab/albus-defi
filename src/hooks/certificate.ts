@@ -24,7 +24,7 @@ export function useCertificate(policy?: string) {
       return `${ALBUS_APP_URL}/holder?certificate=${certificate.value.pubkey?.toBase58()}`
     }
     const redirect = encodeURIComponent(`${location.origin}${route.fullPath}`)
-    return `${ALBUS_APP_URL}/wizard/${requiredPolicy.value}/${cluster.value}?redirect=${redirect}`
+    return `${ALBUS_APP_URL}/wizard/${requiredPolicy.value}?cluster=${cluster.value}&redirect=${redirect}`
   })
 
   return {
