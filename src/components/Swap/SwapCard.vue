@@ -141,7 +141,7 @@ watch(() => state.from.amount, (a) => {
 
       <div class="swap-submit q-mt-md">
         <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap" rounded :ripple="false" @click="swapSubmit">
-          Swap {{ state.from.name }} / {{ state.to.name }}
+          Swap {{ state.from.symbol }} / {{ state.to.symbol }}
         </q-btn>
       </div>
 
