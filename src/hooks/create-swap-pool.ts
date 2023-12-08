@@ -1,7 +1,6 @@
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
 import { CurveType } from '@albus-finance/swap-sdk'
-import { syncNative } from '@solana/spl-token'
 import { getCreateMintTx, getOrInitAssociatedTokenAddress, sendTransaction } from '@/utils'
 import type { PolicyItem, TokenData } from '@/config'
 
@@ -38,7 +37,6 @@ export function useCreateSwap() {
     if (!publicKey.value || !wallet.value) {
       return
     }
-    syncNative()
     state.tokenSwap = Keypair.generate()
     console.log('[create swap] token swap pk = ', state.tokenSwap.publicKey.toBase58())
     console.log('[create swap] token swap sk = ', state.tokenSwap.secretKey.toString())

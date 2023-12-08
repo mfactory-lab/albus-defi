@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
-import { PublicKey } from '@solana/web3.js'
+import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import debounce from 'lodash-es/debounce'
-import { getAssociatedTokenAddress, getMint } from '@solana/spl-token'
+import { createCloseAccountInstruction, createSyncNativeInstruction, getAccount, getAssociatedTokenAddress, getMint } from '@solana/spl-token'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { TokenSwap } from '@albus-finance/swap-sdk'
 import { AlbusSwapClient } from '@albus-finance/swap-sdk'
 import { AnchorProvider } from '@coral-xyz/anchor'
-import { divideBnToNumber, formatBalance, getTokensByOwner, lamportsToSol, showCreateDialog, solToLamports } from '@/utils'
-import { SOL_MINT, WRAPPED_SOL_TOKEN } from '@/config'
+import { divideBnToNumber, formatBalance, getOrInitAssociatedTokenAddress, getTokensByOwner, lamportsToSol, sendTransaction, showCreateDialog, solToLamports } from '@/utils'
+import { SOL_MINT, WRAPPED_SOL_MINT, WRAPPED_SOL_TOKEN } from '@/config'
 import type { TokenData } from '@/config'
 
 interface PoolFees {
@@ -286,6 +286,12 @@ export const useSwapStore = defineStore('swap', () => {
       const poolSourceAddress = state.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenA : tokenSwap.value.data.tokenB
       const poolDestinationAddress = state.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenB : tokenSwap.value.data.tokenA
 
+      console.log('userSourceMint = ', userSourceMint.toBase58())
+      console.log('userDestinationMint = ', userDestinationMint.toBase58())
+      if (userSourceMint.toBase58() === WRAPPED_SOL_MINT) {
+        await wrapSol(fromAmount)
+      }
+
       const userSource = await getAssociatedTokenAddress(userSourceMint, wallet.value!.publicKey)
       const userDestination = await getAssociatedTokenAddress(userDestinationMint, wallet.value!.publicKey)
       const sourceTokenAmount = fromAmount
@@ -323,6 +329,9 @@ export const useSwapStore = defineStore('swap', () => {
         receiver: publicKey.value,
         destinationTokenMint: userDestinationMint,
       }, { commitment: 'confirmed' })
+      if (userDestinationMint.toBase58() === WRAPPED_SOL_MINT) {
+        await unwrapSol(userDestination)
+      }
       reload()
     } catch (e) {
       console.log(e)
@@ -401,6 +410,74 @@ export const useSwapStore = defineStore('swap', () => {
     state.fees.ownerWithdraw = fees.ownerWithdraw
     console.log('fees ==== ', state.fees)
   })
+
+  const { monitorTransaction } = useMonitorTransaction()
+  async function wrapSol(amount: number) {
+    if (!publicKey.value) {
+      return
+    }
+    const tx = new Transaction()
+    const associatedTokenAccount = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, new PublicKey(WRAPPED_SOL_MINT), publicKey.value)
+    console.log('associatedTokenAccount =========== ', associatedTokenAccount.toBase58())
+    let wrappedSolBalance = 0
+    try {
+      const accountInfo = await getAccount(connectionStore.connection, associatedTokenAccount)
+      wrappedSolBalance = Number(accountInfo.amount)
+    } catch {}
+    console.log('wrappedSolBalance ==== ', wrappedSolBalance)
+
+    if (amount > wrappedSolBalance) {
+      tx.add(
+        SystemProgram.transfer({
+          fromPubkey: publicKey.value,
+          toPubkey: associatedTokenAccount,
+          lamports: amount - wrappedSolBalance,
+        }),
+        createSyncNativeInstruction(
+          associatedTokenAccount,
+        ),
+      )
+    }
+
+    if (tx.instructions.length > 0) {
+      await monitorTransaction(
+        sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
+        {
+          commitment: 'finalized',
+          onSuccess: () => {
+            notify({
+              type: 'positive',
+              message: 'SOL wrapped',
+            })
+          },
+        },
+      )
+    }
+  }
+
+  async function unwrapSol(account: PublicKey) {
+    if (!publicKey.value) {
+      return
+    }
+    console.log('unwrap sol ============= ')
+
+    const tx = new Transaction().add(
+      createCloseAccountInstruction(account, publicKey.value, publicKey.value),
+    )
+    await monitorTransaction(
+      sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
+      {
+        commitment: 'finalized',
+        onSuccess: () => {
+          notify({
+            type: 'positive',
+            message: 'Sol unwrapped',
+          })
+        },
+      },
+    )
+    // await closeAccount(connectionStore.connection, wallet, account, wallet.publicKey, wallet)
+  }
 
   return {
     state,
