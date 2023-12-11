@@ -199,8 +199,9 @@
   border-radius: 2px;
   font-size: 10px;
   cursor: pointer;
+  text-transform: lowercase !important;
 
-  .body--dark & {
+  .body--dark .certificate-card & {
     background-color: $secondary;
   }
 }

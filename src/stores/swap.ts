@@ -198,6 +198,7 @@ export const useSwapStore = defineStore('swap', () => {
       state.poolBalance = {}
     }
   }, { immediate: true })
+
   watch([
     tokenSwap,
   ], async () => {
@@ -205,6 +206,11 @@ export const useSwapStore = defineStore('swap', () => {
     userStore.setContractPolicy(tokenSwap.value?.data.policy?.toBase58() ?? '', 'swap')
     if (tokenSwap.value) {
       loadPoolTokenAccounts()
+      if (tokenSwap.value.data.tokenAMint.toBase58() === state.from.mint) {
+        state.direction = SwapDirection.ASC
+      } else {
+        state.direction = SwapDirection.DESC
+      }
     }
   }, { immediate: true })
 
@@ -285,6 +291,8 @@ export const useSwapStore = defineStore('swap', () => {
       const userDestinationMint = state.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenBMint : tokenSwap.value.data.tokenAMint
       const poolSourceAddress = state.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenA : tokenSwap.value.data.tokenB
       const poolDestinationAddress = state.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenB : tokenSwap.value.data.tokenA
+      console.log('userSourceMint = ', userSourceMint.toBase58())
+      console.log('userDestinationMint = ', userDestinationMint.toBase58())
 
       const userSource = await getAssociatedTokenAddress(userSourceMint, wallet.value!.publicKey)
       const userDestination = await getAssociatedTokenAddress(userDestinationMint, wallet.value!.publicKey)

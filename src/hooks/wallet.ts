@@ -15,6 +15,8 @@ export function initWallet() {
   const { emit } = useEmitter()
   const { notify } = useQuasar()
   const { wallet } = useWallet()
+  const subscriptionId = ref<number | undefined>()
+  const subscriptionLogsId = ref<number | undefined>()
 
   watch(
     wallet,
@@ -25,11 +27,11 @@ export function initWallet() {
 
       const onConnect = () => {
         const publicKey = w.adapter.publicKey!
-        connection.onAccountChange(publicKey, (acc) => {
+        subscriptionId.value = connection.onAccountChange(publicKey, (acc) => {
           console.log('ACCOUNT_CHANGE_EVENT', acc)
           emit(ACCOUNT_CHANGE_EVENT, acc)
         })
-        connection.onLogs(publicKey, (logs) => {
+        subscriptionLogsId.value = connection.onLogs(publicKey, (logs) => {
           console.log(logs)
         })
         notify({
@@ -46,6 +48,14 @@ export function initWallet() {
           caption: 'Disconnected from wallet',
           timeout: noticeTimeout,
         })
+        if (subscriptionId.value !== undefined) {
+          connection.removeAccountChangeListener(subscriptionId.value)
+          subscriptionId.value = undefined
+        }
+        if (subscriptionLogsId.value !== undefined) {
+          connection.removeOnLogsListener(subscriptionLogsId.value)
+          subscriptionLogsId.value = undefined
+        }
         emit(WALLET_DISCONNECT_EVENT, w)
       }
 
