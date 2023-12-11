@@ -1,6 +1,7 @@
 .pool-card {
   min-width: 371px;
   max-width: 100%;
+  border: 1px solid #fff;
 
   @media(min-width: $breakpoint-md) {
     min-width: 397px;
@@ -25,6 +26,7 @@
   &__subtitle {
     font-weight: 500;
     font-size: 16px;
+    text-transform: uppercase;
   }
 
   &__pubkey {
@@ -42,5 +44,9 @@
     :nth-child(2) {
       margin-left: -8px;
     }
+  }
+
+  body.body--dark & {
+    border: 1px solid #ffffff42;
   }
 }
