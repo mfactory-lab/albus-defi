@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@albus-finance/sdk": "0.2.2-next.18",
-    "@albus-finance/swap-sdk": "0.1.2-next.2",
+    "@albus-finance/swap-sdk": "0.1.4-next.0",
     "@albus-finance/transfer-sdk": "0.2.4-next.0",
     "@coral-xyz/anchor": "^0.29.0",
     "@metaplex-foundation/beet": "^0.7.1",
