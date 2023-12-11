@@ -125,7 +125,7 @@ export const useUserStore = defineStore('user', () => {
     } finally {
       state.loading = false
     }
-  }, 500)
+  }, 2000)
 
   const tokenBalance = (token: string) => {
     let balance = state.tokens.find(t => t.mint === token)?.balance ?? 0
@@ -151,7 +151,7 @@ export const useUserStore = defineStore('user', () => {
     } finally {
       state.certificateLoading = false
     }
-  }, 500)
+  }, 2000)
 
   const certificate = computed(() => {
     if (requiredPolicy.value) {
