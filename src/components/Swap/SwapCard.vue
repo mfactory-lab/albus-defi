@@ -76,7 +76,7 @@ watch(() => state.from.amount, (a) => {
             </div>
           </div>
           <q-input
-            v-model="state.from.amount" :maxlength="14" outlined placeholder="0.0" class="swap-input" :disable="!connected"
+            v-model="state.from.amount" :maxlength="14" outlined placeholder="0.0" class="swap-input"
             @keypress="onlyNumber"
           >
             <template #append>
@@ -106,7 +106,7 @@ watch(() => state.from.amount, (a) => {
               </div>
             </div>
           </div>
-          <q-input v-model="state.to.amount" :disable="!connected" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
+          <q-input v-model="state.to.amount" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
             <template #append>
               <select-token
                 :swap-token="String(state.from.symbol)" :options="tokens" :direction="true" :token="state.to" :destination-unavailable="!tokenSwap"

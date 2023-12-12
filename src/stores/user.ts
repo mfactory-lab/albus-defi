@@ -6,7 +6,7 @@ import type { ProofRequest, ServiceProvider } from '@albus-finance/sdk'
 import { AlbusClient, ProofRequestStatus } from '@albus-finance/sdk'
 import { getSolanaBalance, getTokensByOwner } from '@/utils'
 import type { PolicyItem } from '@/config'
-import { APP_CONFIG, SOL_MINT } from '@/config'
+import { APP_CONFIG, SOL_MINT, WRAPPED_SOL_MINT } from '@/config'
 
 export const useUserStore = defineStore('user', () => {
   const connectionStore = useConnectionStore()
@@ -128,7 +128,11 @@ export const useUserStore = defineStore('user', () => {
   }, 2000)
 
   const tokenBalance = (token: string) => {
-    return state.tokens.find(t => t.mint === token)?.balance ?? 0
+    let balance = state.tokens.find(t => t.mint === token)?.balance ?? 0
+    if (token === WRAPPED_SOL_MINT) {
+      balance += state.tokens.find(t => t.mint === SOL_MINT)?.balance ?? 0
+    }
+    return balance
   }
 
   const getCertificates = debounce(async () => {

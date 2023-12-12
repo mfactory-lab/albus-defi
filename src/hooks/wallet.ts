@@ -1,4 +1,5 @@
 import { useQuasar } from 'quasar'
+import debounce from 'lodash-es/debounce'
 import { useWallet } from 'solana-wallets-vue'
 import { watch } from 'vue'
 import { useEmitter } from './emitter'
@@ -14,29 +15,30 @@ export function initWallet() {
   const { connection } = useConnectionStore()
   const { emit } = useEmitter()
   const { notify } = useQuasar()
-  const { wallet } = useWallet()
+  const { wallet, publicKey } = useWallet()
   const subscriptionId = ref<number | undefined>()
   const subscriptionLogsId = ref<number | undefined>()
 
   watch(
-    wallet,
-    (w) => {
+    [wallet, publicKey],
+    debounce(([w, _pk], [_wOld, _pkOld]) => {
       if (!w) {
         return
       }
 
       const onConnect = () => {
         const publicKey = w.adapter.publicKey!
-        subscriptionId.value = connection.onAccountChange(publicKey, (acc) => {
+        subscriptionId.value = connection.onAccountChange(publicKey!, (acc) => {
           console.log('ACCOUNT_CHANGE_EVENT', acc)
           emit(ACCOUNT_CHANGE_EVENT, acc)
         })
-        subscriptionLogsId.value = connection.onLogs(publicKey, (logs) => {
+        subscriptionLogsId.value = connection.onLogs(publicKey!, (logs) => {
           console.log(logs)
         })
+
         notify({
           message: 'Wallet update',
-          caption: `Connected to wallet ${shortenAddress(publicKey.toBase58(), 7)}`,
+          caption: `Connected to wallet ${shortenAddress(publicKey?.toBase58() ?? '', 7)}`,
           timeout: noticeTimeout,
         })
         emit(WALLET_CONNECT_EVENT, w)
@@ -76,7 +78,7 @@ export function initWallet() {
 
       w.adapter.removeAllListeners('error')
       w.adapter.on('error', onError)
-    },
+    }, 100),
     { immediate: true },
   )
 }

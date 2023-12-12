@@ -294,6 +294,9 @@ export const useSwapStore = defineStore('swap', () => {
       console.log('userSourceMint = ', userSourceMint.toBase58())
       console.log('userDestinationMint = ', userDestinationMint.toBase58())
 
+      console.log('userSourceMint = ', userSourceMint.toBase58())
+      console.log('userDestinationMint = ', userDestinationMint.toBase58())
+
       const userSource = await getAssociatedTokenAddress(userSourceMint, wallet.value!.publicKey)
       const userDestination = await getAssociatedTokenAddress(userDestinationMint, wallet.value!.publicKey)
       const sourceTokenAmount = fromAmount
@@ -328,9 +331,10 @@ export const useSwapStore = defineStore('swap', () => {
         amountIn: sourceTokenAmount,
         minimumAmountOut: state.minimumReceived,
         // hostFeeAccount: undefined,
-        receiver: publicKey.value,
+        sourceTokenMint: userSourceMint,
         destinationTokenMint: userDestinationMint,
       }, { commitment: 'confirmed' })
+
       reload()
     } catch (e) {
       console.log(e)
