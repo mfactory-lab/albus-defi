@@ -44,7 +44,7 @@ const { certificate, certificateLink, certificateValid } = useCertificate(props.
             class="certificate-card__info__status-line"
             :class="connected ? (certificateValid ? 'certificate-card__info__status-line--positive' : 'certificate-card__info__status-line--negative') : 'certificate-card__info__status-line--gray'"
           />
-          <span>{{ serviceData?.name }} {{ serviceData?.name && requiredPolicyData?.name && ',' }} {{ requiredPolicyData?.name }}</span>
+          <span>{{ serviceData?.name }}{{ serviceData?.name && requiredPolicyData?.name && ',' }} {{ requiredPolicyData?.name }}</span>
         </div>
       </div>
       <div v-if="connected && !serviceLoading && !certificateLoading" class="certificate-card__end">
