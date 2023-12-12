@@ -94,7 +94,6 @@ const active = computed(() => Number(state.value) > 0 && validateAddress(state.a
 
             <select-token
               :token="state.token"
-              :disable="!connected"
               :options="filterTokenExist"
               @handle-search-token="handleSearchToken"
               @set-token="setToken"
