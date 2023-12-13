@@ -15,6 +15,10 @@ const routes = [
     icon: swapIcon,
   },
   {
+    name: 'liquidity',
+    icon: swapIcon,
+  },
+  {
     name: 'pools',
     icon: stakeIcon,
   },
