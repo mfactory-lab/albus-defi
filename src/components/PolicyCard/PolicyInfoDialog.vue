@@ -22,6 +22,7 @@ const { certificateLink, certificateValid, certificate } = useCertificate()
       :certificate-valid="!!certificateValid"
       :certificate-loading="certificateLoading"
       :certificate-link="certificateLink"
+      @close-dialog="dialog = false"
     />
   </q-dialog>
 </template>

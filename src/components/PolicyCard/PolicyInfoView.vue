@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { evaRefresh } from '@quasar/extras/eva-icons'
+import { evaClose, evaRefresh } from '@quasar/extras/eva-icons'
 import { useWallet } from 'solana-wallets-vue'
 import type { Policy } from '@albus-finance/sdk'
 import { formatDate, formatRule } from '@/utils'
@@ -13,6 +13,7 @@ const props = defineProps({
   certificateValid: Boolean,
   certificateLoading: Boolean,
 })
+defineEmits(['closeDialog'])
 
 const userStore = useUserStore()
 const serviceData = computed(() => userStore.serviceData)
@@ -33,6 +34,12 @@ const expiredAt = computed(() => {
 
 <template>
   <q-card class="policy-card">
+    <q-icon
+      size="20px"
+      :name="evaClose"
+      class="cursor-pointer absolute-right q-pa-xs"
+      @click="$emit('closeDialog')"
+    />
     <div>
       <q-inner-loading :showing="serviceLoading" label-class="text-teal" label-style="font-size: 1.1em" />
       <div v-if="connected" class="q-px-md q-pt-md">
