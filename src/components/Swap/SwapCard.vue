@@ -140,7 +140,13 @@ watch(() => state.from.amount, (a) => {
       <policy-card class="q-mt-md q-mx-auto" />
 
       <div class="swap-submit q-mt-md">
-        <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap" rounded :ripple="false" @click="swapSubmit">
+        <q-btn
+          :loading="state.swapping"
+          :disable="!state.active || !tokenSwap || !connected || !state.from.amount"
+          rounded
+          :ripple="false"
+          @click="swapSubmit"
+        >
           Swap {{ state.from.symbol }} / {{ state.to.symbol }}
         </q-btn>
       </div>
@@ -150,7 +156,7 @@ watch(() => state.from.amount, (a) => {
       </div>
       <div v-else class="row q-mt-md text-center relative-position full-width">
         <div class="swap-rate q-mx-auto">
-          1 {{ state.from.name }} ≈ {{ formatBalance(state.rate) }} {{ state.to.name }}
+          1 {{ state.from.symbol }} ≈ {{ formatBalance(state.rate) }} {{ state.to.symbol }}
         </div>
         <div class="absolute-right swap-rate__refresh">
           <q-btn

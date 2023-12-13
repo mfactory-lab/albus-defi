@@ -25,17 +25,24 @@ export const APP_CONFIG = {
     serviceCode: 'alphaDefi',
     policy: {
       transfer: {
-        // countries Germany, Ukraine, Switzerland
+        // Germany
         default: '6ZHFw4Z6A5g8ktPktzHKG7rPJHGem8HoKhxfYo9iYmhA',
-        // 22 - 55
+        // Liveness
         usdc: 'DfmzXJY5u1VPLmG58dekQoSchhyhZRcuuHy8e3D6Wq6B',
         // 18+
         usdt: 'B6MQGcriR1XXUhs4DbHattdueqRDkfGAQ9EJHSBQbDQn',
       },
-      // swap: {
-      //   // countries Germany, Ukraine, Switzerland
-      //   default: 'CjnpmL6Svfr3Vhpp1jVWCcNbJRxbyPY5ZQF8QiNXWXtT',
-      // },
     },
   },
 }
+// serviceCode: 'alphaDefi',
+// policy: {
+//   transfer: {
+//     // countries Germany, Ukraine, Switzerland
+//     default: '6ZHFw4Z6A5g8ktPktzHKG7rPJHGem8HoKhxfYo9iYmhA',
+//     // 22 - 55
+//     usdc: 'DfmzXJY5u1VPLmG58dekQoSchhyhZRcuuHy8e3D6Wq6B',
+//     // 18+
+//     usdt: 'B6MQGcriR1XXUhs4DbHattdueqRDkfGAQ9EJHSBQbDQn',
+//   },
+// },

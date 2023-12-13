@@ -52,7 +52,7 @@ function setMaxCurrency() {
   }
 }
 
-const active = computed(() => Number(state.value) > 0 && validateAddress(state.address))
+const active = computed(() => connected.value && Number(state.value) > 0 && validateAddress(state.address))
 </script>
 
 <template>
