@@ -16,7 +16,7 @@ if (mode !== 'dev') {
       ? 'https://restless-blue-valley.solana-mainnet.quiknode.pro/388d47063172de995210b42f44a3483d4269dcf9/'
       : 'https://rpc.jfactory.ch/',
     wsEndpoint: isDev ? undefined : 'wss://sleek-solemn-rain.solana-mainnet.quiknode.pro/6e7118f20a84b8d10c8f00ec8f16ab6878f00fb8/',
-    getToken: getJFRpcToken,
+    getToken: isDev ? undefined : getJFRpcToken,
   })
 }
 
