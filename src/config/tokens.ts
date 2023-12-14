@@ -58,16 +58,16 @@ export const WRAPPED_SOL_TOKEN = {
 }
 
 export const USDC_TOKEN_DEV = {
-  symbol: 'usdc',
-  name: 'usdc',
+  symbol: 'USDC',
+  name: 'USD Coin',
   image: usdcToken,
   decimals: 6,
   mint: '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU',
 }
 
 export const USDT_TOKEN_DEV = {
-  symbol: 'tether',
-  name: 'usdt',
+  symbol: 'TETHER',
+  name: 'USDT',
   image: usdtToken,
   decimals: 6,
   mint: 'HY6uvCfBQhKANRxBcYLBK7aUva8mT7mLP2SjrLLmipza',

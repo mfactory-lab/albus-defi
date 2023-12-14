@@ -1,13 +1,15 @@
-name: Deploy Dev
+name: Deploy Stage
 
 on:
   workflow_dispatch:
   push:
-    branches: [ dev ]
+    branches: [ stage ]
     paths:
       - public/**
       - src/**
 
+# change domain to stage
+# change the proccess to the same as in deploy-main
 env:
   URL: dev.defi.albus.finance
 
@@ -25,7 +27,7 @@ jobs:
       - name: Install and Build
         run: |
           pnpm install
-          pnpm run build:dev
+          pnpm run build:staging
           cp dist/index.html dist/404.html
           echo ${{ env.URL }} > dist/CNAME
           touch dist/.nojekyll
