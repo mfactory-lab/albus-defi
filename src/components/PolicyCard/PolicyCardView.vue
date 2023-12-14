@@ -63,6 +63,7 @@ const { certificate, certificateLink, certificateValid } = useCertificate(props.
         :certificate-valid="!!certificateValid"
         :certificate-loading="certificateLoading"
         :certificate-link="certificateLink"
+        @close-dialog="dialog = false"
       />
     </q-dialog>
   </q-card>

@@ -26,6 +26,14 @@ onBeforeMount(() => {
 
 const auth = useAuthStore()
 const isPasswordProtected = computed(() => auth.isEnabled && !auth.isAuthenticated)
+
+const route = useRoute()
+const router = useRouter()
+watch(route, () => {
+  if (route.name === 'index' || route.name === 'all' || (route.name && !router.hasRoute(route.name))) {
+    router.push('/transfer')
+  }
+}, { immediate: true })
 </script>
 
 <template>

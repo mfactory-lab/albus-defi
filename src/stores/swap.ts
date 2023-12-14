@@ -6,7 +6,7 @@ import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { TokenSwap } from '@albus-finance/swap-sdk'
 import { AlbusSwapClient } from '@albus-finance/swap-sdk'
 import { AnchorProvider } from '@coral-xyz/anchor'
-import { divideBnToNumber, formatBalance, getTokensByOwner, lamportsToSol, showCreateDialog, solToLamports } from '@/utils'
+import { divideBnToNumber, formatBalance, getTokensByOwner, lamportsToSol, showCreateDialog, showTransactionResultDialog, solToLamports } from '@/utils'
 import { SOL_MINT, WRAPPED_SOL_TOKEN } from '@/config'
 import type { TokenData } from '@/config'
 
@@ -64,6 +64,7 @@ export const useSwapStore = defineStore('swap', () => {
   })
 
   const tokenSwapsAll = ref<SwapPool[]>([])
+  const tokenSwapsAllFiltered = ref<SwapPool[]>([])
   const tokenSwaps = ref<SwapPool[]>([])
   const tokenSwap = ref<SwapPool | undefined>()
 
@@ -165,14 +166,23 @@ export const useSwapStore = defineStore('swap', () => {
     tokenSwap.value = swap
     console.log('setTokenSwap: ', tokenSwap.value)
   }
+
   watch([
     tokenSwapsAll,
+    () => userStore.servicePolicy,
+  ], async () => {
+    tokenSwapsAllFiltered.value = tokenSwapsAll.value.filter(p => !!userStore.servicePolicy.find(sp => sp.pubkey.toBase58() === p.data.policy?.toBase58()))
+  }, { immediate: true })
+
+  watch([
+    tokenSwapsAllFiltered,
     () => state.from?.mint,
     () => state.to?.mint,
+    () => userStore.servicePolicy,
   ], async () => {
-    console.log('tokenSwapsAll: ', tokenSwapsAll.value)
-    if (tokenSwapsAll.value && state.from?.mint && state.to?.mint && state.from.mint !== state.to.mint) {
-      tokenSwaps.value = tokenSwapsAll.value.filter((p) => {
+    console.log('tokenSwapsAllFiltered: ', tokenSwapsAllFiltered.value)
+    if (tokenSwapsAllFiltered.value && state.from?.mint && state.to?.mint && state.from.mint !== state.to.mint && userStore.servicePolicy.length) {
+      tokenSwaps.value = tokenSwapsAllFiltered.value.filter((p) => {
         const tokenA = p.data?.tokenAMint.toBase58()
         const tokenB = p.data?.tokenBMint.toBase58()
         return (tokenA === state.from.mint && tokenB === state.to.mint) || (tokenA === state.to.mint && tokenB === state.from.mint)
@@ -318,7 +328,7 @@ export const useSwapStore = defineStore('swap', () => {
       console.log('poolFee = ', tokenSwap.value.data.poolFeeAccount.toBase58())
       console.log('amountIn = ', sourceTokenAmount)
       console.log('minimumAmountOut = ', state.minimumReceived)
-      await swapClient.value.swap({
+      const signature = await swapClient.value.swap({
         proofRequest: userStore.certificate?.pubkey,
         authority,
         tokenSwap: tokenSwap.value.pubkey,
@@ -335,6 +345,7 @@ export const useSwapStore = defineStore('swap', () => {
         destinationTokenMint: userDestinationMint,
       }, { commitment: 'confirmed' })
 
+      showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)
       reload()
     } catch (e) {
       console.log(e)
@@ -416,7 +427,7 @@ export const useSwapStore = defineStore('swap', () => {
 
   return {
     state,
-    tokenSwapsAll,
+    tokenSwapsAllFiltered,
     tokenSwaps,
     tokenSwap,
     swapClient,

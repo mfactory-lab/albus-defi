@@ -5,8 +5,9 @@
   "packageManager": "pnpm@8.11.0",
   "scripts": {
     "dev": "vite --port 3333",
-    "build": "vite build --mode production",
-    "build:staging": "vite build --mode staging",
+    "build": "vite build --mode prod",
+    "build:stage": "vite build --mode stage",
+    "build:dev": "vite build --mode dev",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
