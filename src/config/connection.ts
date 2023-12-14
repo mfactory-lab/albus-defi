@@ -28,7 +28,6 @@ if (mode === 'dev' || isDev) {
     url: 'https://polished-damp-dust.solana-devnet.quiknode.pro/e3fdb5a9915e3c3c47709465b4b5fa9f0153b674',
   })
 }
-console.log('ENDPOINTS ===================== ', ENDPOINTS)
 
 export const DEFAULT_ENDPOINT = ENDPOINTS[0] as Endpoint
 

@@ -8,6 +8,7 @@
       <connect-wallet />
     </div>
 
+    <transaction-success-dialog />
     <policy-info-dialog />
   </header>
 </template>

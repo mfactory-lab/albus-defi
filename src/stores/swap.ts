@@ -6,7 +6,7 @@ import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { TokenSwap } from '@albus-finance/swap-sdk'
 import { AlbusSwapClient } from '@albus-finance/swap-sdk'
 import { AnchorProvider } from '@coral-xyz/anchor'
-import { divideBnToNumber, formatBalance, getTokensByOwner, lamportsToSol, showCreateDialog, solToLamports } from '@/utils'
+import { divideBnToNumber, formatBalance, getTokensByOwner, lamportsToSol, showCreateDialog, showTransactionResultDialog, solToLamports } from '@/utils'
 import { SOL_MINT, WRAPPED_SOL_TOKEN } from '@/config'
 import type { TokenData } from '@/config'
 
@@ -318,7 +318,7 @@ export const useSwapStore = defineStore('swap', () => {
       console.log('poolFee = ', tokenSwap.value.data.poolFeeAccount.toBase58())
       console.log('amountIn = ', sourceTokenAmount)
       console.log('minimumAmountOut = ', state.minimumReceived)
-      await swapClient.value.swap({
+      const signature = await swapClient.value.swap({
         proofRequest: userStore.certificate?.pubkey,
         authority,
         tokenSwap: tokenSwap.value.pubkey,
@@ -335,6 +335,7 @@ export const useSwapStore = defineStore('swap', () => {
         destinationTokenMint: userDestinationMint,
       }, { commitment: 'confirmed' })
 
+      showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)
       reload()
     } catch (e) {
       console.log(e)

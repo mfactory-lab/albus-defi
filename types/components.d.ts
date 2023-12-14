@@ -45,6 +45,8 @@ declare module 'vue' {
     SocialLinks: typeof import('./../src/components/SocialLinks.vue')['default']
     StakeCard: typeof import('./../src/components/stake/StakeCard.vue')['default']
     SwapCard: typeof import('./../src/components/swap/SwapCard.vue')['default']
+    TransactionSuccess: typeof import('./../src/components/TransactionSuccess.vue')['default']
+    TransactionSuccessDialog: typeof import('./../src/components/TransactionSuccessDialog.vue')['default']
     TransferCard: typeof import('./../src/components/transfer/TransferCard.vue')['default']
     WarningDisclaimer: typeof import('./../src/components/WarningDisclaimer.vue')['default']
   }

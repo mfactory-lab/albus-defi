@@ -26,11 +26,11 @@ export const APP_CONFIG = {
     policy: {
       transfer: {
         // Germany
-        default: '6ZHFw4Z6A5g8ktPktzHKG7rPJHGem8HoKhxfYo9iYmhA',
+        default: 'FMjX1SkKxHXRXwB2xwF3A3vq8qhi8j9sGxqaUtm3jQeM',
         // Liveness
-        usdc: 'DfmzXJY5u1VPLmG58dekQoSchhyhZRcuuHy8e3D6Wq6B',
+        usdc: 'DS9euEj5CfpXh3d4KCHMZt6uNHopfEs5yCcXULot4gpJ',
         // 18+
-        usdt: 'B6MQGcriR1XXUhs4DbHattdueqRDkfGAQ9EJHSBQbDQn',
+        usdt: '3igCfP1acua77qPrKiBNRHtGM3JCrQfFSYw2zwNym553',
       },
     },
   },
