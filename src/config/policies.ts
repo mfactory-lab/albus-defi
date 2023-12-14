@@ -22,7 +22,7 @@ export const APP_CONFIG = {
     },
   },
   'devnet': {
-    serviceCode: 'alphaDefi',
+    serviceCode: 'albus',
     policy: {
       transfer: {
         // Germany

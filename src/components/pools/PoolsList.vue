@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const swapStore = useSwapStore()
-const tokenSwapsAll = computed(() => swapStore.tokenSwapsAll)
+const tokenSwapsAllFiltered = computed(() => swapStore.tokenSwapsAllFiltered)
 const { state } = swapStore
 </script>
 
@@ -9,7 +9,7 @@ const { state } = swapStore
     <q-inner-loading :showing="state?.loading" class="swap-loading" color="grey" />
     <div class="row justify-center">
       <pools-list-item
-        v-for="(pool, idx) in tokenSwapsAll"
+        v-for="(pool, idx) in tokenSwapsAllFiltered"
         :key="pool.pubkey?.toBase58() ?? idx"
         :pubkey="pool.pubkey"
         :data="pool.data"
