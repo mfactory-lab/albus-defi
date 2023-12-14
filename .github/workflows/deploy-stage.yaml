@@ -1,0 +1,39 @@
+name: Deploy Stage
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ stage ]
+    paths:
+      - public/**
+      - src/**
+
+# change domain to stage
+# change the proccess to the same as in deploy-main
+env:
+  URL: dev.defi.albus.finance
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+
+      - name: Install and Build
+        run: |
+          pnpm install
+          pnpm run build:staging
+          cp dist/index.html dist/404.html
+          echo ${{ env.URL }} > dist/CNAME
+          touch dist/.nojekyll
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.5.0
+        with:
+          branch: gh-pages
+          folder: dist
