@@ -38,7 +38,7 @@ jobs:
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
         run: |
-          pnpm run build
+          pnpm run build:stage
           cp dist/index.html dist/404.html && touch dist/.nojekyll
           echo ${{ env.URL }} > dist/CNAME
 
