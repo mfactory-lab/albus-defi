@@ -4,7 +4,7 @@ import usdtToken from '@/assets/img/tokens/usdt.png'
 
 export enum PoolTokenSymbol {
   TOKEN_A = 'TOKEN_A',
-  TOKEN_B = 'TOKEN_B',
+  TOKEN_B = 'JSOL',
   TOKEN_C = 'TOKEN_C',
 }
 
@@ -32,10 +32,11 @@ export const USDC_TOKEN_MAIN = {
   decimals: 6,
 }
 
+const JSOL_IMG = 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/7Q2afV64in6N6SeZsAAB81TJzwDoD6zpqmHkzi9Dcavn/logo.svg'
 export const JSOL_TOKEN_MAIN = {
   symbol: 'JSOL',
   name: 'JPOOL Solana Token',
-  image: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/7Q2afV64in6N6SeZsAAB81TJzwDoD6zpqmHkzi9Dcavn/logo.svg',
+  image: JSOL_IMG,
   inactive: false,
   mint: JSOL_MINT,
   decimals: 9,
@@ -84,7 +85,7 @@ export const TOKEN_A = {
 export const TOKEN_B = {
   symbol: PoolTokenSymbol.TOKEN_B,
   name: PoolTokenSymbol.TOKEN_B,
-  image: usdcToken,
+  image: JSOL_IMG,
   decimals: 9,
   mint: '6rdejLXbi2Ws2z3Ff1wRhRS9WqrXRDuM8YpSkiektRgw',
 }
@@ -98,13 +99,13 @@ export const TOKEN_C = {
 }
 
 export const TOKENS_DEV = [
-  TOKEN_A,
+  // TOKEN_A,
   TOKEN_B,
   SOL_TOKEN,
   WRAPPED_SOL_TOKEN,
   USDC_TOKEN_DEV,
-  USDT_TOKEN_DEV,
-  TOKEN_C,
+  // USDT_TOKEN_DEV,
+  // TOKEN_C,
 ]
 
 export const TOKENS_MAIN = [

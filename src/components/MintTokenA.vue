@@ -42,6 +42,6 @@ async function mintTokenB() {
     :color="$q.dark.isActive ? 'white' : 'primary'"
     @click="mintTokenB"
   >
-    Mint TOKEN_B
+    Mint JSOL (fake)
   </q-btn>
 </template>

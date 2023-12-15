@@ -20,7 +20,7 @@ const esbuildShim = require.resolve('node-stdlib-browser/helpers/esbuild/shim')
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
-  const isProd = mode === 'production' || mode === 'staging'
+  const isProd = mode === 'prod' || mode === 'stage'
 
   const { default: stdLibBrowser } = await import('node-stdlib-browser')
 
