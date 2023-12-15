@@ -23,14 +23,6 @@ jobs:
           node-version: 16.x
           cache: pnpm
 
-      - name: Bump version
-        uses: phips28/gh-action-bump-version@master
-        id: version
-#        with:
-#          tag-prefix:  'v'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install
         run: pnpm install --frozen-lockfile
 
