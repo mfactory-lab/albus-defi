@@ -1,9 +1,10 @@
+import type { Buffer } from 'node:buffer'
 import { defineStore } from 'pinia'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
-import type { PublicKey, PublicKeyInitData } from '@solana/web3.js'
+import type { AccountInfo, PublicKey, PublicKeyInitData } from '@solana/web3.js'
 import debounce from 'lodash-es/debounce'
-import type { ProofRequest, ServiceProvider } from '@albus-finance/sdk'
-import { AlbusClient, ProofRequestStatus } from '@albus-finance/sdk'
+import type { ServiceProvider } from '@albus-finance/sdk'
+import { AlbusClient, ProofRequest, ProofRequestStatus } from '@albus-finance/sdk'
 import { getSolanaBalance, getTokensByOwner } from '@/utils'
 import type { PolicyItem } from '@/config'
 import { APP_CONFIG, ENVIRONMENT, SOL_MINT, WRAPPED_SOL_MINT } from '@/config'
@@ -49,6 +50,8 @@ export const useUserStore = defineStore('user', () => {
     }
     console.log('[swap] policies = ', contractPolicy.value)
   }
+
+  const certificatesSubscriptions = ref<number[]>([])
 
   const servicePolicy = ref<PolicyItem[]>([])
   const serviceData = ref<ServiceProvider>()
@@ -134,8 +137,35 @@ export const useUserStore = defineStore('user', () => {
     return balance
   }
 
+  const reloadCertData = async (accountInfo: AccountInfo<Buffer>) => {
+    try {
+      const certData = ProofRequest.fromAccountInfo(accountInfo)[0]
+
+      const idx = state.certificates?.findIndex(c => c.data?.policy.toBase58() === certData.policy.toBase58()) ?? -1
+
+      if (state.certificates && idx > -1) {
+        const cert = state.certificates[idx]
+        cert.data = certData
+        state.certificates = [...state.certificates.slice(0, idx), cert, ...state.certificates.slice(idx + 1)]
+      }
+    } catch (e) {
+      console.log('reload cert error: ', e)
+      // TODO: improve listener
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      setTimeout(getCertificates, 0)
+    }
+  }
+
   const getCertificates = debounce(async () => {
+    // TODO: improve listener
+    certificatesSubscriptions.value = []
     if (!publicKey.value) {
+      certificatesSubscriptions.value.forEach((s) => {
+        try {
+          connectionStore.connection.removeAccountChangeListener(s)
+        } catch {}
+      })
+      certificatesSubscriptions.value = []
       return
     }
     try {
@@ -145,6 +175,14 @@ export const useUserStore = defineStore('user', () => {
         serviceProviderCode: appConfig.value?.serviceCode,
       })
       console.log('[debug] certificates === ', state.certificates)
+
+      const subscriptions: number[] = []
+      state.certificates.forEach((cert) => {
+        subscriptions.push(
+          connectionStore.connection.onAccountChange(cert.pubkey, reloadCertData),
+        )
+      })
+      certificatesSubscriptions.value = subscriptions
     } catch (e) {
       console.error('getCertificates error:', e)
     } finally {
