@@ -22,15 +22,13 @@ export const APP_CONFIG = {
     },
   },
   'devnet': {
-    serviceCode: 'albus',
+    serviceCode: 'albusDefi',
     policy: {
       transfer: {
-        // Germany
-        default: 'FMjX1SkKxHXRXwB2xwF3A3vq8qhi8j9sGxqaUtm3jQeM',
-        // Liveness
-        usdc: 'DS9euEj5CfpXh3d4KCHMZt6uNHopfEs5yCcXULot4gpJ',
-        // 18+
-        usdt: '3igCfP1acua77qPrKiBNRHtGM3JCrQfFSYw2zwNym553',
+        // Country
+        default: 'ANGgdHwXQd9UmfZdHvMDJ6b5ATzrmTCJz4bcbZzB5a76',
+        // Age
+        usdc: '6c3ER8JD9Gq39AMMALZMi2Rf55QzvRcyPwNZMLn7ApSo',
       },
     },
   },

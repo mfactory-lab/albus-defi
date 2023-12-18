@@ -6,7 +6,7 @@ import type { ProofRequest, ServiceProvider } from '@albus-finance/sdk'
 import { AlbusClient, ProofRequestStatus } from '@albus-finance/sdk'
 import { getSolanaBalance, getTokensByOwner } from '@/utils'
 import type { PolicyItem } from '@/config'
-import { APP_CONFIG, SOL_MINT, WRAPPED_SOL_MINT } from '@/config'
+import { APP_CONFIG, ENVIRONMENT, SOL_MINT, WRAPPED_SOL_MINT } from '@/config'
 
 export const useUserStore = defineStore('user', () => {
   const connectionStore = useConnectionStore()
@@ -16,7 +16,8 @@ export const useUserStore = defineStore('user', () => {
   const route = useRoute()
   const emitter = useEmitter()
 
-  const client = computed(() => AlbusClient.fromWallet(connectionStore.connection, anchorWallet.value).configure('debug', true))
+  const client = computed(() => AlbusClient.fromWallet(connectionStore.connection, anchorWallet.value).env(ENVIRONMENT).configure('debug', true))
+  watch(client, () => console.log('AlbusClient: ', client.value), { immediate: true })
   const { tokens } = useToken()
 
   const serviceLoading = ref(false)
@@ -42,6 +43,10 @@ export const useUserStore = defineStore('user', () => {
   })
   function setContractPolicy(policy: string, page?: string) {
     contractPolicy.value[page ?? route.name] = policy
+    // TODO: better solution
+    if (page === 'swap') {
+      setContractPolicy(policy, 'liquidity')
+    }
     console.log('[swap] policies = ', contractPolicy.value)
   }
 
