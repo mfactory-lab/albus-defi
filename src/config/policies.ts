@@ -1,5 +1,6 @@
 import type { Policy } from '@albus-finance/sdk'
 import type { PublicKey } from '@solana/web3.js'
+import { ENVIRONMENT } from './connection'
 
 export interface PolicyItem {
   pubkey: PublicKey
@@ -11,8 +12,8 @@ export const APP_CONFIG = {
     serviceCode: 'albus',
     policy: {
       transfer: {
-        // Country
-        default: '21iMuKCP4gSKJfh7JT6byetCBLsvcAg9GpEVqPj2Adcw',
+        // Age : Country
+        default: ENVIRONMENT === 'prod' ? '7Zes5oRAu7TCF9om8fCPstJx29nMAPQHY52u8kEnqNXr' : '21iMuKCP4gSKJfh7JT6byetCBLsvcAg9GpEVqPj2Adcw',
       },
       swap: {
         default: '',
