@@ -6,7 +6,7 @@ import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { TokenSwap } from '@albus-finance/swap-sdk'
 import { AlbusSwapClient } from '@albus-finance/swap-sdk'
 import { AnchorProvider } from '@coral-xyz/anchor'
-import { divideBnToNumber, formatBalance, getTokensByOwner, lamportsToSol, showCreateDialog, showTransactionResultDialog, solToLamports } from '@/utils'
+import { divideBnToNumber, formatBalance, getTokensByOwner, lamportsToSol, showCreateDialog, solToLamports } from '@/utils'
 import { SOL_MINT, WRAPPED_SOL_TOKEN } from '@/config'
 import type { TokenData } from '@/config'
 
@@ -344,7 +344,19 @@ export const useSwapStore = defineStore('swap', () => {
         destinationTokenMint: userDestinationMint,
       }, { commitment: 'confirmed' })
 
-      showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)
+      // showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)
+      notify({
+        message: 'Transaction confirmed',
+        type: 'positive',
+        actions: [{
+          label: 'Explore',
+          color: 'white',
+          target: '_blank',
+          href: `https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`,
+          onClick: () => false,
+        }],
+      })
+
       reload()
     } catch (e) {
       console.log(e)
