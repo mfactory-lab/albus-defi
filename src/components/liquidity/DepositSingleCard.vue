@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { evaRefresh } from '@quasar/extras/eva-icons'
-import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
+import { formatBalance, lamportsToSol, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import { SOL_MINT, type TokenData } from '@/config'
 
@@ -17,8 +17,6 @@ handleFilterToken(SOL_MINT)
 const userStore = useUserStore()
 const poolBalanceA = computed(() => swapState.poolBalance[swapState.from.mint] ? lamportsToSol(swapState.poolBalance[swapState.from.mint], swapState.from.decimals) : 0)
 const poolBalanceB = computed(() => swapState.poolBalance[swapState.to.mint] ? lamportsToSol(swapState.poolBalance[swapState.to.mint], swapState.to.decimals) : 0)
-
-const formatPercent = (n: number) => formatPct.format(n)
 
 const changeButtonRotate = ref(0)
 

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { PublicKey } from '@solana/web3.js'
+import { type PublicKey } from '@solana/web3.js'
 import { getAssociatedTokenAddress } from '@solana/spl-token'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { TokenSwap } from '@albus-finance/swap-sdk'
@@ -180,6 +180,8 @@ export const useLiquidityStore = defineStore('liquidity', () => {
     const userSource = await getAssociatedTokenAddress(userSourceMint, wallet.value!.publicKey)
     const userDestination = await getAssociatedTokenAddress(tokenSwap.value.data.poolMint, wallet.value!.publicKey)
 
+    const sourceTokenAmount = Number(solToLamports(state.amountTokenA ?? 0, swapState.value.from.decimals))
+
     const signature = await swapClient.value.depositSingleTokenTypeExactAmountIn({
       tokenSwap: tokenSwap.value?.pubkey,
       poolMint: tokenSwap.value.data.poolMint,
@@ -187,7 +189,7 @@ export const useLiquidityStore = defineStore('liquidity', () => {
       destination: userDestination,
       swapTokenA: tokenSwap.value.data.tokenA,
       swapTokenB: tokenSwap.value.data.tokenB,
-      sourceTokenAmount: state.amountTokenA,
+      sourceTokenAmount,
       minimumPoolTokenAmount: 0,
     })
 
