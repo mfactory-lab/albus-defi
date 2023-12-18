@@ -170,6 +170,42 @@ export const useLiquidityStore = defineStore('liquidity', () => {
     }
   }
 
+  async function depositSingleToken() {
+    if (!tokenSwap.value || !publicKey.value) {
+      console.log('TokenSwap is not initialized...')
+      return
+    }
+
+    const userSourceMint = swapState.value.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenAMint : tokenSwap.value.data.tokenBMint
+    const userSource = await getAssociatedTokenAddress(userSourceMint, wallet.value!.publicKey)
+    const userDestination = await getAssociatedTokenAddress(tokenSwap.value.data.poolMint, wallet.value!.publicKey)
+
+    const signature = await swapClient.value.depositSingleTokenTypeExactAmountIn({
+      tokenSwap: tokenSwap.value?.pubkey,
+      poolMint: tokenSwap.value.data.poolMint,
+      source: userSource,
+      destination: userDestination,
+      swapTokenA: tokenSwap.value.data.tokenA,
+      swapTokenB: tokenSwap.value.data.tokenB,
+      sourceTokenAmount: state.amountTokenA,
+      minimumPoolTokenAmount: 0,
+    })
+
+    reload()
+
+    notify({
+      message: 'Transaction confirmed',
+      type: 'positive',
+      actions: [{
+        label: 'Explore',
+        color: 'white',
+        target: '_blank',
+        href: `https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`,
+        onClick: () => false,
+      }],
+    })
+  }
+
   function openSlippage() {
     state.slippageDialog = true
   }
@@ -183,5 +219,6 @@ export const useLiquidityStore = defineStore('liquidity', () => {
     closeSlippage,
     openSlippage,
     addLiquiditySubmit,
+    depositSingleToken,
   }
 })
