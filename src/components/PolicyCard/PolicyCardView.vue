@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useWallet } from 'solana-wallets-vue'
+import { ProofRequestStatus } from '@albus-finance/sdk'
 import type { Policy } from '@albus-finance/sdk'
 
 const props = defineProps({
@@ -17,6 +18,19 @@ const dialog = ref(false)
 const { connected } = useWallet()
 
 const { certificate, certificateLink, certificateValid } = useCertificate(props.requiredPolicy)
+
+function getStatusLineColor() {
+  if (!connected.value) {
+    return 'certificate-card__info__status-line--gray'
+  }
+  if (certificateValid.value) {
+    return 'certificate-card__info__status-line--positive'
+  }
+  if (certificate.value?.data?.status === ProofRequestStatus.Proved) {
+    return 'certificate-card__info__status-line--warning'
+  }
+  return 'certificate-card__info__status-line--negative'
+}
 </script>
 
 <template>
@@ -42,7 +56,7 @@ const { certificate, certificateLink, certificateValid } = useCertificate(props.
         <div class="certificate-card__policy-name full-height">
           <span
             class="certificate-card__info__status-line"
-            :class="connected ? (certificateValid ? 'certificate-card__info__status-line--positive' : 'certificate-card__info__status-line--negative') : 'certificate-card__info__status-line--gray'"
+            :class="getStatusLineColor()"
           />
           <span>{{ serviceData?.name }}{{ serviceData?.name && requiredPolicyData?.name && ',' }} {{ requiredPolicyData?.name }}</span>
         </div>
