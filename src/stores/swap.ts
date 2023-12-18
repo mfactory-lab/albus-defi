@@ -112,7 +112,7 @@ export const useSwapStore = defineStore('swap', () => {
     }
   })
 
-  watch(wallet, async (w) => {
+  watch([wallet, () => connectionStore.cluster], async (w) => {
     init().then()
     if (!w) {
       resetStore()
