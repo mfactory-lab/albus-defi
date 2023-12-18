@@ -4,18 +4,17 @@ on:
   workflow_dispatch:
   push:
     branches: [ stage ]
-    paths:
-      - public/**
-      - src/**
 
-# change domain to stage
-# change the proccess to the same as in deploy-main
 env:
-  URL: dev.defi.albus.finance
+  REPO: mfactory-lab/albus-defi-stage
+  URL: stage.defi.albus.finance
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://${{ env.URL }}
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
@@ -24,16 +23,20 @@ jobs:
           node-version: 16.x
           cache: pnpm
 
-      - name: Install and Build
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
         run: |
-          pnpm install
           pnpm run build:stage
-          cp dist/index.html dist/404.html
+          cp dist/index.html dist/404.html && touch dist/.nojekyll
           echo ${{ env.URL }} > dist/CNAME
-          touch dist/.nojekyll
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.5.0
         with:
-          branch: gh-pages
+          repository-name: ${{ env.REPO }}
+          token: ${{ secrets.PAT }}
           folder: dist
