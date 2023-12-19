@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia'
-import { type PublicKey } from '@solana/web3.js'
 import { getAssociatedTokenAddress } from '@solana/spl-token'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
-import type { TokenSwap } from '@albus-finance/swap-sdk'
 import { formatBalance, lamportsToSol, showCreateDialog, showTransactionResultDialog, solToLamports } from '@/utils'
 
 interface LiquidityState {
@@ -14,11 +12,6 @@ interface LiquidityState {
   active: boolean
   amountTokenA: number
   amountTokenB: number
-}
-
-export interface SwapPool {
-  pubkey: PublicKey
-  data: TokenSwap
 }
 
 enum SwapDirection {

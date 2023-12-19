@@ -5,11 +5,11 @@ import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import { SOL_MINT, type TokenData } from '@/config'
 
 const swapStore = useSwapStore()
-const { state: swapState, loadingPoolTokens, changeDirection, openSlippage, closeSlippage, setMax, loadPoolTokenAccounts } = swapStore
+const { state: swapState, loadingPoolTokens, changeDirection, closeSlippage, setMax, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
 
-const liquidityStore = useLiquidityStore()
-const { state, depositSingleToken } = liquidityStore
+const liquiditySingleStore = useLiquiditySingleStore()
+const { state, depositSingleToken } = liquiditySingleStore
 
 const { handleSearchToken, handleFilterToken, tokens } = useToken()
 handleFilterToken(SOL_MINT)

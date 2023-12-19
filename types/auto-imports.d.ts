@@ -203,6 +203,7 @@ declare global {
   const useKeyModifier: typeof import('@vueuse/core')['useKeyModifier']
   const useLastChanged: typeof import('@vueuse/core')['useLastChanged']
   const useLink: typeof import('vue-router')['useLink']
+  const useLiquiditySingleStore: typeof import('../src/stores/liquidity-single')['useLiquiditySingleStore']
   const useLiquidityStore: typeof import('../src/stores/liquidity')['useLiquidityStore']
   const useLocalStorage: typeof import('@vueuse/core')['useLocalStorage']
   const useMagicKeys: typeof import('@vueuse/core')['useMagicKeys']
