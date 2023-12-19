@@ -28,6 +28,12 @@ const { certificateLink } = useCertificate()
       valid until <span v-html="expiredAt" />
     </div>
     <div
+      v-else-if="certificate?.data?.status === ProofRequestStatus.Proved"
+      class="certificate-card__info__date certificate-card__info__date--warning"
+    >
+      <span>please wait...</span>
+    </div>
+    <div
       v-else
       class="certificate-card__info__date certificate-card__info__date--negative"
     >

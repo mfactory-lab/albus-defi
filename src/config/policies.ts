@@ -1,5 +1,6 @@
 import type { Policy } from '@albus-finance/sdk'
 import type { PublicKey } from '@solana/web3.js'
+import { ENVIRONMENT } from './connection'
 
 export interface PolicyItem {
   pubkey: PublicKey
@@ -11,7 +12,8 @@ export const APP_CONFIG = {
     serviceCode: 'albus',
     policy: {
       transfer: {
-        default: '7Zes5oRAu7TCF9om8fCPstJx29nMAPQHY52u8kEnqNXr',
+        // Age : Country
+        default: ENVIRONMENT === 'prod' ? '7Zes5oRAu7TCF9om8fCPstJx29nMAPQHY52u8kEnqNXr' : '21iMuKCP4gSKJfh7JT6byetCBLsvcAg9GpEVqPj2Adcw',
       },
       swap: {
         default: '',
@@ -22,15 +24,13 @@ export const APP_CONFIG = {
     },
   },
   'devnet': {
-    serviceCode: 'albus',
+    serviceCode: 'albusDefi',
     policy: {
       transfer: {
-        // Germany
-        default: 'FMjX1SkKxHXRXwB2xwF3A3vq8qhi8j9sGxqaUtm3jQeM',
-        // Liveness
-        usdc: 'DS9euEj5CfpXh3d4KCHMZt6uNHopfEs5yCcXULot4gpJ',
-        // 18+
-        usdt: '3igCfP1acua77qPrKiBNRHtGM3JCrQfFSYw2zwNym553',
+        // Country
+        default: 'ANGgdHwXQd9UmfZdHvMDJ6b5ATzrmTCJz4bcbZzB5a76',
+        // Age
+        usdc: '6c3ER8JD9Gq39AMMALZMi2Rf55QzvRcyPwNZMLn7ApSo',
       },
     },
   },

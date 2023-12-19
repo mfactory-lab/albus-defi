@@ -6,14 +6,14 @@ settings:
 
 dependencies:
   '@albus-finance/sdk':
-    specifier: 0.2.2-next.18
-    version: 0.2.2-next.18
+    specifier: 0.2.6
+    version: 0.2.6
   '@albus-finance/swap-sdk':
-    specifier: 0.1.4-next.0
-    version: 0.1.4-next.0
+    specifier: 0.1.4-next.4
+    version: 0.1.4-next.4
   '@albus-finance/transfer-sdk':
-    specifier: 0.2.4-next.0
-    version: 0.2.4-next.0
+    specifier: 0.2.4
+    version: 0.2.4
   '@coral-xyz/anchor':
     specifier: ^0.29.0
     version: 0.29.0
@@ -162,17 +162,17 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /@albus-finance/core@0.3.3:
-    resolution: {integrity: sha512-afsatwnlTq0trKj5RGQj4FlG94cVK85gnzIW1YSknoGccaHQp8P2L71zyYwPE7PJncTpRuKJ3WNBr7wCwaYZJw==}
+  /@albus-finance/core@0.3.5:
+    resolution: {integrity: sha512-JZ2gisz0a5KT40+PnfN33K3hZ/o2hR8hnzRHj0l4G+qbWf64Bs5cChbl7m6xIwORDhHWsVigedD4tKNaUhMHaQ==}
     dependencies:
       '@metaplex-foundation/mpl-token-metadata': 2.13.0
-      '@solana/web3.js': 1.87.1
+      '@solana/web3.js': 1.87.6
       '@stablelib/ed25519': 1.0.3
       '@stablelib/random': 1.0.2
       '@stablelib/sha256': 1.0.1
       '@stablelib/x25519': 1.0.3
       '@stablelib/xchacha20poly1305': 1.0.1
-      axios: 1.5.1
+      axios: 1.6.2
       did-resolver: 3.2.2
       key-did-resolver: 3.0.0
       snarkjs: 0.7.2
@@ -186,17 +186,17 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@albus-finance/sdk@0.2.2-next.18:
-    resolution: {integrity: sha512-3Peyvjcte8W8UZoqQV3Rgcac/1mWKFwDqdm1ykf5va/b1sYOV7tOcWUpcYRokoxIBtzMPQeCWM0Ss4QLWvzULg==}
+  /@albus-finance/sdk@0.2.6:
+    resolution: {integrity: sha512-84nEXZwx5BZfygorN620uXhhYsxQdu+tAcWcLDBrGDwhqaIUPY0s2Q4R5DleYCltLFuQRGGCoRBargKGyao+3A==}
     peerDependencies:
       snarkjs: '*'
     dependencies:
-      '@albus-finance/core': 0.3.3
+      '@albus-finance/core': 0.3.5
       '@coral-xyz/anchor': 0.29.0
       '@metaplex-foundation/beet': 0.7.1
       '@metaplex-foundation/beet-solana': 0.4.0
       '@metaplex-foundation/mpl-token-metadata': 2.13.0
-      '@solana/web3.js': 1.87.1
+      '@solana/web3.js': 1.87.6
       lodash: 4.17.21
     transitivePeerDependencies:
       - bufferutil
@@ -206,8 +206,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@albus-finance/swap-sdk@0.1.4-next.0:
-    resolution: {integrity: sha512-yPvpIikLh2lQ4LG14M4tbRaeeiTFQ3ibX/IMCK1cl49wp4pbFNVQk0/mGwTlVRBPfFJ+Ef2e7sLXzz9rfFJhCA==}
+  /@albus-finance/swap-sdk@0.1.4-next.4:
+    resolution: {integrity: sha512-9ORAi/kvXMqwnBP6Nlo4Sqyg+5KmPNv3u11VntbTFSrLLXvT8/s7FSdp3XYnwwrn7S0S/9coQzkSyvCKNWUfQA==}
     dependencies:
       '@coral-xyz/anchor': 0.29.0
       '@metaplex-foundation/beet': 0.7.1
@@ -220,13 +220,13 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@albus-finance/transfer-sdk@0.2.4-next.0:
-    resolution: {integrity: sha512-2DNxxu4JG+2Wh7T6CZg5pkIWu87VS+yefB20ylzCBIIcpyP9SeCjYEQDTq+ahQ6w2aEt2sThvkDmFwr6X9CJeg==}
+  /@albus-finance/transfer-sdk@0.2.4:
+    resolution: {integrity: sha512-sNvL8UfuTe7XUyH9DZhX4U1ySFUPCqjwKKh6OWdkR+q3voxhDaMEXsKAkSoUbnKvIa8+3biV2CP/9o1nckB7yA==}
     dependencies:
       '@coral-xyz/anchor': 0.29.0
       '@metaplex-foundation/beet': 0.7.1
-      '@solana/spl-token': 0.3.9(@solana/web3.js@1.87.1)
-      '@solana/web3.js': 1.87.1
+      '@solana/spl-token': 0.3.9(@solana/web3.js@1.87.6)
+      '@solana/web3.js': 1.87.6
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -1720,22 +1720,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@solana/spl-token@0.3.9(@solana/web3.js@1.87.1):
-    resolution: {integrity: sha512-1EXHxKICMnab35MvvY/5DBc/K/uQAOJCYnDZXw83McCAYUAfi+rwq6qfd6MmITmSTEhcfBcl/zYxmW/OSN0RmA==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      '@solana/web3.js': ^1.47.4
-    dependencies:
-      '@solana/buffer-layout': 4.0.1
-      '@solana/buffer-layout-utils': 0.2.0
-      '@solana/web3.js': 1.87.1
-      buffer: 6.0.3
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - utf-8-validate
-    dev: false
-
   /@solana/spl-token@0.3.9(@solana/web3.js@1.87.6):
     resolution: {integrity: sha512-1EXHxKICMnab35MvvY/5DBc/K/uQAOJCYnDZXw83McCAYUAfi+rwq6qfd6MmITmSTEhcfBcl/zYxmW/OSN0RmA==}
     engines: {node: '>=16'}
@@ -2621,7 +2605,7 @@ packages:
     peerDependencies:
       '@babel/runtime': 7.x
     dependencies:
-      '@solana/web3.js': 1.87.1
+      '@solana/web3.js': 1.87.6
       '@toruslabs/base-controllers': 2.9.0
       '@toruslabs/http-helpers': 3.4.0(@babel/runtime@7.23.2)
       '@toruslabs/openlogin-jrpc': 3.2.0
@@ -3674,6 +3658,16 @@ packages:
 
   /axios@1.5.1:
     resolution: {integrity: sha512-Q28iYCWzNHjAm+yEAot5QaAMxhMghWLFVf7rRdwhUI+c2jix2DUXjAHXVi+s1ibs3mjPO/cCgbA++3BjD0vP/A==}
+    dependencies:
+      follow-redirects: 1.15.3(debug@4.3.4)
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /axios@1.6.2:
+    resolution: {integrity: sha512-7i24Ri4pmDRfJTR7LDBhsOTtcm+9kjX5WiY1X3wIisx6G9So3pfMkEiU7emUBe46oceVImccTEM3k6C5dbVW8A==}
     dependencies:
       follow-redirects: 1.15.3(debug@4.3.4)
       form-data: 4.0.0

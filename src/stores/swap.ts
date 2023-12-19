@@ -6,11 +6,11 @@ import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { TokenSwap } from '@albus-finance/swap-sdk'
 import { AlbusSwapClient } from '@albus-finance/swap-sdk'
 import { AnchorProvider } from '@coral-xyz/anchor'
-import { divideBnToNumber, formatBalance, getTokensByOwner, lamportsToSol, showCreateDialog, showTransactionResultDialog, solToLamports } from '@/utils'
+import { divideBnToNumber, formatBalance, getTokensByOwner, lamportsToSol, showCreateDialog, solToLamports } from '@/utils'
 import { SOL_MINT, WRAPPED_SOL_TOKEN } from '@/config'
 import type { TokenData } from '@/config'
 
-interface PoolFees {
+export interface PoolFees {
   host: number
   trade: number
   ownerTrade: number
@@ -22,7 +22,6 @@ interface SwapState {
   poolTokenSupply: number
   poolBalance: { [key: string]: any }
   slippageDialog: boolean
-  status?: number
 
   from: TokenData
   to: TokenData
@@ -73,7 +72,6 @@ export const useSwapStore = defineStore('swap', () => {
   const state = reactive<SwapState>({
     loading: false,
     slippageDialog: false,
-    status: undefined,
     poolBalance: {},
     poolTokenSupply: 0,
 
@@ -114,7 +112,7 @@ export const useSwapStore = defineStore('swap', () => {
     }
   })
 
-  watch(wallet, async (w) => {
+  watch([wallet, () => connectionStore.cluster], async (w) => {
     init().then()
     if (!w) {
       resetStore()
@@ -171,6 +169,7 @@ export const useSwapStore = defineStore('swap', () => {
     tokenSwapsAll,
     () => userStore.servicePolicy,
   ], async () => {
+    console.log('tokenSwapsAll: ', tokenSwapsAll.value)
     tokenSwapsAllFiltered.value = tokenSwapsAll.value.filter(p => !!userStore.servicePolicy.find(sp => sp.pubkey.toBase58() === p.data.policy?.toBase58()))
   }, { immediate: true })
 
@@ -227,7 +226,6 @@ export const useSwapStore = defineStore('swap', () => {
   function resetStore() {
     state.loading = false
     state.slippageDialog = false
-    state.status = undefined
     state.poolBalance = {}
     state.poolTokenSupply = 0
   }
@@ -328,6 +326,7 @@ export const useSwapStore = defineStore('swap', () => {
       console.log('poolFee = ', tokenSwap.value.data.poolFeeAccount.toBase58())
       console.log('amountIn = ', sourceTokenAmount)
       console.log('minimumAmountOut = ', state.minimumReceived)
+
       const signature = await swapClient.value.swap({
         proofRequest: userStore.certificate?.pubkey,
         authority,
@@ -345,7 +344,19 @@ export const useSwapStore = defineStore('swap', () => {
         destinationTokenMint: userDestinationMint,
       }, { commitment: 'confirmed' })
 
-      showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)
+      // showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)
+      notify({
+        message: 'Transaction confirmed',
+        type: 'positive',
+        actions: [{
+          label: 'Explore',
+          color: 'white',
+          target: '_blank',
+          href: `https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`,
+          onClick: () => false,
+        }],
+      })
+
       reload()
     } catch (e) {
       console.log(e)
@@ -440,5 +451,8 @@ export const useSwapStore = defineStore('swap', () => {
     changeDirection,
     swapSubmit,
     getPoolFee,
+    // TODO: rework liquidity
+    tokenAMint,
+    tokenBMint,
   }
 })

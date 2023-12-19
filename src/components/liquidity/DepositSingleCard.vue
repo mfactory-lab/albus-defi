@@ -1,31 +1,29 @@
 <script setup lang="ts">
 import { evaRefresh } from '@quasar/extras/eva-icons'
-import { useWallet } from 'solana-wallets-vue'
-import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
+import { formatBalance, lamportsToSol, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import { SOL_MINT, type TokenData } from '@/config'
 
 const swapStore = useSwapStore()
-const { state, loadingPoolTokens, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit, loadPoolTokenAccounts } = swapStore
+const { state: swapState, loadingPoolTokens, changeDirection, openSlippage, closeSlippage, setMax, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
+
+const liquidityStore = useLiquidityStore()
+const { state, depositSingleToken } = liquidityStore
+
 const { handleSearchToken, handleFilterToken, tokens } = useToken()
 handleFilterToken(SOL_MINT)
 
 const userStore = useUserStore()
-const poolBalanceA = computed(() => state.poolBalance[state.from.mint] ? lamportsToSol(state.poolBalance[state.from.mint], state.from.decimals) : 0)
-const poolBalanceB = computed(() => state.poolBalance[state.to.mint] ? lamportsToSol(state.poolBalance[state.to.mint], state.to.decimals) : 0)
-
-const { connected } = useWallet()
-
-const formatPercent = (n: number) => formatPct.format(n)
+const poolBalanceA = computed(() => swapState.poolBalance[swapState.from.mint] ? lamportsToSol(swapState.poolBalance[swapState.from.mint], swapState.from.decimals) : 0)
+const poolBalanceB = computed(() => swapState.poolBalance[swapState.to.mint] ? lamportsToSol(swapState.poolBalance[swapState.to.mint], swapState.to.decimals) : 0)
 
 const changeButtonRotate = ref(0)
 
 const rotateBtnStyle = computed(() => `transform: rotate(${changeButtonRotate.value * 180}deg)`)
 
-const balanceFrom = computed(() => userStore.tokenBalance(state.from.mint))
-const balanceTo = computed(() => userStore.tokenBalance(state.to.mint))
-const swapFee = computed(() => state.fees.ownerTrade + state.fees.trade)
+const balanceFrom = computed(() => userStore.tokenBalance(swapState.from.mint))
+const balanceTo = computed(() => userStore.tokenBalance(swapState.to.mint))
 
 function handleChangeDirection() {
   changeDirection()
@@ -33,7 +31,7 @@ function handleChangeDirection() {
 }
 
 function setToken(t: TokenData, direction: true) {
-  state[direction ? 'to' : 'from'] = t
+  swapState[direction ? 'to' : 'from'] = t
 }
 
 function setMaxAmount() {
@@ -41,14 +39,14 @@ function setMaxAmount() {
 }
 
 const insufficientError = computed(() => {
-  if (Number(state.from.amount) > balanceFrom.value) {
+  if (Number(state.amountTokenA) > balanceFrom.value) {
     return 'Insufficient funds'
   } else {
     return false
   }
 })
 
-watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
+watch([() => state.amountTokenA, tokenSwap, balanceFrom], (_a) => {
   state.active = !insufficientError.value
 })
 </script>
@@ -56,7 +54,7 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
 <template>
   <q-card class="swap-card swap-widget">
     <q-card-section class="swap-card__header">
-      Swap
+      Liquidity
     </q-card-section>
 
     <q-card-section class="swap-card__body">
@@ -64,19 +62,17 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
         <div class="swap-field">
           <div class="swap-field__info">
             <div class="row items-end">
-              <div class="col swap-field__label">
-                FROM:
-              </div>
+              <div class="col swap-field__label" />
               <div class="col-8 col-xs-10 row justify-end swap-field__balance">
                 <div v-if="insufficientError" class="insufficient-error">
                   {{ insufficientError }}
                 </div>
-                Balance: {{ formatBalance(balanceFrom) }} {{ state.from.symbol }}
+                Balance: {{ formatBalance(balanceFrom) }} {{ swapState.from.symbol }}
               </div>
             </div>
           </div>
           <q-input
-            v-model="state.from.amount" :maxlength="14" outlined placeholder="0.0" class="swap-input"
+            v-model="state.amountTokenA" :maxlength="14" outlined placeholder="0.0" class="swap-input"
             @keypress="onlyNumber"
           >
             <template #append>
@@ -84,32 +80,31 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
                 MAX
               </q-btn>
               <select-token
-                :options="tokens" :token="state.from" :swap-token="String(state.to.symbol)"
+                :options="tokens" :token="swapState.from" :swap-token="String(swapState.to.symbol)"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
           </q-input>
         </div>
+
         <div class="swap-change">
           <q-btn :ripple="false" dense unelevated :style="rotateBtnStyle" @click="handleChangeDirection">
             <i v-html="swapCircle" />
           </q-btn>
         </div>
+
         <div class="swap-field">
-          <div class="swap-field__info">
+          <div class="swap-field__info q-mt-sm">
             <div class="row">
-              <div class="col swap-field__label">
-                TO:
-              </div>
               <div class="col swap-field__balance">
-                Balance: {{ formatBalance(balanceTo) }} {{ state.to.symbol }}
+                Balance: {{ formatBalance(balanceTo) }} {{ swapState.to.symbol }}
               </div>
             </div>
           </div>
-          <q-input v-model="state.to.amount" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
+          <q-input readonly :maxlength="14" outlined class="swap-input">
             <template #append>
               <select-token
-                :swap-token="String(state.from.symbol)" :options="tokens" :direction="true" :token="state.to" :destination-unavailable="!tokenSwap"
+                :swap-token="String(swapState.from.symbol)" :options="tokens" :direction="true" :token="swapState.to" :destination-unavailable="!tokenSwap"
                 @handle-search-token="handleSearchToken" @set-token="setToken"
               />
             </template>
@@ -117,37 +112,11 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
         </div>
       </div>
 
-      <div class="swap-info q-mt-md q-pt-xs">
-        <dl>
-          <dt>Minimum Received</dt>
-          <dd>
-            {{ formatBalance(lamportsToSol(state.minimumReceived, state.to.decimals)) }} {{ state.to.symbol.toUpperCase() }}
-          </dd>
-        </dl>
-        <dl>
-          <dt>Slippage Tolerance</dt>
-          <dd>
-            <a href="#" @click="openSlippage">{{ formatPercent(state.slippage) }}</a>
-          </dd>
-        </dl>
-        <dl>
-          <dt>Swap fee</dt>
-          <dd>{{ formatPercent(swapFee) }} SOL</dd>
-        </dl>
-      </div>
-
       <select-pool class="q-mt-md" />
-      <policy-card class="q-mt-md q-mx-auto" />
 
-      <div class="swap-submit q-mt-md">
-        <q-btn
-          :loading="state.swapping"
-          :disable="!state.active || !tokenSwap || !connected || !state.from.amount"
-          rounded
-          :ripple="false"
-          @click="swapSubmit"
-        >
-          Swap {{ state.from.symbol }} / {{ state.to.symbol }}
+      <div class="swap-submit q-mt-lg">
+        <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap" rounded :ripple="false" @click="depositSingleToken">
+          Add Liquidity ({{ swapState.from.symbol }})
         </q-btn>
       </div>
 
@@ -155,9 +124,6 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
         Pool not found
       </div>
       <div v-else class="row q-mt-md text-center relative-position full-width">
-        <div class="swap-rate q-mx-auto">
-          1 {{ state.from.symbol }} ≈ {{ formatBalance(state.rate) }} {{ state.to.symbol }}
-        </div>
         <div class="absolute-right swap-rate__refresh">
           <q-btn
             :loading="loadingPoolTokens"
@@ -172,27 +138,21 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
         </div>
       </div>
 
-      <div class="swap-info q-mt-md">
+      <div class="swap-info q-mt-lg">
         <dl>
-          <dt>Price impact</dt>
-          <dd>
-            {{ formatPercent(state.impact) }}
-          </dd>
-        </dl>
-        <dl>
-          <dt>Pool {{ state.from.symbol }} balance</dt>
+          <dt>Pool {{ swapState.from.symbol }} balance</dt>
           <dd>
             {{ formatBalance(poolBalanceA) }}
           </dd>
         </dl>
         <dl>
-          <dt>Pool {{ state.to.symbol }} balance</dt>
+          <dt>Pool {{ swapState.to.symbol }} balance</dt>
           <dd>{{ formatBalance(poolBalanceB) }}</dd>
         </dl>
       </div>
     </q-card-section>
 
-    <q-inner-loading :showing="state?.loading" class="swap-loading" color="grey" />
+    <q-inner-loading :showing="swapState?.loading" class="swap-loading" color="grey" />
   </q-card>
   <q-dialog v-model="state.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
     <q-card>

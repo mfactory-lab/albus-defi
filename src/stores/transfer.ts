@@ -6,7 +6,7 @@ import { AlbusTransferClient } from '@albus-finance/transfer-sdk'
 import { getAccount, getAssociatedTokenAddress } from '@solana/spl-token'
 import BN from 'bn.js'
 import type { ProofRequestStatus } from '@albus-finance/sdk'
-import { createTransaction, showCreateDialog, showTransactionResultDialog, transactionFee, validateAddress } from '@/utils'
+import { createTransaction, showCreateDialog, transactionFee, validateAddress } from '@/utils'
 import type { TokenData } from '@/config'
 import { MIN_TRANSFER_FEE, SOL_MINT, TRANSFER_FEE_CONST } from '@/config'
 
@@ -164,7 +164,18 @@ export const useTransferStore = defineStore('transfer', () => {
         } else {
           signature = await verifiedTransferToken()
         }
-        showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)
+        // showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)
+        notify({
+          message: 'Transaction confirmed',
+          type: 'positive',
+          actions: [{
+            label: 'Explore',
+            color: 'white',
+            target: '_blank',
+            href: `https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`,
+            onClick: () => false,
+          }],
+        })
         reset()
         await getUserTokens()
       } else {
