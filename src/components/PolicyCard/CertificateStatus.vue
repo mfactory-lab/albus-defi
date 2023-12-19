@@ -31,7 +31,7 @@ const { certificateLink } = useCertificate()
       v-else-if="certificate?.data?.status === ProofRequestStatus.Proved"
       class="certificate-card__info__date certificate-card__info__date--warning"
     >
-      <span>please wait</span>
+      <span>please wait...</span>
     </div>
     <div
       v-else

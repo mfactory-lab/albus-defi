@@ -85,9 +85,13 @@
       }
       &--negative {
         color: $negative-light;
+        font-size: 11px;
       }
       &--warning {
-        color: $warning;
+        color: $primary;
+        .body--dark & {
+          color: $white;
+        }
       }
       &--positive {
         color: $positive;
