@@ -13,7 +13,7 @@ export const APP_CONFIG = {
     policy: {
       transfer: {
         // Age : Country
-        default: ENVIRONMENT === 'prod' ? '7Zes5oRAu7TCF9om8fCPstJx29nMAPQHY52u8kEnqNXr' : '21iMuKCP4gSKJfh7JT6byetCBLsvcAg9GpEVqPj2Adcw',
+        default: ENVIRONMENT === 'prod' ? 'JBWSPjAEMaR3vGkwxhqHKWBsfAy9tF7geC4m8RyT2v4q' : '21iMuKCP4gSKJfh7JT6byetCBLsvcAg9GpEVqPj2Adcw',
       },
       swap: {
         default: '',
