@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@albus-finance/sdk':
-    specifier: 0.2.5-next.5
-    version: 0.2.5-next.5
+    specifier: 0.2.6
+    version: 0.2.6
   '@albus-finance/swap-sdk':
     specifier: 0.1.4-next.4
     version: 0.1.4-next.4
@@ -162,8 +162,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /@albus-finance/core@0.3.5-next.0:
-    resolution: {integrity: sha512-StWmsCye0uWDlShOf4hHOWeODaCJXfNKKGw1wR2eY5KjV+ZHb6h6/p+XumkLx7aXmxuBbm5oZAyhFFNMW/CtHg==}
+  /@albus-finance/core@0.3.5:
+    resolution: {integrity: sha512-JZ2gisz0a5KT40+PnfN33K3hZ/o2hR8hnzRHj0l4G+qbWf64Bs5cChbl7m6xIwORDhHWsVigedD4tKNaUhMHaQ==}
     dependencies:
       '@metaplex-foundation/mpl-token-metadata': 2.13.0
       '@solana/web3.js': 1.87.6
@@ -186,12 +186,12 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@albus-finance/sdk@0.2.5-next.5:
-    resolution: {integrity: sha512-St2Gj7kFAbLj2S/bg5cXYF+6eGiQO6cSyg+x6yQ424QTMTWZwKnvyuiCQhmpxl8U/LT9h85TnZMoplwRDWFmSQ==}
+  /@albus-finance/sdk@0.2.6:
+    resolution: {integrity: sha512-84nEXZwx5BZfygorN620uXhhYsxQdu+tAcWcLDBrGDwhqaIUPY0s2Q4R5DleYCltLFuQRGGCoRBargKGyao+3A==}
     peerDependencies:
       snarkjs: '*'
     dependencies:
-      '@albus-finance/core': 0.3.5-next.0
+      '@albus-finance/core': 0.3.5
       '@coral-xyz/anchor': 0.29.0
       '@metaplex-foundation/beet': 0.7.1
       '@metaplex-foundation/beet-solana': 0.4.0
