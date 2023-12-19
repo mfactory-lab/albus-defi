@@ -5,7 +5,7 @@ const connectionStore = useConnectionStore()
 
 <template>
   <div v-if="mode !== 'prod'" class="text-h6 text-negative fixed-top-right q-pt-xs q-pr-sm">
-    <span>Environment: {{ mode }}</span>
+    <span>Environment: {{ mode === 'dev' && connectionStore.cluster === 'mainnet-beta' ? 'stage' : mode }}</span>
     <span class="q-ml-lg">Cluster: {{ connectionStore.cluster }}</span>
   </div>
 </template>
