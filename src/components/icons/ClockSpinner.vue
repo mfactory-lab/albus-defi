@@ -1,0 +1,26 @@
+<script lang="ts">
+export default {
+  props: {
+    fill: {
+      type: String,
+      default: '#000',
+    },
+    size: {
+      type: String,
+      default: '26px',
+    },
+  },
+}
+</script>
+
+<template>
+  <svg viewBox="0 0 100 100" :style="{ width: size, height: size }" preserveAspectRatio="xMidYMid" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="45" fill="none" stroke-width="10" stroke-miterlimit="10" :stroke="fill" />
+    <line stroke-linecap="round" stroke-width="8" stroke-miterlimit="10" :stroke="fill" x1="50" y1="50" x2="82" y2="50.5">
+      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="2s" repeatCount="indefinite" />
+    </line>
+    <line stroke-linecap="round" stroke-width="8" stroke-miterlimit="10" :stroke="fill" x1="50" y1="50" x2="50" y2="74">
+      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="15s" repeatCount="indefinite" />
+    </line>
+  </svg>
+</template>

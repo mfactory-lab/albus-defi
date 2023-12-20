@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { evaArrowIosForwardOutline, evaClockOutline } from '@quasar/extras/eva-icons'
+import { colors } from 'quasar'
+import { evaArrowIosForwardOutline } from '@quasar/extras/eva-icons'
 import { ProofRequestStatus } from '@albus-finance/sdk'
 import type { Certificate } from '@/stores'
 
@@ -7,6 +8,8 @@ defineProps({
   certificate: Object as PropType<Certificate | null>,
   certificateLink: String,
 })
+
+const { getPaletteColor } = colors
 </script>
 
 <template>
@@ -16,7 +19,7 @@ defineProps({
     :href="certificateLink"
     target="_blank"
   >
-    <q-icon :name="evaClockOutline" size="26px" color="warning" />
+    <clock-spinner :fill="getPaletteColor('warning')" size="26px" color="warning" />
   </a>
   <q-btn
     v-else
