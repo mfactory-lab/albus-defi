@@ -9,11 +9,9 @@ interface LiquiditySingleState {
   amountTokenA: number
 }
 
-enum SwapDirection {
-  ASC,
-  DESC,
-}
-
+/**
+ * for internal usage for now
+ */
 export const useLiquiditySingleStore = defineStore('liquidity-single', () => {
   const connectionStore = useConnectionStore()
   const wallet = useAnchorWallet()
@@ -82,19 +80,8 @@ export const useLiquiditySingleStore = defineStore('liquidity-single', () => {
     }
   }
 
-  function openSlippage() {
-    state.slippageDialog = true
-  }
-
-  function closeSlippage() {
-    state.slippageDialog = false
-  }
-
   return {
     state,
-    closeSlippage,
-    openSlippage,
-    addLiquiditySubmit,
     depositSingleToken,
   }
 })

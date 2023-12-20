@@ -18,6 +18,7 @@ declare module 'vue' {
     CreatePoolTokenData: typeof import('./../src/components/CreatePool/CreatePoolTokenData.vue')['default']
     CreateSwapCard: typeof import('./../src/components/CreatePool/CreateSwapCard.vue')['default']
     DarkThemeToggle: typeof import('./../src/components/DarkThemeToggle.vue')['default']
+    DepositBothCard: typeof import('./../src/components/liquidity/DepositBothCard.vue')['default']
     DepositSingleCard: typeof import('./../src/components/liquidity/DepositSingleCard.vue')['default']
     EnvironmentWarning: typeof import('./../src/components/EnvironmentWarning.vue')['default']
     IAppCertificate: typeof import('~icons/app/certificate')['default']

@@ -5,7 +5,7 @@ import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import { SOL_MINT, type TokenData } from '@/config'
 
 const swapStore = useSwapStore()
-const { state: swapState, loadingPoolTokens, changeDirection, closeSlippage, setMax, loadPoolTokenAccounts } = swapStore
+const { state: swapState, loadingPoolTokens, changeDirection, setMax, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
 
 const liquiditySingleStore = useLiquiditySingleStore()
@@ -101,7 +101,7 @@ watch([() => state.amountTokenA, tokenSwap, balanceFrom], (_a) => {
               </div>
             </div>
           </div>
-          <q-input readonly :maxlength="14" outlined class="swap-input">
+          <q-input v-model="undefined" readonly outlined class="swap-input">
             <template #append>
               <select-token
                 :swap-token="String(swapState.from.symbol)" :options="tokens" :direction="true" :token="swapState.to" :destination-unavailable="!tokenSwap"
@@ -154,19 +154,4 @@ watch([() => state.amountTokenA, tokenSwap, balanceFrom], (_a) => {
 
     <q-inner-loading :showing="swapState?.loading" class="swap-loading" color="grey" />
   </q-card>
-  <q-dialog v-model="state.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
-    <q-card>
-      <q-card-section>
-        <q-btn-toggle
-          v-model="state.slippage" spread no-caps unelevated :ripple="false" toggle-color="secondary"
-          color="white" text-color="dark" :options="[
-            { label: '0.1%', value: 0.001 },
-            { label: '0.5%', value: 0.005 },
-            { label: '1%', value: 0.01 },
-            { label: '5%', value: 0.05 },
-          ]" @update:model-value="closeSlippage"
-        />
-      </q-card-section>
-    </q-card>
-  </q-dialog>
 </template>

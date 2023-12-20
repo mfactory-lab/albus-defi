@@ -10,6 +10,7 @@ declare global {
   const IProofRequestStatus: typeof import('../src/stores/user')['IProofRequestStatus']
   const PoolTokenSymbol: typeof import('../src/stores/swap')['PoolTokenSymbol']
   const ProofRequestStatusWithEmpty: typeof import('../src/stores/client')['ProofRequestStatusWithEmpty']
+  const SwapDirection: typeof import('../src/stores/swap')['SwapDirection']
   const WALLET_CONNECT_EVENT: typeof import('../src/hooks/wallet')['WALLET_CONNECT_EVENT']
   const WALLET_DISCONNECT_EVENT: typeof import('../src/hooks/wallet')['WALLET_DISCONNECT_EVENT']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']

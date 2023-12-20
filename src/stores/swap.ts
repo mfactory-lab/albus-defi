@@ -40,7 +40,7 @@ export interface SwapPool {
   data: TokenSwap
 }
 
-enum SwapDirection {
+export enum SwapDirection {
   ASC,
   DESC,
 }
@@ -149,6 +149,7 @@ export const useSwapStore = defineStore('swap', () => {
       state.poolBalance = poolBalance
       const poolMint = await getMint(connectionStore.connection, tokenSwap.value.data.poolMint)
       state.poolTokenSupply = Number(poolMint.supply)
+      console.log('[Pool Balance] poolMint', poolMint)
       console.log('[Pool Balance]', state.poolBalance)
       console.log('[Pool Balance] poolTokenSupply', state.poolTokenSupply)
     } catch (e) {

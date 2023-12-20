@@ -9,7 +9,7 @@ const { state: swapState, loadingPoolTokens, changeDirection, openSlippage, clos
 const tokenSwap = computed(() => swapStore.tokenSwap)
 
 const liquidityStore = useLiquidityStore()
-const { state, addLiquiditySubmit } = liquidityStore
+const { state, depositBothTokens } = liquidityStore
 
 const { handleSearchToken, handleFilterToken, tokens } = useToken()
 handleFilterToken(SOL_MINT)
@@ -133,7 +133,7 @@ watch(() => state.amountTokenA, (_a) => {
       <policy-card class="q-mt-md q-mx-auto" />
 
       <div class="swap-submit q-mt-md">
-        <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap" rounded :ripple="false" @click="addLiquiditySubmit">
+        <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap" rounded :ripple="false" @click="depositBothTokens">
           Add Liquidity
         </q-btn>
       </div>
