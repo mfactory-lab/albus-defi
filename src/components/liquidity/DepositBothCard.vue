@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { evaRefresh } from '@quasar/extras/eva-icons'
 import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
-import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import { SOL_MINT, type TokenData } from '@/config'
 
 const swapStore = useSwapStore()
-const { state: swapState, loadingPoolTokens, changeDirection, openSlippage, closeSlippage, setMax, loadPoolTokenAccounts } = swapStore
+const { state: swapState, loadingPoolTokens, openSlippage, closeSlippage, setMax, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
 
 const liquidityStore = useLiquidityStore()
-const { state, depositBothTokens } = liquidityStore
+const { state, depositBothTokens, calcRate } = liquidityStore
 
 const { handleSearchToken, handleFilterToken, tokens } = useToken()
 handleFilterToken(SOL_MINT)
@@ -20,17 +19,8 @@ const poolBalanceB = computed(() => swapState.poolBalance[swapState.to.mint] ? l
 
 const formatPercent = (n: number) => formatPct.format(n)
 
-const changeButtonRotate = ref(0)
-
-const rotateBtnStyle = computed(() => `transform: rotate(${changeButtonRotate.value * 180}deg)`)
-
 const balanceFrom = computed(() => userStore.tokenBalance(swapState.from.mint))
 const balanceTo = computed(() => userStore.tokenBalance(swapState.to.mint))
-
-function handleChangeDirection() {
-  changeDirection()
-  changeButtonRotate.value++
-}
 
 function setToken(t: TokenData, direction: true) {
   swapState[direction ? 'to' : 'from'] = t
@@ -74,7 +64,9 @@ watch(() => state.amountTokenA, (_a) => {
             </div>
           </div>
           <q-input
-            v-model="state.amountTokenA" :maxlength="14" outlined placeholder="0.0" class="swap-input"
+            v-model="state.amountTokenA"
+            :maxlength="14" outlined placeholder="0.0" class="swap-input"
+            @update:model-value="calcRate"
             @keypress="onlyNumber"
           >
             <template #append>
@@ -82,20 +74,17 @@ watch(() => state.amountTokenA, (_a) => {
                 MAX
               </q-btn>
               <select-token
-                :options="tokens" :token="swapState.from" :swap-token="String(swapState.to.symbol)"
-                @handle-search-token="handleSearchToken" @set-token="setToken"
+                :options="tokens"
+                :token="swapState.from"
+                :swap-token="String(swapState.to.symbol)"
+                @handle-search-token="handleSearchToken"
+                @set-token="setToken"
               />
             </template>
           </q-input>
         </div>
 
-        <div class="swap-change">
-          <q-btn :ripple="false" dense unelevated :style="rotateBtnStyle" @click="handleChangeDirection">
-            <i v-html="swapCircle" />
-          </q-btn>
-        </div>
-
-        <div class="swap-field">
+        <div class="swap-field q-pt-xs">
           <div class="swap-field__info q-mt-sm">
             <div class="row">
               <div class="col swap-field__balance">
@@ -103,11 +92,21 @@ watch(() => state.amountTokenA, (_a) => {
               </div>
             </div>
           </div>
-          <q-input v-model="state.amountTokenB" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
+          <q-input
+            v-model="state.amountTokenB"
+            :maxlength="14" outlined placeholder="0.0" class="swap-input"
+            @update:model-value="() => calcRate(true)"
+            @keypress="onlyNumber"
+          >
             <template #append>
               <select-token
-                :swap-token="String(swapState.from.symbol)" :options="tokens" :direction="true" :token="swapState.to" :destination-unavailable="!tokenSwap"
-                @handle-search-token="handleSearchToken" @set-token="setToken"
+                :swap-token="String(swapState.from.symbol)"
+                :options="tokens"
+                :direction="true"
+                :token="swapState.to"
+                :destination-unavailable="!tokenSwap"
+                @handle-search-token="handleSearchToken"
+                @set-token="setToken"
               />
             </template>
           </q-input>

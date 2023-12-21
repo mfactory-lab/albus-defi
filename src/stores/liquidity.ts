@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { getAssociatedTokenAddress } from '@solana/spl-token'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
-import { formatBalance, lamportsToSol, showCreateDialog, showTransactionResultDialog, solToLamports } from '@/utils'
+import { lamportsToSol, showCreateDialog, showTransactionResultDialog, solToLamports } from '@/utils'
 
 interface LiquidityState {
   slippageDialog: boolean
@@ -38,32 +38,32 @@ export const useLiquidityStore = defineStore('liquidity', () => {
     amountTokenB: 0,
   })
 
-  const calcRate = async () => {
-    const fromAmount = Number(state.amountTokenA ?? 0)
+  const calcRate = async (setFromB = false) => {
+    const changedToken = Number((setFromB ? state.amountTokenA : state.amountTokenB) ?? 0)
 
-    const poolFrom = lamportsToSol(Number(swapState.value.poolBalance[swapState.value.from.mint] ?? 0), swapState.value.from.decimals)
-    const poolTo = lamportsToSol(Number(swapState.value.poolBalance[swapState.value.to.mint] ?? 0), swapState.value.to.decimals)
+    const poolFrom = Number(lamportsToSol(Number(swapState.value.poolBalance[swapState.value.from.mint] ?? 0), swapState.value.from.decimals))
+    const poolTo = Number(lamportsToSol(Number(swapState.value.poolBalance[swapState.value.to.mint] ?? 0), swapState.value.to.decimals))
 
-    if (fromAmount === 0 || Number.isNaN(fromAmount)) {
+    if (changedToken === 0 || Number.isNaN(changedToken)) {
       state.amountTokenB = 0
+      state.amountTokenA = 0
       state.rate = Number(poolTo) / Number(poolFrom)
       state.maxTokenB = 0
       return
     }
 
-    const toAmount = poolTo - (poolFrom * poolTo / (poolFrom + fromAmount))
-    state.rate = fromAmount ? toAmount / fromAmount : poolTo / poolFrom
-    state.amountTokenB = toAmount ? Number(formatBalance(toAmount * (1 - swapState.value.fees.ownerTrade - swapState.value.fees.trade), swapState.value.to.decimals)) : 0
-    state.maxTokenB = solToLamports(state.amountTokenB + (state.amountTokenB * state.slippage), swapState.value.to.decimals)
+    const rate = setFromB ? poolFrom / poolTo : poolTo / poolFrom
+    if (setFromB) {
+      state.amountTokenA = rate * state.amountTokenB
+    } else {
+      state.amountTokenB = rate * state.amountTokenA
+    }
+    // state.maxTokenB = solToLamports(state.amountTokenB + (state.amountTokenB * state.slippage), swapState.value.to.decimals)
   }
 
   watch(
-    [
-      () => swapState.value.direction,
-      () => swapState.value.from.amount,
-      () => swapState.value.poolBalance,
-    ],
-    calcRate,
+    () => swapState.value.poolBalance,
+    () => calcRate(),
     { immediate: true },
   )
 
@@ -89,64 +89,53 @@ export const useLiquidityStore = defineStore('liquidity', () => {
       notify({ type: 'info', message: 'Please connect your wallet first' })
     }
 
-    const fromAmount = Number(solToLamports(state.amountTokenA ?? 0, swapState.value.from.decimals))
-    const fromBalance = Number(solToLamports(userStore.tokenBalance(swapState.value.from.mint) ?? 0, swapState.value.from.decimals))
-    const toAmount = Number(solToLamports(state.amountTokenB ?? 0, swapState.value.to.decimals))
+    const tokenA = Number(solToLamports(state.amountTokenA ?? 0, swapState.value.from.decimals))
+    const tokenABalance = Number(solToLamports(userStore.tokenBalance(swapState.value.from.mint) ?? 0, swapState.value.from.decimals))
 
-    if (fromAmount > fromBalance) {
-      notify({ type: 'negative', message: 'Insufficient balance.' })
+    if (tokenA > tokenABalance) {
+      notify({ type: 'negative', message: `Insufficient balance ${swapState.value.from.symbol}.` })
+      return
+    }
+
+    const tokenB = Number(solToLamports(state.amountTokenA ?? 0, swapState.value.to.decimals))
+    const tokenBBalance = Number(solToLamports(userStore.tokenBalance(swapState.value.to.mint) ?? 0, swapState.value.to.decimals))
+    if (tokenB > tokenBBalance) {
+      notify({ type: 'negative', message: `Insufficient balance ${swapState.value.to.symbol}.` })
       return
     }
 
     try {
       state.swapping = true
+      // const maximumTokenA = swapState.value.direction === SwapDirection.ASC ? state.amountTokenA : state.amountTokenB
+      // const maximumTokenB = swapState.value.direction === SwapDirection.ASC ? state.amountTokenB : state.amountTokenA
 
-      const userSourceMint = swapState.value.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenAMint : tokenSwap.value.data.tokenBMint
-      const userDestinationMint = swapState.value.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenBMint : tokenSwap.value.data.tokenAMint
-      const poolSourceAddress = swapState.value.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenA : tokenSwap.value.data.tokenB
-      const poolDestinationAddress = swapState.value.direction === SwapDirection.ASC ? tokenSwap.value.data.tokenB : tokenSwap.value.data.tokenA
-      console.log('userSourceMint = ', userSourceMint.toBase58())
-      console.log('userDestinationMint = ', userDestinationMint.toBase58())
+      const userTokenA = await getAssociatedTokenAddress(tokenSwap.value.data.tokenA, wallet.value!.publicKey)
+      const userTokenB = await getAssociatedTokenAddress(tokenSwap.value.data.tokenB, wallet.value!.publicKey)
+      const destination = await getAssociatedTokenAddress(tokenSwap.value.data.poolMint, wallet.value!.publicKey)
 
-      console.log('userSourceMint = ', userSourceMint.toBase58())
-      console.log('userDestinationMint = ', userDestinationMint.toBase58())
-
-      const userSource = await getAssociatedTokenAddress(userSourceMint, wallet.value!.publicKey)
-      const userDestination = await getAssociatedTokenAddress(userDestinationMint, wallet.value!.publicKey)
-      const sourceTokenAmount = fromAmount
-
-      console.log('toAmount = ', toAmount)
       console.log('slippage = ', state.slippage)
-      console.log('slippage 2 = ', toAmount * state.slippage)
 
       const authority = swapClient.value.swapAuthority(tokenSwap.value.pubkey)
 
       console.log('proofRequest = ', userStore.certificate?.pubkey.toBase58())
       console.log('swapAuthority = ', authority)
       console.log('tokenSwap = ', tokenSwap.value.pubkey.toBase58())
-      console.log('userSource = ', userSource.toBase58())
-      console.log('userDestination = ', userDestination.toBase58())
-      console.log('poolSource = ', poolSourceAddress.toBase58())
-      console.log('poolDestination = ', poolDestinationAddress.toBase58())
       console.log('poolMint = ', tokenSwap.value.data.poolMint.toBase58())
       console.log('poolFee = ', tokenSwap.value.data.poolFeeAccount.toBase58())
-      console.log('amountIn = ', sourceTokenAmount)
       console.log('maxTokenB = ', state.maxTokenB)
-      const signature = await swapClient.value.swap({
-        proofRequest: userStore.certificate?.pubkey,
-        authority,
+      const signature = await swapClient.value.depositAllTokenTypes({
+        // proofRequest: userStore.certificate?.pubkey,
+        // authority,
         tokenSwap: tokenSwap.value.pubkey,
-        userSource,
-        userDestination,
-        poolSource: poolSourceAddress,
-        poolDestination: poolDestinationAddress,
         poolMint: tokenSwap.value.data.poolMint,
-        poolFee: tokenSwap.value.data.poolFeeAccount,
-        amountIn: sourceTokenAmount,
-        minimumAmountOut: state.maxTokenB,
-        // hostFeeAccount: undefined,
-        sourceTokenMint: userSourceMint,
-        destinationTokenMint: userDestinationMint,
+        destination,
+        userTokenA,
+        userTokenB,
+        swapTokenA: tokenSwap.value.data.tokenA,
+        swapTokenB: tokenSwap.value.data.tokenB,
+        poolTokenAmount: 1000000000,
+        maximumTokenA: 10000000000,
+        maximumTokenB: 10000000000,
       }, { commitment: 'confirmed' })
 
       showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)
@@ -168,6 +157,7 @@ export const useLiquidityStore = defineStore('liquidity', () => {
 
   return {
     state,
+    calcRate,
     closeSlippage,
     openSlippage,
     depositBothTokens,
