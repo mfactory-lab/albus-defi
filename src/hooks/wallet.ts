@@ -2,6 +2,7 @@ import { useQuasar } from 'quasar'
 import debounce from 'lodash-es/debounce'
 import { useWallet } from 'solana-wallets-vue'
 import { watch } from 'vue'
+import type { PublicKey } from '@solana/web3.js'
 import { useEmitter } from './emitter'
 import { shortenAddress } from '~/utils/web3'
 
@@ -19,22 +20,45 @@ export function initWallet() {
   const subscriptionId = ref<number | undefined>()
   const subscriptionLogsId = ref<number | undefined>()
 
+  const removeSubscriptions = async () => {
+    if (subscriptionId.value !== undefined) {
+      await connection.removeAccountChangeListener(subscriptionId.value)
+      subscriptionId.value = undefined
+    }
+    if (subscriptionLogsId.value !== undefined) {
+      await connection.removeOnLogsListener(subscriptionLogsId.value)
+      subscriptionLogsId.value = undefined
+    }
+  }
+
+  const createSubscriptions = async (pk?: PublicKey) => {
+    if (!pk) {
+      pk = publicKey.value!
+    }
+    await removeSubscriptions()
+    console.log('onConnect subscript: ', pk?.toBase58())
+    await Promise.all([
+      subscriptionId.value = connection.onAccountChange(pk, (acc) => {
+        console.log('ACCOUNT_CHANGE_EVENT', acc)
+        emit(ACCOUNT_CHANGE_EVENT, acc)
+      }),
+      subscriptionLogsId.value = connection.onLogs(pk, (logs) => {
+        console.log(logs)
+      }),
+    ])
+  }
+
   watch(
     [wallet, publicKey],
     debounce(([w, _pk], [_wOld, _pkOld]) => {
       if (!w) {
         return
       }
+      createSubscriptions()
 
       const onConnect = () => {
         const publicKey = w.adapter.publicKey!
-        subscriptionId.value = connection.onAccountChange(publicKey!, (acc) => {
-          console.log('ACCOUNT_CHANGE_EVENT', acc)
-          emit(ACCOUNT_CHANGE_EVENT, acc)
-        })
-        subscriptionLogsId.value = connection.onLogs(publicKey!, (logs) => {
-          console.log(logs)
-        })
+        // createSubscriptions(publicKey)
 
         notify({
           message: 'Wallet update',
@@ -50,14 +74,7 @@ export function initWallet() {
           caption: 'Disconnected from wallet',
           timeout: noticeTimeout,
         })
-        if (subscriptionId.value !== undefined) {
-          connection.removeAccountChangeListener(subscriptionId.value)
-          subscriptionId.value = undefined
-        }
-        if (subscriptionLogsId.value !== undefined) {
-          connection.removeOnLogsListener(subscriptionLogsId.value)
-          subscriptionLogsId.value = undefined
-        }
+        removeSubscriptions()
         emit(WALLET_DISCONNECT_EVENT, w)
       }
 
@@ -78,7 +95,7 @@ export function initWallet() {
 
       w.adapter.removeAllListeners('error')
       w.adapter.on('error', onError)
-    }, 100),
+    }, 200),
     { immediate: true },
   )
 }

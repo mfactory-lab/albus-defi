@@ -11,6 +11,7 @@ declare module 'vue' {
     AppDescriptionTop: typeof import('./../src/components/AppDescriptionTop.vue')['default']
     AppHeader: typeof import('./../src/components/AppHeader.vue')['default']
     CertificateStatus: typeof import('./../src/components/PolicyCard/CertificateStatus.vue')['default']
+    ClockSpinner: typeof import('./../src/components/icons/ClockSpinner.vue')['default']
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     CopyToClipboard: typeof import('./../src/components/CopyToClipboard.vue')['default']
