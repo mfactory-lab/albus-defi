@@ -30,7 +30,7 @@ function setMaxAmount() {
   setMax(balanceFrom.value)
 }
 
-const insufficientError = computed(() => {
+const insufficientAError = computed(() => {
   if (Number(state.amountTokenA) > balanceFrom.value) {
     return 'Insufficient funds'
   } else {
@@ -38,8 +38,16 @@ const insufficientError = computed(() => {
   }
 })
 
-watch(() => state.amountTokenA, (_a) => {
-  state.active = !insufficientError.value
+const insufficientBError = computed(() => {
+  if (Number(state.amountTokenB) > balanceTo.value) {
+    return 'Insufficient funds'
+  } else {
+    return false
+  }
+})
+
+watch([() => state.amountTokenA, balanceFrom, () => state.amountTokenB, balanceTo], (_a) => {
+  state.active = !insufficientAError.value && !insufficientBError.value
 })
 </script>
 
@@ -53,11 +61,10 @@ watch(() => state.amountTokenA, (_a) => {
       <div class="swap-form">
         <div class="swap-field">
           <div class="swap-field__info">
-            <div class="row items-end">
-              <div class="col swap-field__label" />
+            <div class="row items-end justify-end">
               <div class="col-8 col-xs-10 row justify-end swap-field__balance">
-                <div v-if="insufficientError" class="insufficient-error">
-                  {{ insufficientError }}
+                <div v-if="insufficientAError" class="insufficient-error">
+                  {{ insufficientAError }}
                 </div>
                 Balance: {{ formatBalance(balanceFrom) }} {{ swapState.from.symbol }}
               </div>
@@ -66,7 +73,12 @@ watch(() => state.amountTokenA, (_a) => {
           <q-input
             v-model="state.amountTokenA"
             :maxlength="14" outlined placeholder="0.0" class="swap-input"
-            @update:model-value="calcRate"
+            @update:model-value="(v) => {
+              const val = String(v)
+              if (val[val.length - 1] !== '.') {
+                calcRate()
+              }
+            }"
             @keypress="onlyNumber"
           >
             <template #append>
@@ -86,8 +98,11 @@ watch(() => state.amountTokenA, (_a) => {
 
         <div class="swap-field q-pt-xs">
           <div class="swap-field__info q-mt-sm">
-            <div class="row">
-              <div class="col swap-field__balance">
+            <div class="row items-end justify-end">
+              <div class="col-8 col-xs-10 row justify-end swap-field__balance">
+                <div v-if="insufficientBError" class="insufficient-error">
+                  {{ insufficientBError }}
+                </div>
                 Balance: {{ formatBalance(balanceTo) }} {{ swapState.to.symbol }}
               </div>
             </div>
@@ -95,7 +110,12 @@ watch(() => state.amountTokenA, (_a) => {
           <q-input
             v-model="state.amountTokenB"
             :maxlength="14" outlined placeholder="0.0" class="swap-input"
-            @update:model-value="() => calcRate(true)"
+            @update:model-value="(v) => {
+              const val = String(v)
+              if (val[val.length - 1] !== '.') {
+                calcRate(true)
+              }
+            }"
             @keypress="onlyNumber"
           >
             <template #append>
@@ -141,9 +161,6 @@ watch(() => state.amountTokenA, (_a) => {
         Pool not found
       </div>
       <div v-else class="row q-mt-md text-center relative-position full-width">
-        <div class="swap-rate q-mx-auto">
-          1 {{ swapState.from.symbol }} ≈ {{ formatBalance(swapState.rate) }} {{ swapState.to.symbol }}
-        </div>
         <div class="absolute-right swap-rate__refresh">
           <q-btn
             :loading="loadingPoolTokens"
