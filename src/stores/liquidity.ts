@@ -1,17 +1,19 @@
 import { defineStore } from 'pinia'
 import { getAssociatedTokenAddress } from '@solana/spl-token'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
-import { formatBalance, lamportsToSol, showCreateDialog, showTransactionResultDialog, solToLamports } from '@/utils'
+import { formatBalance, lamportsToSol, showTransactionResultDialog, solToLamports } from '@/utils'
 
 interface LiquidityState {
   slippageDialog: boolean
   slippage: number
   rate: number
-  maxTokenB: number
   swapping: boolean
   active: boolean
+  poolAmount: number
   amountTokenA: number
   amountTokenB: number
+  maxAmountTokenA: number
+  maxAmountTokenB: number
 }
 
 export const useLiquidityStore = defineStore('liquidity', () => {
@@ -28,14 +30,15 @@ export const useLiquidityStore = defineStore('liquidity', () => {
 
   const state = reactive<LiquidityState>({
     slippageDialog: false,
-
     swapping: false,
     active: false,
     slippage: 0.01,
     rate: 0,
-    maxTokenB: 0,
+    poolAmount: 0,
     amountTokenA: 0,
     amountTokenB: 0,
+    maxAmountTokenA: 0,
+    maxAmountTokenB: 0,
   })
 
   const calcRate = async (setFromB = false) => {
@@ -45,31 +48,40 @@ export const useLiquidityStore = defineStore('liquidity', () => {
 
     const poolFrom = Number(lamportsToSol(Number(swapState.value.poolBalance[swapState.value.from.mint] ?? 0), swapState.value.from.decimals))
     const poolTo = Number(lamportsToSol(Number(swapState.value.poolBalance[swapState.value.to.mint] ?? 0), swapState.value.to.decimals))
+    const rate = setFromB ? poolFrom / poolTo : poolTo / poolFrom
 
     if (changedToken === 0 || Number.isNaN(changedToken)) {
       console.log('calcRate clear ====== ')
-      state.rate = Number(poolTo) / Number(poolFrom)
+      state.poolAmount = 0
       if (setFromB) {
         state.amountTokenA = 0
+        state.maxAmountTokenA = 0
       } else {
         state.amountTokenB = 0
+        state.maxAmountTokenB = 0
       }
-      // state.maxTokenB = 0
       return
     }
 
-    const rate = setFromB ? poolFrom / poolTo : poolTo / poolFrom
     console.log('calcRate rate ====== ', rate)
     if (setFromB) {
       state.amountTokenA = Number(formatBalance(rate * state.amountTokenB, swapState.value.to.decimals))
     } else {
       state.amountTokenB = Number(formatBalance(rate * state.amountTokenA, swapState.value.from.decimals))
     }
-    // state.maxTokenB = solToLamports(state.amountTokenB + (state.amountTokenB * state.slippage), swapState.value.to.decimals)
+    state.maxAmountTokenA = state.amountTokenA * (1 + state.slippage)
+    state.maxAmountTokenB = state.amountTokenB * (1 + state.slippage)
+
+    const amountTokenA = state.amountTokenA
+    const tokenA = swapState.value.from
+    state.poolAmount = Math.floor(solToLamports(amountTokenA, tokenA.decimals) / swapState.value.poolBalance[tokenA.mint] * swapState.value.poolTokenSupply)
   }
 
   watch(
-    () => swapState.value.poolBalance,
+    [
+      () => swapState.value.poolBalance,
+      () => state.slippage,
+    ],
     () => calcRate(),
     { immediate: true },
   )
@@ -81,9 +93,9 @@ export const useLiquidityStore = defineStore('liquidity', () => {
   }
 
   async function depositBothTokens() {
-    if (!userStore.certificateValid) {
-      return showCreateDialog()
-    }
+    // if (!userStore.certificateValid) {
+    //   return showCreateDialog()
+    // }
 
     if (!tokenSwap.value || !publicKey.value) {
       console.log('TokenSwap is not initialized...')
@@ -148,8 +160,26 @@ export const useLiquidityStore = defineStore('liquidity', () => {
 
       console.log('TokenA = ', tokenA.symbol)
       console.log('maximumTokenA = ', amountTokenA)
+      console.log('maximumTokenA = ', solToLamports(amountTokenA, tokenA.decimals))
       console.log('TokenB = ', tokenB.symbol)
       console.log('maximumTokenB = ', amountTokenB)
+      console.log('maximumTokenB = ', solToLamports(amountTokenB, tokenB.decimals))
+
+      console.log('poolTokenAmount = ', state.poolAmount)
+
+      console.log({
+        tokenSwap: tokenSwap.value.pubkey.toBase58(),
+        poolMint: tokenSwap.value.data.poolMint.toBase58(),
+        destination: destination.toBase58(),
+        userTokenA: userTokenA.toBase58(),
+        userTokenB: userTokenB.toBase58(),
+        swapTokenA: tokenSwap.value.data.tokenA.toBase58(),
+        swapTokenB: tokenSwap.value.data.tokenB.toBase58(),
+        poolTokenAmount: state.poolAmount,
+        maximumTokenA: Math.floor(solToLamports(amountTokenA, tokenA.decimals) * (1 + state.slippage)),
+        maximumTokenB: Math.floor(solToLamports(amountTokenB, tokenB.decimals) * (1 + state.slippage)),
+      })
+
       const signature = await swapClient.value.depositAllTokenTypes({
         // proofRequest: userStore.certificate?.pubkey,
         // authority,
@@ -160,9 +190,11 @@ export const useLiquidityStore = defineStore('liquidity', () => {
         userTokenB,
         swapTokenA: tokenSwap.value.data.tokenA,
         swapTokenB: tokenSwap.value.data.tokenB,
-        poolTokenAmount: 0,
-        maximumTokenA: solToLamports(amountTokenA, tokenA.decimals),
-        maximumTokenB: solToLamports(amountTokenB, tokenB.decimals),
+        poolTokenAmount: state.poolAmount,
+        maximumTokenA: Math.floor(solToLamports(amountTokenA, tokenA.decimals) * (1 + state.slippage)),
+        maximumTokenB: Math.floor(solToLamports(amountTokenB, tokenB.decimals) * (1 + state.slippage)),
+        tokenAMint: tokenSwap.value.data.tokenAMint,
+        tokenBMint: tokenSwap.value.data.tokenBMint,
       }, { commitment: 'confirmed' })
 
       showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)

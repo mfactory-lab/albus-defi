@@ -21,11 +21,11 @@ const policyData = computed(() => userStore.servicePolicy.find(t => t.pubkey.toB
 
 const swapStore = useSwapStore()
 const router = useRouter()
-async function swapAction() {
+async function swapAction(liquidity = false) {
   if (tokenAData.value && tokenBData.value && props.pubkey && props.data) {
     swapStore.state.from = tokenAData.value
     swapStore.state.to = tokenBData.value
-    await router.push('/swap')
+    await router.push(liquidity ? 'liquidity' : '/swap')
     swapStore.setTokenSwap({
       pubkey: props.pubkey,
       data: props.data,
@@ -66,19 +66,18 @@ const dialog = ref(false)
         <div class="col">
           <q-btn-group spread>
             <q-btn
-              disable
               label="ADD LIQUIDITY"
               color="warning"
               text-color="#282828"
               target="_blank"
-              @click="swapAction"
+              @click="swapAction(true)"
             />
             <q-btn
               label="SWAP"
               color="primary"
               text-color="white"
               target="_blank"
-              @click="swapAction"
+              @click="swapAction(false)"
             />
           </q-btn-group>
         </div>

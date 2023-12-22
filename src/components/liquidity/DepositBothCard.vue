@@ -4,11 +4,11 @@ import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
 import { SOL_MINT, type TokenData } from '@/config'
 
 const swapStore = useSwapStore()
-const { state: swapState, loadingPoolTokens, openSlippage, closeSlippage, setMax, loadPoolTokenAccounts } = swapStore
+const { state: swapState, loadingPoolTokens, setMax, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
 
 const liquidityStore = useLiquidityStore()
-const { state, depositBothTokens, calcRate } = liquidityStore
+const { state, depositBothTokens, calcRate, openSlippage, closeSlippage } = liquidityStore
 
 const { handleSearchToken, handleFilterToken, tokens } = useToken()
 handleFilterToken(SOL_MINT)
@@ -135,9 +135,21 @@ watch([() => state.amountTokenA, balanceFrom, () => state.amountTokenB, balanceT
 
       <div class="swap-info q-mt-md q-pt-xs">
         <dl>
-          <dt>Max amount</dt>
+          <dt>Max {{ swapState.from.symbol.toUpperCase() }} amount</dt>
           <dd>
-            {{ formatBalance(lamportsToSol(state.maxTokenB, swapState.to.decimals)) }} {{ swapState.to.symbol.toUpperCase() }}
+            {{ formatBalance(state.maxAmountTokenA, swapState.from.decimals) }} {{ swapState.from.symbol.toUpperCase() }}
+          </dd>
+        </dl>
+        <dl>
+          <dt>Max {{ swapState.to.symbol.toUpperCase() }} amount</dt>
+          <dd>
+            {{ formatBalance(state.maxAmountTokenB, swapState.to.decimals) }} {{ swapState.to.symbol.toUpperCase() }}
+          </dd>
+        </dl>
+        <dl>
+          <dt>Pool tokens amount</dt>
+          <dd>
+            {{ lamportsToSol(state.poolAmount, 9) }}
           </dd>
         </dl>
         <dl>
