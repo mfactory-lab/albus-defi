@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { getAssociatedTokenAddress } from '@solana/spl-token'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
-import { formatBalance, lamportsToSol, showTransactionResultDialog, solToLamports } from '@/utils'
+import { formatBalance, lamportsToSol, solToLamports } from '@/utils'
 
 interface LiquidityState {
   slippageDialog: boolean
@@ -197,7 +197,18 @@ export const useLiquidityStore = defineStore('liquidity', () => {
         tokenBMint: tokenSwap.value.data.tokenBMint,
       }, { commitment: 'confirmed' })
 
-      showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)
+      // showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)
+      notify({
+        message: 'Transaction confirmed',
+        type: 'positive',
+        actions: [{
+          label: 'Explore',
+          color: 'white',
+          target: '_blank',
+          href: `https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`,
+          onClick: () => false,
+        }],
+      })
       reload()
     } catch (e) {
       console.log(e)
