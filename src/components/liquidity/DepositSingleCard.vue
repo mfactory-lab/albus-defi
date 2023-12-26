@@ -115,7 +115,7 @@ watch([() => state.amountTokenA, tokenSwap, balanceFrom], (_a) => {
       <select-pool class="q-mt-md" />
 
       <div class="swap-submit q-mt-lg">
-        <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap" rounded :ripple="false" @click="depositSingleToken">
+        <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap || !state.amountTokenA" rounded :ripple="false" @click="depositSingleToken">
           Add Liquidity ({{ swapState.from.symbol }})
         </q-btn>
       </div>

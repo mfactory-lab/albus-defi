@@ -88,6 +88,8 @@ export const useLiquidityStore = defineStore('liquidity', () => {
 
   function reload() {
     swapStore.loadPoolTokenAccounts()
+    state.maxAmountTokenA = 0
+    state.maxAmountTokenB = 0
     state.amountTokenA = 0
     state.amountTokenB = 0
   }

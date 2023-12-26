@@ -164,7 +164,7 @@ watch([() => state.amountTokenA, balanceFrom, () => state.amountTokenB, balanceT
       <policy-card class="q-mt-md q-mx-auto" />
 
       <div class="swap-submit q-mt-md">
-        <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap" rounded :ripple="false" @click="depositBothTokens">
+        <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap || !state.amountTokenA" rounded :ripple="false" @click="depositBothTokens">
           Add Liquidity
         </q-btn>
       </div>
