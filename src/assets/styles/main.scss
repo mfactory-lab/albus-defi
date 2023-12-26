@@ -12,7 +12,7 @@ body {
 main {
     padding: 30px 40px;
     flex-grow: 1;
-    
+
     @media (max-width: $breakpoint-xs) {
         padding: 40px 0 30px 0;
         width: 90%;
@@ -32,8 +32,7 @@ main {
     min-height: calc(100vh - 76px);
     width: 100%;
 
-    @media (max-width: $breakpoint-xs) {
-    }
+    @media (max-width: $breakpoint-xs) {}
 }
 
 .monoscaped {
@@ -59,4 +58,47 @@ main {
 
 .nowrap {
     flex-wrap: nowrap;
+}
+
+.app-toggle {
+    height: 30px;
+
+    .q-toggle__track {
+        height: 26px;
+        width: 50px;
+        border-radius: 20px;
+        border: 1px solid #fff;
+        opacity: 1;
+    }
+
+    .q-toggle__inner {
+        color: #637075;
+        width: 50px;
+        height: 30px;
+    }
+
+    .q-toggle__thumb {
+        top: 5px !important;
+        left: 2px !important;
+        width: 22px;
+        height: 22px;
+    }
+
+    .q-toggle__inner--truthy .q-toggle__thumb {
+        left: 25px !important;
+    }
+
+    .q-toggle:not(.disabled) .q-toggle__thumb:before {
+        background: $secondary !important;
+    }
+
+    .q-toggle__inner--truthy {
+        .q-toggle__track {
+            opacity: 1;
+        }
+
+        .q-toggle__thumb {
+            color: #fff;
+        }
+    }
 }

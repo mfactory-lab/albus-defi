@@ -8,6 +8,6 @@ const { state, toggle } = useQuasarThemeStore()
 <template>
   <div :class="propClass">
     <span>Dark Mode</span>
-    <q-toggle v-model="state.isDark" dense dark @click="toggle" />
+    <q-toggle v-model="state.isDark" dense dark color="secondary" class="app-toggle" @click="toggle" />
   </div>
 </template>

@@ -54,7 +54,7 @@ watch([() => state.amountTokenA, tokenSwap, balanceFrom], (_a) => {
 <template>
   <q-card class="swap-card swap-widget">
     <q-card-section class="swap-card__header">
-      Liquidity
+      Deposit
     </q-card-section>
 
     <q-card-section class="swap-card__body">

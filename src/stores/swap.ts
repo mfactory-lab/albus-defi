@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { PublicKey } from '@solana/web3.js'
 import debounce from 'lodash-es/debounce'
-import { getAssociatedTokenAddress, getMint } from '@solana/spl-token'
+import { getAccount, getAssociatedTokenAddress, getMint } from '@solana/spl-token'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { TokenSwap } from '@albus-finance/swap-sdk'
 import { AlbusSwapClient } from '@albus-finance/swap-sdk'
@@ -62,6 +62,8 @@ export const useSwapStore = defineStore('swap', () => {
     )
   })
 
+  const userPoolsTokens = ref<Record<string, number>>({})
+
   const tokenSwapsAll = ref<SwapPool[]>([])
   const tokenSwapsAllFiltered = ref<SwapPool[]>([])
   const tokenSwaps = ref<SwapPool[]>([])
@@ -118,6 +120,21 @@ export const useSwapStore = defineStore('swap', () => {
       resetStore()
     }
   }, { immediate: true })
+
+  watch([publicKey, tokenSwapsAllFiltered], debounce(async () => {
+    if (publicKey.value && tokenSwapsAllFiltered.value.length > 0) {
+      const userTokens: Record<string, number> = {}
+      for (const pool of tokenSwapsAllFiltered.value) {
+        try {
+          const userAddr = await getAssociatedTokenAddress(pool.data.poolMint, publicKey.value)
+          const userAcc = await getAccount(connectionStore.connection, userAddr)
+          userTokens[pool.data.poolMint.toBase58()] = Number(userAcc.amount)
+          console.log('userAcc === ', userAcc)
+        } catch {}
+      }
+      userPoolsTokens.value = userTokens
+    }
+  }, 500), { immediate: true })
 
   async function init() {
     state.loading = true
@@ -455,5 +472,6 @@ export const useSwapStore = defineStore('swap', () => {
     // TODO: rework liquidity
     tokenAMint,
     tokenBMint,
+    userPoolsTokens,
   }
 })
