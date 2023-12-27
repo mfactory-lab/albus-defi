@@ -75,6 +75,12 @@ export const useLiquiditySingleStore = defineStore('liquidity-single', () => {
       })
     } catch (e) {
       console.log(e)
+      if (!`${e}`.includes('User rejected the request')) {
+        notify({
+          type: 'negative',
+          message: `${e}`,
+        })
+      }
     } finally {
       state.swapping = false
     }

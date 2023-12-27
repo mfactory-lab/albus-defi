@@ -112,7 +112,6 @@ export const useLiquidityStore = defineStore('liquidity', () => {
 
     const tokenA = Number(solToLamports(state.amountTokenA ?? 0, swapState.value.from.decimals))
     const tokenABalance = Number(solToLamports(userStore.tokenBalance(swapState.value.from.mint) ?? 0, swapState.value.from.decimals))
-
     if (tokenA > tokenABalance) {
       notify({ type: 'negative', message: `Insufficient balance ${swapState.value.from.symbol}.` })
       return
@@ -169,19 +168,6 @@ export const useLiquidityStore = defineStore('liquidity', () => {
 
       console.log('poolTokenAmount = ', state.poolAmount)
 
-      console.log({
-        tokenSwap: tokenSwap.value.pubkey.toBase58(),
-        poolMint: tokenSwap.value.data.poolMint.toBase58(),
-        destination: destination.toBase58(),
-        userTokenA: userTokenA.toBase58(),
-        userTokenB: userTokenB.toBase58(),
-        swapTokenA: tokenSwap.value.data.tokenA.toBase58(),
-        swapTokenB: tokenSwap.value.data.tokenB.toBase58(),
-        poolTokenAmount: state.poolAmount,
-        maximumTokenA: Math.floor(solToLamports(amountTokenA, tokenA.decimals) * (1 + state.slippage)),
-        maximumTokenB: Math.floor(solToLamports(amountTokenB, tokenB.decimals) * (1 + state.slippage)),
-      })
-
       const signature = await swapClient.value.depositAllTokenTypes({
         // proofRequest: userStore.certificate?.pubkey,
         // authority,
@@ -214,6 +200,12 @@ export const useLiquidityStore = defineStore('liquidity', () => {
       reload()
     } catch (e) {
       console.log(e)
+      if (!`${e}`.includes('User rejected the request')) {
+        notify({
+          type: 'negative',
+          message: `${e}`,
+        })
+      }
     } finally {
       state.swapping = false
     }
