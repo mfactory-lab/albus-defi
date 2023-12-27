@@ -6,7 +6,6 @@ import { formatBalance, lamportsToSol, showCreateDialog, solToLamports } from '@
 interface LiquidityState {
   slippageDialog: boolean
   slippage: number
-  rate: number
   swapping: boolean
   active: boolean
   poolAmount: number
@@ -33,7 +32,6 @@ export const useLiquidityStore = defineStore('liquidity', () => {
     swapping: false,
     active: false,
     slippage: 0.01,
-    rate: 0,
     poolAmount: 0,
     amountTokenA: 0,
     amountTokenB: 0,
@@ -42,16 +40,13 @@ export const useLiquidityStore = defineStore('liquidity', () => {
   })
 
   const calcRate = async (setFromB = false) => {
-    console.log('calcRate ====== ')
     const changedToken = Number((setFromB ? state.amountTokenB : state.amountTokenA) ?? 0)
-    console.log('calcRate changedToken ====== ', changedToken)
 
     const poolFrom = Number(lamportsToSol(Number(swapState.value.poolBalance[swapState.value.from.mint] ?? 0), swapState.value.from.decimals))
     const poolTo = Number(lamportsToSol(Number(swapState.value.poolBalance[swapState.value.to.mint] ?? 0), swapState.value.to.decimals))
     const rate = setFromB ? poolFrom / poolTo : poolTo / poolFrom
 
     if (changedToken === 0 || Number.isNaN(changedToken)) {
-      console.log('calcRate clear ====== ')
       state.poolAmount = 0
       if (setFromB) {
         state.amountTokenA = 0
@@ -63,7 +58,6 @@ export const useLiquidityStore = defineStore('liquidity', () => {
       return
     }
 
-    console.log('calcRate rate ====== ', rate)
     if (setFromB) {
       state.amountTokenA = Number(formatBalance(rate * state.amountTokenB, swapState.value.to.decimals))
     } else {
@@ -100,7 +94,7 @@ export const useLiquidityStore = defineStore('liquidity', () => {
     }
 
     if (!tokenSwap.value || !publicKey.value) {
-      console.log('TokenSwap is not initialized...')
+      console.log('Pool is not selected...')
       return
     }
 

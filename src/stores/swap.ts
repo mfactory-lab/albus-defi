@@ -301,7 +301,7 @@ export const useSwapStore = defineStore('swap', () => {
     }
 
     if (!tokenSwap.value || !publicKey.value) {
-      console.log('TokenSwap is not initialized...')
+      console.log('Pool is not selected...')
       return
     }
 

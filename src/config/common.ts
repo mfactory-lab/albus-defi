@@ -10,5 +10,7 @@ export const MIN_TRANSFER_FEE = 0.00203928
 // TODO: where from 0.0000016
 export const TRANSFER_FEE_CONST = 0.0000016
 export const MIN_FEE = 0.000005
+// LP token decimals; TODO: in calculate get from pool mint
+export const LP_DECIMALS = 9
 
 export const PASSWORD_PROTECT = import.meta.env.VITE_PASSWORD_PROTECT

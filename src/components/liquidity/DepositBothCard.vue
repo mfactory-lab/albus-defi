@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { evaRefresh } from '@quasar/extras/eva-icons'
 import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
-import { MIN_FEE, RENT_FEE, SOL_MINT, TRANSFER_FEE_CONST, type TokenData, WRAPPED_SOL_MINT } from '@/config'
+import { LP_DECIMALS, MIN_FEE, RENT_FEE, SOL_MINT, TRANSFER_FEE_CONST, type TokenData, WRAPPED_SOL_MINT } from '@/config'
 
 const swapStore = useSwapStore()
 const { state: swapState, loadingPoolTokens, loadPoolTokenAccounts } = swapStore
@@ -158,9 +158,9 @@ watch([() => state.amountTokenA, balanceFrom, () => state.amountTokenB, balanceT
           </dd>
         </dl>
         <dl>
-          <dt>Pool tokens amount</dt>
+          <dt>LP tokens amount</dt>
           <dd>
-            {{ lamportsToSol(state.poolAmount, 9) }}
+            {{ lamportsToSol(state.poolAmount, LP_DECIMALS) }}
           </dd>
         </dl>
         <dl>

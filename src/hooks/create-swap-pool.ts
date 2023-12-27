@@ -2,7 +2,7 @@ import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
 import { CurveType } from '@albus-finance/swap-sdk'
 import { getCreateMintTx, getOrInitAssociatedTokenAddress, sendTransaction } from '@/utils'
-import type { PolicyItem, TokenData } from '@/config'
+import { LP_DECIMALS, type PolicyItem, type TokenData } from '@/config'
 
 export function useCreateSwap() {
   const swapStore = useSwapStore()
@@ -48,7 +48,7 @@ export function useCreateSwap() {
     }
     const swapAuthority = swapStore.swapClient.swapAuthority(state.tokenSwap.publicKey)
     const tx = new Transaction()
-    const poolMint = await getCreateMintTx(connectionStore.connection, tx, publicKey.value, swapAuthority, 9)
+    const poolMint = await getCreateMintTx(connectionStore.connection, tx, publicKey.value, swapAuthority, LP_DECIMALS)
     console.log('[create swap] poolMint = ', poolMint.publicKey.toBase58())
     if (tx.instructions.length > 0) {
       await monitorTransaction(
