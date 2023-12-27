@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { getAssociatedTokenAddress } from '@solana/spl-token'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
-import { formatBalance, lamportsToSol, solToLamports } from '@/utils'
+import { formatBalance, lamportsToSol, showCreateDialog, solToLamports } from '@/utils'
 
 interface LiquidityState {
   slippageDialog: boolean
@@ -95,9 +95,9 @@ export const useLiquidityStore = defineStore('liquidity', () => {
   }
 
   async function depositBothTokens() {
-    // if (!userStore.certificateValid) {
-    //   return showCreateDialog()
-    // }
+    if (!userStore.certificateValid) {
+      return showCreateDialog()
+    }
 
     if (!tokenSwap.value || !publicKey.value) {
       console.log('TokenSwap is not initialized...')

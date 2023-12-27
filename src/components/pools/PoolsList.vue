@@ -11,7 +11,7 @@ const { state } = swapStore
 
 <template>
   <div v-if="connected" class="full-width app-description row items-center justify-start q-mb-md">
-    <span class="q-mr-sm">My pools</span>
+    <span class="q-mr-sm">My Liquidity</span>
     <q-toggle v-model="onlyMyPools" color="secondary" dense class="app-toggle" />
   </div>
   <div>
