@@ -2,10 +2,10 @@
 import { evaRefresh } from '@quasar/extras/eva-icons'
 import { formatBalance, lamportsToSol, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
-import { SOL_MINT, type TokenData } from '@/config'
+import { MIN_FEE, RENT_FEE, SOL_MINT, TRANSFER_FEE_CONST, type TokenData, WRAPPED_SOL_MINT } from '@/config'
 
 const swapStore = useSwapStore()
-const { state: swapState, loadingPoolTokens, changeDirection, setMax, loadPoolTokenAccounts } = swapStore
+const { state: swapState, loadingPoolTokens, changeDirection, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
 
 const liquiditySingleStore = useLiquiditySingleStore()
@@ -35,7 +35,11 @@ function setToken(t: TokenData, direction: true) {
 }
 
 function setMaxAmount() {
-  setMax(balanceFrom.value)
+  if (swapState.from?.mint === SOL_MINT || swapState.from?.mint === WRAPPED_SOL_MINT) {
+    state.amountTokenA = balanceFrom.value - RENT_FEE - 3 * MIN_FEE - TRANSFER_FEE_CONST
+  } else {
+    state.amountTokenA = balanceFrom.value
+  }
 }
 
 const insufficientError = computed(() => {

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { evaRefresh } from '@quasar/extras/eva-icons'
 import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
-import { SOL_MINT, type TokenData } from '@/config'
+import { MIN_FEE, RENT_FEE, SOL_MINT, TRANSFER_FEE_CONST, type TokenData, WRAPPED_SOL_MINT } from '@/config'
 
 const swapStore = useSwapStore()
-const { state: swapState, loadingPoolTokens, setMax, loadPoolTokenAccounts } = swapStore
+const { state: swapState, loadingPoolTokens, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
 
 const liquidityStore = useLiquidityStore()
@@ -26,8 +26,16 @@ function setToken(t: TokenData, direction: true) {
   swapState[direction ? 'to' : 'from'] = t
 }
 
-function setMaxAmount() {
-  setMax(balanceFrom.value)
+function setMaxAmount(to = false) {
+  const tokenField = to ? 'to' : 'from'
+  const tokenAmount = to ? 'amountTokenB' : 'amountTokenA'
+  const balance = to ? balanceTo.value : balanceFrom.value
+  if (swapState[tokenField]?.mint === SOL_MINT || swapState[tokenField]?.mint === WRAPPED_SOL_MINT) {
+    state[tokenAmount] = balance - RENT_FEE - 3 * MIN_FEE - TRANSFER_FEE_CONST
+  } else {
+    state[tokenAmount] = balance
+  }
+  calcRate(to)
 }
 
 const insufficientAError = computed(() => {
@@ -82,7 +90,7 @@ watch([() => state.amountTokenA, balanceFrom, () => state.amountTokenB, balanceT
             @keypress="onlyNumber"
           >
             <template #append>
-              <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount">
+              <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount()">
                 MAX
               </q-btn>
               <select-token
@@ -119,6 +127,9 @@ watch([() => state.amountTokenA, balanceFrom, () => state.amountTokenB, balanceT
             @keypress="onlyNumber"
           >
             <template #append>
+              <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount(true)">
+                MAX
+              </q-btn>
               <select-token
                 :swap-token="String(swapState.from.symbol)"
                 :options="tokens"

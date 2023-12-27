@@ -415,10 +415,6 @@ export const useSwapStore = defineStore('swap', () => {
     state.slippageDialog = false
   }
 
-  function setMax(amount: number) {
-    state.from.amount = amount
-  }
-
   function reload() {
     loadPoolTokenAccounts()
     state.from.amount = undefined
@@ -479,7 +475,6 @@ export const useSwapStore = defineStore('swap', () => {
     loadingPoolTokens,
     loadPoolTokenAccounts,
     setTokenSwap,
-    setMax,
     closeSlippage,
     openSlippage,
     changeDirection,
