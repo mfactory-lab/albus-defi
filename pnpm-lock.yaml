@@ -9,8 +9,8 @@ dependencies:
     specifier: 0.2.6
     version: 0.2.6
   '@albus-finance/swap-sdk':
-    specifier: 0.1.4-next.4
-    version: 0.1.4-next.4
+    specifier: 0.1.5-next.0
+    version: 0.1.5-next.0
   '@albus-finance/transfer-sdk':
     specifier: 0.2.4
     version: 0.2.4
@@ -206,8 +206,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@albus-finance/swap-sdk@0.1.4-next.4:
-    resolution: {integrity: sha512-9ORAi/kvXMqwnBP6Nlo4Sqyg+5KmPNv3u11VntbTFSrLLXvT8/s7FSdp3XYnwwrn7S0S/9coQzkSyvCKNWUfQA==}
+  /@albus-finance/swap-sdk@0.1.5-next.0:
+    resolution: {integrity: sha512-vqsNKZgVQ4Dp7a/VCbhVf8dg8lvYX22vZxssrv02IWsN/9AKN5+FyRcGaZqmm6sLdmSuzd7akQNexOIQ1LObtA==}
     dependencies:
       '@coral-xyz/anchor': 0.29.0
       '@metaplex-foundation/beet': 0.7.1
@@ -426,7 +426,7 @@ packages:
   /@censo-custody/solana-wallet-adapter@0.1.0:
     resolution: {integrity: sha512-iM1jFVzBMfk7iokgUVfA2xvGUegixklUISgMARa/VA2mFIjoi32t4xmD8PtWHht81fmg107aYhLnTV1cM7NkAg==}
     dependencies:
-      '@solana/web3.js': 1.87.1
+      '@solana/web3.js': 1.87.6
       bs58: 4.0.1
       eventemitter3: 4.0.7
       uuid: 8.3.2
@@ -1181,7 +1181,7 @@ packages:
       '@keystonehq/bc-ur-registry': 0.5.5
       '@keystonehq/bc-ur-registry-sol': 0.3.1
       '@keystonehq/sdk': 0.13.1
-      '@solana/web3.js': 1.87.1
+      '@solana/web3.js': 1.87.6
       bs58: 5.0.0
       uuid: 8.3.2
     transitivePeerDependencies:
@@ -1251,7 +1251,7 @@ packages:
     resolution: {integrity: sha512-tgyEl6dvtLln8XX81JyBvWjIiEcjTkUwZbrM5dIobTmoqMuGewSyk9CClno8qsMsFdB5T3jC91Rjeqmu/6xk2g==}
     dependencies:
       '@metaplex-foundation/beet': 0.7.1
-      '@solana/web3.js': 1.87.1
+      '@solana/web3.js': 1.87.6
       bs58: 5.0.0
       debug: 4.3.4
     transitivePeerDependencies:
@@ -1265,7 +1265,7 @@ packages:
     resolution: {integrity: sha512-B1L94N3ZGMo53b0uOSoznbuM5GBNJ8LwSeznxBxJ+OThvfHQ4B5oMUqb+0zdLRfkKGS7Q6tpHK9P+QK0j3w2cQ==}
     dependencies:
       '@metaplex-foundation/beet': 0.7.1
-      '@solana/web3.js': 1.87.1
+      '@solana/web3.js': 1.87.6
       bs58: 5.0.0
       debug: 4.3.4
     transitivePeerDependencies:
@@ -1693,7 +1693,7 @@ packages:
     engines: {node: '>= 10'}
     dependencies:
       '@babel/runtime': 7.23.2
-      '@solana/web3.js': 1.87.1
+      '@solana/web3.js': 1.87.6
       bn.js: 5.2.1
       buffer: 6.0.3
       buffer-layout: 1.2.2
