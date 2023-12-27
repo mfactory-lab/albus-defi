@@ -98,8 +98,18 @@ export const useSwapStore = defineStore('swap', () => {
   handleFilterToken(SOL_MINT)
   watch(tokens, () => {
     if (tokens.value.length >= 2) {
+      const from = tokens.value.find(t => t.mint === tokenAMint.value) ?? tokens.value[0]
+      let to = tokens.value.find(t => t.mint === tokenBMint.value) ?? tokens.value[1]
       state.from = tokens.value.find(t => t.mint === tokenAMint.value) ?? tokens.value[0]
       state.to = tokens.value.find(t => t.mint === tokenBMint.value) ?? tokens.value[1]
+      if (from === to) {
+        const another = tokens.value.find(t => t.mint !== from.mint)
+        if (another) {
+          to = another
+        }
+      }
+      state.from = from
+      state.to = to
     }
   }, { immediate: true })
 
