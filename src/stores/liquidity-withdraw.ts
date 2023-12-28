@@ -60,6 +60,7 @@ export const useLiquidityWithdrawStore = defineStore('liquidity-withdraw', () =>
 
   function reload() {
     swapStore.loadPoolTokenAccounts()
+    swapStore.reloadUserLP()
     state.poolAmount = 0
   }
 
@@ -128,6 +129,24 @@ export const useLiquidityWithdrawStore = defineStore('liquidity-withdraw', () =>
 
       console.log('poolTokenAmount = ', state.poolAmount)
       console.log('poolTokenAmount = ', solToLamports(state.poolAmount, LP_DECIMALS))
+
+      console.log({
+        // proofRequest: userStore.certificate?.pubkey,
+        // authority,
+        tokenSwap: tokenSwap.value.pubkey,
+        poolMint: tokenSwap.value.data.poolMint,
+        poolFee: tokenSwap.value.data.poolFeeAccount,
+        source,
+        destTokenA,
+        destTokenB,
+        swapTokenA: tokenSwap.value.data.tokenA,
+        swapTokenB: tokenSwap.value.data.tokenB,
+        poolTokenAmount: solToLamports(state.poolAmount, LP_DECIMALS),
+        minimumTokenA,
+        minimumTokenB,
+        // tokenAMint: tokenSwap.value.data.tokenAMint,
+        // tokenBMint: tokenSwap.value.data.tokenBMint,
+      })
 
       const signature = await swapClient.value.withdrawAllTokenTypes({
         // proofRequest: userStore.certificate?.pubkey,

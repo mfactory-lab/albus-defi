@@ -31,6 +31,7 @@ export const useLiquiditySingleStore = defineStore('liquidity-single', () => {
 
   function reload() {
     swapStore.loadPoolTokenAccounts()
+    swapStore.reloadUserLP()
     state.amountTokenA = 0
   }
 

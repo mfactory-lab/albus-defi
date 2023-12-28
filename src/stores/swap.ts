@@ -131,7 +131,7 @@ export const useSwapStore = defineStore('swap', () => {
     }
   }, { immediate: true })
 
-  watch([publicKey, tokenSwapsAllFiltered], debounce(async () => {
+  const reloadUserLP = debounce(async () => {
     if (publicKey.value && tokenSwapsAllFiltered.value.length > 0) {
       const userTokens: Record<string, number> = {}
       for (const pool of tokenSwapsAllFiltered.value) {
@@ -144,7 +144,9 @@ export const useSwapStore = defineStore('swap', () => {
       }
       userPoolsTokens.value = userTokens
     }
-  }, 500), { immediate: true })
+  }, 500)
+
+  watch([publicKey, tokenSwapsAllFiltered], reloadUserLP, { immediate: true })
 
   async function init() {
     state.loading = true
@@ -484,5 +486,6 @@ export const useSwapStore = defineStore('swap', () => {
     tokenAMint,
     tokenBMint,
     userPoolsTokens,
+    reloadUserLP,
   }
 })
