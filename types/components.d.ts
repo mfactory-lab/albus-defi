@@ -14,7 +14,7 @@ declare module 'vue' {
     ClockSpinner: typeof import('./../src/components/icons/ClockSpinner.vue')['default']
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
-    copy: typeof import('./../src/components/liquidity/DepositBothCard copy.vue')['default']
+    copy: typeof import('./../src/components/liquidity/WithdrawBothCard copy.vue')['default']
     CopyToClipboard: typeof import('./../src/components/CopyToClipboard.vue')['default']
     CreateCertificateBtn: typeof import('./../src/components/PolicyCard/CreateCertificateBtn.vue')['default']
     CreatePoolTokenData: typeof import('./../src/components/CreatePool/CreatePoolTokenData.vue')['default']
@@ -55,5 +55,6 @@ declare module 'vue' {
     WarningDisclaimer: typeof import('./../src/components/WarningDisclaimer.vue')['default']
     WidBothCard: typeof import('./../src/components/liquidity/WidBothCard.vue')['default']
     WithdrawBothCard: typeof import('./../src/components/liquidity/WithdrawBothCard.vue')['default']
+    WithdrawSingleCard: typeof import('./../src/components/liquidity/WithdrawSingleCard.vue')['default']
   }
 }

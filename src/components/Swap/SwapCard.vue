@@ -185,13 +185,11 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
         </dl>
         <dl>
           <dt>Pool {{ state.from.symbol }} balance</dt>
-          <dd>
-            {{ formatBalance(poolBalanceA) }}
-          </dd>
+          <dd>{{ formatBalance(poolBalanceA) }} {{ state.from.symbol }}</dd>
         </dl>
         <dl>
           <dt>Pool {{ state.to.symbol }} balance</dt>
-          <dd>{{ formatBalance(poolBalanceB) }}</dd>
+          <dd>{{ formatBalance(poolBalanceB) }} {{ state.to.symbol }}</dd>
         </dl>
       </div>
     </q-card-section>

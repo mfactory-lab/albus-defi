@@ -2,10 +2,7 @@
   <app-description-top class="q-mt-lg" />
   <div class="main-block row justify-center">
     <div class="row justify-center col-12">
-      <deposit-both-card />
-    </div>
-    <div class="row justify-center col-12 q-mt-lg">
-      <withdraw-both-card />
+      <liquidity-card />
     </div>
   </div>
 
