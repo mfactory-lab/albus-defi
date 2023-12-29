@@ -142,19 +142,19 @@ watch([() => state.amountTokenA, balanceFrom, () => state.amountTokenB, balanceT
 
     <div class="swap-info q-mt-md q-pt-xs">
       <dl>
-        <dt>LP tokens amount</dt>
+        <dt>LP tokens received</dt>
         <dd>
           {{ lamportsToSol(state.poolAmount, LP_DECIMALS) }}
         </dd>
       </dl>
       <dl>
-        <dt>Max {{ swapState.from.symbol.toUpperCase() }} amount</dt>
+        <dt>Max {{ swapState.from.symbol.toUpperCase() }} to be withdrawn</dt>
         <dd>
           {{ formatBalance(state.maxAmountTokenA, swapState.from.decimals) }} {{ swapState.from.symbol.toUpperCase() }}
         </dd>
       </dl>
       <dl>
-        <dt>Max {{ swapState.to.symbol.toUpperCase() }} amount</dt>
+        <dt>Max {{ swapState.to.symbol.toUpperCase() }} to be withdrawn</dt>
         <dd>
           {{ formatBalance(state.maxAmountTokenB, swapState.to.decimals) }} {{ swapState.to.symbol.toUpperCase() }}
         </dd>

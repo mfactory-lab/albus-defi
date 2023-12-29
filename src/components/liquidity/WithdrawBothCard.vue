@@ -36,7 +36,8 @@ watch([() => state.poolAmount, balance], () => {
 
 <template>
   <q-card-section class="swap-card__body">
-    <div class="swap-form">
+    <select-pair />
+    <div class="swap-form q-mt-md">
       <div class="swap-field">
         <div class="swap-field__info">
           <div class="row">
@@ -68,13 +69,13 @@ watch([() => state.poolAmount, balance], () => {
 
     <div class="swap-info q-mt-md q-pt-xs">
       <dl>
-        <dt>Min {{ swapState.from.symbol.toUpperCase() }} amount</dt>
+        <dt>Min {{ swapState.from.symbol.toUpperCase() }} received</dt>
         <dd>
           {{ formatBalance(lamportsToSol(state.minAmountTokenA, swapState.from.decimals), swapState.from.decimals) }} {{ swapState.from.symbol.toUpperCase() }}
         </dd>
       </dl>
       <dl>
-        <dt>Min {{ swapState.to.symbol.toUpperCase() }} amount</dt>
+        <dt>Min {{ swapState.to.symbol.toUpperCase() }} received</dt>
         <dd>
           {{ formatBalance(lamportsToSol(state.minAmountTokenB, swapState.to.decimals), swapState.to.decimals) }} {{ swapState.to.symbol.toUpperCase() }}
         </dd>

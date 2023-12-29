@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const tab = ref('deposit')
+const tab = useLocalStorage('withdraw-tab', 'deposit')
 </script>
 
 <template>
