@@ -15,7 +15,7 @@ ENDPOINTS.push({
   id: 'jfactory-mainnet',
   name: 'JFactory RPC',
   cluster: 'mainnet-beta',
-  url: 'https://mainnet.helius-rpc.com/?api-key=3ba15dd6-e253-4954-bfaf-f05d370fcc05',
+  url: 'https://marketa-1sh8m6-fast-mainnet.helius-rpc.com/',
 })
 // }
 
