@@ -55,7 +55,7 @@ export const useUserStore = defineStore('user', () => {
 
   const servicePolicy = ref<PolicyItem[]>([])
   const serviceData = ref<ServiceProvider>()
-  watch([appConfig, client], async () => {
+  watch([appConfig, client], debounce(async () => {
     console.log('[debug] service Code === ', appConfig.value.serviceCode)
     if (appConfig.value) {
       serviceLoading.value = true
@@ -69,7 +69,7 @@ export const useUserStore = defineStore('user', () => {
     console.log('[debug] serviceData  === ', serviceData.value)
     console.log('[debug] required Policy pk === ', requiredPolicy.value)
     console.log('[debug] service Policy === ', servicePolicy.value)
-  }, { immediate: true })
+  }, 200), { immediate: true })
   const requiredPolicyData = computed(() => {
     if (requiredPolicy.value) {
       return servicePolicy.value?.find(p => p.pubkey.toBase58() === requiredPolicy.value)?.data
@@ -188,7 +188,7 @@ export const useUserStore = defineStore('user', () => {
     } finally {
       state.certificateLoading = false
     }
-  }, 2000)
+  }, 1500)
 
   const certificate = computed(() => {
     if (requiredPolicy.value) {

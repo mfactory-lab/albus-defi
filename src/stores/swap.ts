@@ -148,7 +148,7 @@ export const useSwapStore = defineStore('swap', () => {
 
   watch([publicKey, tokenSwapsAllFiltered], reloadUserLP, { immediate: true })
 
-  async function init() {
+  const init = debounce(async () => {
     state.loading = true
     try {
       console.log('swapClient ================: ', swapClient.value)
@@ -160,7 +160,7 @@ export const useSwapStore = defineStore('swap', () => {
     } finally {
       state.loading = false
     }
-  }
+  }, 400)
 
   const loadingPoolTokens = ref(false)
   const loadPoolTokenAccounts = debounce(async () => {
