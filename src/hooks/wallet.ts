@@ -36,16 +36,18 @@ export function initWallet() {
       pk = publicKey.value!
     }
     await removeSubscriptions()
-    console.log('onConnect subscript: ', pk?.toBase58())
-    await Promise.all([
-      subscriptionId.value = connection.onAccountChange(pk, (acc) => {
-        console.log('ACCOUNT_CHANGE_EVENT', acc)
-        emit(ACCOUNT_CHANGE_EVENT, acc)
-      }),
-      subscriptionLogsId.value = connection.onLogs(pk, (logs) => {
-        console.log(logs)
-      }),
-    ])
+    if (pk) {
+      console.log('onConnect subscript: ', pk?.toBase58())
+      await Promise.all([
+        subscriptionId.value = connection.onAccountChange(pk, (acc) => {
+          console.log('ACCOUNT_CHANGE_EVENT', acc)
+          emit(ACCOUNT_CHANGE_EVENT, acc)
+        }),
+        subscriptionLogsId.value = connection.onLogs(pk, (logs) => {
+          console.log(logs)
+        }),
+      ])
+    }
   }
 
   watch(
