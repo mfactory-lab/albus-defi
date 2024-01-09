@@ -124,8 +124,22 @@ export const useSwapStore = defineStore('swap', () => {
     }
   })
 
+  const init = debounce(async () => {
+    state.loading = true
+    try {
+      console.log('swapClient ================: ', swapClient.value)
+      tokenSwapsAll.value = await swapClient.value.loadAll()
+      console.log('swaps ================: ', tokenSwapsAll.value)
+    } catch (e) {
+      console.log(e)
+      tokenSwapsAll.value = []
+    } finally {
+      state.loading = false
+    }
+  }, 400)
+
   watch([wallet, () => connectionStore.cluster], async (w) => {
-    init().then()
+    init()?.then()
     if (!w) {
       resetStore()
     }
@@ -147,20 +161,6 @@ export const useSwapStore = defineStore('swap', () => {
   }, 500)
 
   watch([publicKey, tokenSwapsAllFiltered], reloadUserLP, { immediate: true })
-
-  const init = debounce(async () => {
-    state.loading = true
-    try {
-      console.log('swapClient ================: ', swapClient.value)
-      tokenSwapsAll.value = await swapClient.value.loadAll()
-      console.log('swaps ================: ', tokenSwapsAll.value)
-    } catch (e) {
-      console.log(e)
-      tokenSwapsAll.value = []
-    } finally {
-      state.loading = false
-    }
-  }, 400)
 
   const loadingPoolTokens = ref(false)
   const loadPoolTokenAccounts = debounce(async () => {
