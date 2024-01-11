@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { PublicKey } from '@solana/web3.js'
 import debounce from 'lodash-es/debounce'
-import { getAssociatedTokenAddress, getMint } from '@solana/spl-token'
+import { getAccount, getAssociatedTokenAddress, getMint } from '@solana/spl-token'
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { TokenSwap } from '@albus-finance/swap-sdk'
 import { AlbusSwapClient } from '@albus-finance/swap-sdk'
@@ -40,7 +40,7 @@ export interface SwapPool {
   data: TokenSwap
 }
 
-enum SwapDirection {
+export enum SwapDirection {
   ASC,
   DESC,
 }
@@ -61,6 +61,8 @@ export const useSwapStore = defineStore('swap', () => {
       ),
     )
   })
+
+  const userPoolsTokens = ref<Record<string, number>>({})
 
   const tokenSwapsAll = ref<SwapPool[]>([])
   const tokenSwapsAllFiltered = ref<SwapPool[]>([])
@@ -96,8 +98,18 @@ export const useSwapStore = defineStore('swap', () => {
   handleFilterToken(SOL_MINT)
   watch(tokens, () => {
     if (tokens.value.length >= 2) {
+      const from = tokens.value.find(t => t.mint === tokenAMint.value) ?? tokens.value[0]
+      let to = tokens.value.find(t => t.mint === tokenBMint.value) ?? tokens.value[1]
       state.from = tokens.value.find(t => t.mint === tokenAMint.value) ?? tokens.value[0]
       state.to = tokens.value.find(t => t.mint === tokenBMint.value) ?? tokens.value[1]
+      if (from === to) {
+        const another = tokens.value.find(t => t.mint !== from.mint)
+        if (another) {
+          to = another
+        }
+      }
+      state.from = from
+      state.to = to
     }
   }, { immediate: true })
 
@@ -112,14 +124,7 @@ export const useSwapStore = defineStore('swap', () => {
     }
   })
 
-  watch([wallet, () => connectionStore.cluster], async (w) => {
-    init().then()
-    if (!w) {
-      resetStore()
-    }
-  }, { immediate: true })
-
-  async function init() {
+  const init = debounce(async () => {
     state.loading = true
     try {
       console.log('swapClient ================: ', swapClient.value)
@@ -131,7 +136,31 @@ export const useSwapStore = defineStore('swap', () => {
     } finally {
       state.loading = false
     }
-  }
+  }, 400)
+
+  watch([wallet, () => connectionStore.cluster], async (w) => {
+    init()?.then()
+    if (!w) {
+      resetStore()
+    }
+  }, { immediate: true })
+
+  const reloadUserLP = debounce(async () => {
+    if (publicKey.value && tokenSwapsAllFiltered.value.length > 0) {
+      const userTokens: Record<string, number> = {}
+      for (const pool of tokenSwapsAllFiltered.value) {
+        try {
+          const userAddr = await getAssociatedTokenAddress(pool.data.poolMint, publicKey.value)
+          const userAcc = await getAccount(connectionStore.connection, userAddr)
+          userTokens[pool.data.poolMint.toBase58()] = Number(userAcc.amount)
+          console.log('userAcc === ', userAcc)
+        } catch {}
+      }
+      userPoolsTokens.value = userTokens
+    }
+  }, 500)
+
+  watch([publicKey, tokenSwapsAllFiltered], reloadUserLP, { immediate: true })
 
   const loadingPoolTokens = ref(false)
   const loadPoolTokenAccounts = debounce(async () => {
@@ -149,6 +178,7 @@ export const useSwapStore = defineStore('swap', () => {
       state.poolBalance = poolBalance
       const poolMint = await getMint(connectionStore.connection, tokenSwap.value.data.poolMint)
       state.poolTokenSupply = Number(poolMint.supply)
+      console.log('[Pool Balance] poolMint', poolMint)
       console.log('[Pool Balance]', state.poolBalance)
       console.log('[Pool Balance] poolTokenSupply', state.poolTokenSupply)
     } catch (e) {
@@ -273,7 +303,7 @@ export const useSwapStore = defineStore('swap', () => {
     }
 
     if (!tokenSwap.value || !publicKey.value) {
-      console.log('TokenSwap is not initialized...')
+      console.log('Pool is not selected...')
       return
     }
 
@@ -360,6 +390,12 @@ export const useSwapStore = defineStore('swap', () => {
       reload()
     } catch (e) {
       console.log(e)
+      if (!`${e}`.includes('User rejected the request')) {
+        notify({
+          type: 'negative',
+          message: `${e}`,
+        })
+      }
     } finally {
       state.swapping = false
     }
@@ -379,10 +415,6 @@ export const useSwapStore = defineStore('swap', () => {
 
   function closeSlippage() {
     state.slippageDialog = false
-  }
-
-  function setMax(amount: number) {
-    state.from.amount = amount
   }
 
   function reload() {
@@ -445,7 +477,6 @@ export const useSwapStore = defineStore('swap', () => {
     loadingPoolTokens,
     loadPoolTokenAccounts,
     setTokenSwap,
-    setMax,
     closeSlippage,
     openSlippage,
     changeDirection,
@@ -454,5 +485,7 @@ export const useSwapStore = defineStore('swap', () => {
     // TODO: rework liquidity
     tokenAMint,
     tokenBMint,
+    userPoolsTokens,
+    reloadUserLP,
   }
 })

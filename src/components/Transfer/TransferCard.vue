@@ -43,12 +43,6 @@ function setMaxCurrency() {
   if (state.token?.mint === SOL_MINT) {
     // save additional 2 min fee for next transaction
     state.value = balance.value - RENT_FEE - 3 * MIN_FEE - TRANSFER_FEE_CONST
-    // Notify.create({
-    //   type: 'negative',
-    //   timeout: 0,
-    //   message: 'When transferring all funds, you will no longer be able to sign transactions! Leave not a lot of SOL on the account',
-    //   actions: [{ icon: evaClose, color: 'white' }],
-    // })
   }
 }
 

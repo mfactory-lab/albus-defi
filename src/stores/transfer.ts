@@ -183,10 +183,12 @@ export const useTransferStore = defineStore('transfer', () => {
       }
     } catch (e) {
       console.error('verifyTransfer error: ', e)
-      // notify({
-      //   type: 'negative',
-      //   message: `${e}`,
-      // })
+      if (!`${e}`.includes('User rejected the request')) {
+        notify({
+          type: 'negative',
+          message: `${e}`,
+        })
+      }
     } finally {
       state.loading = false
     }

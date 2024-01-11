@@ -1,0 +1,54 @@
+.liquidity-tabs {
+  .q-tab-panel {
+    padding: 0;
+  }
+  .q-tab {
+    flex-basis: 0;
+  }
+  .q-tab__label {
+    text-transform: uppercase;
+    font-weight: 500;
+    font-family: $font-secondary;
+
+    @media(min-width: $breakpoint-md) {
+      font-size: 23px;
+      line-height: 28px;
+    }
+  }
+}
+
+.select-token-pair {
+  height: 48px;
+  .q-field__control {
+    height: 48px;
+    font-size: 18px;
+  }
+  &__selected-prepend {
+    height: 48px;
+    display: flex;
+    align-items: center;
+  }
+  .q-field__prepend, .q-field__append {
+    height: 48px;
+  }
+  .q-avatar {
+    font-size: 32px !important;
+    + .q-avatar {
+      margin-left: -4px;
+    }
+  }
+  &-popup {
+    .q-item {
+      padding-left: 10px;
+    }
+    div {
+      font-size: 18px;
+    }
+    .q-avatar {
+      font-size: 32px !important;
+      + .q-avatar {
+        margin-left: -4px;
+      }
+    }
+  }
+}

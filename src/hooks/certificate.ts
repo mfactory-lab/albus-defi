@@ -25,7 +25,7 @@ export function useCertificate(policy?: string) {
     if (ENVIRONMENT !== AlbusClientEnv.PROD && cluster.value === 'mainnet-beta') {
       albusUrl = 'https://stage.app.albus.finance'
     }
-    if (certificate.value) {
+    if (certificate.value && certificate.value.data?.status !== ProofRequestStatus.Rejected) {
       return `${albusUrl}/holder?certificate=${certificate.value.pubkey?.toBase58()}`
     }
     const redirect = encodeURIComponent(`${location.origin}${route.fullPath}`)
