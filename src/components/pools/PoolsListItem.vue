@@ -106,6 +106,13 @@ const dialog = ref(false)
             <copy-to-clipboard :text="data.tokenBMint.toBase58()" />
           </span>
         </div>
+        <div class="row items-center">
+          LP token mint:&nbsp;
+          <span>
+            <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.poolMint.toBase58()) }}</span>
+            <copy-to-clipboard :text="data.poolMint.toBase58()" />
+          </span>
+        </div>
         <div class="row items-center q-mt-xs">
           Pool fee:&nbsp;
           <span class="pool-card__pubkey">{{ formatPct.format(swapFee) }}</span>
