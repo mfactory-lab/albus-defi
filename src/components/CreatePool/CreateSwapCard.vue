@@ -3,7 +3,16 @@
 import { Keypair, PublicKey } from '@solana/web3.js'
 import type { TokenData } from '@/config'
 
-const { state, createTokenSwap, createPoolAccounts, generateSwapKeypair, createPoolMint } = useCreateSwap()
+const {
+  state,
+  createTokenSwap,
+  createPoolAccounts,
+  generateSwapKeypair,
+  createPoolMint,
+  metadataState,
+  createMetadataLPT,
+  updateMetadataLPT,
+} = useCreateSwap()
 const { handleSearchToken, tokens } = useToken()
 
 const userStore = useUserStore()
@@ -16,6 +25,7 @@ function setToken(field: 'tokenA' | 'tokenB', t: TokenData) {
 }
 
 const expandedTokenSwap = ref(false)
+const expandedPoolMint = ref(false)
 const tokenSwapSecret = ref('')
 function setTokenSwap() {
   if (tokenSwapSecret.value) {
@@ -129,7 +139,7 @@ function setPoolMint() {
         Copy Pool Mint public key
       </div>
       <q-expansion-item
-        v-model="expandedTokenSwap"
+        v-model="expandedPoolMint"
         label="Set pool mint manually"
       >
         <q-input v-model="poolMint" class="q-mr-md" label="Pool Mint" />
@@ -140,8 +150,25 @@ function setPoolMint() {
         </div>
       </q-expansion-item>
 
+      <div class="q-mt-lg column">
+        <div>LP token metadata</div>
+        <q-input v-model="metadataState.name" class="q-mr-md" label="name" />
+        <q-input v-model="metadataState.symbol" class="q-mr-md" label="symbol" />
+        <q-input v-model="metadataState.metadataUrl" class="q-mr-md" label="url" />
+        <q-toggle v-model="metadataState.isMutable" class="q-mr-md q-mt-sm" size="lg" label="is Mutable" />
+
+        <div class="q-mt-sm row">
+          <q-btn class="q-ml-auto" :disable="!state.poolMint" :loading="state.creating" @click="updateMetadataLPT">
+            Update LP token metadata
+          </q-btn>
+          <q-btn class="q-ml-md" :disable="!state.poolMint" :loading="state.creating" @click="createMetadataLPT">
+            Create LP token metadata
+          </q-btn>
+        </div>
+      </div>
+
       <div class="q-mt-xl row">
-        <q-btn class="q-ml-auto" @click="createPoolAccounts">
+        <q-btn class="q-ml-auto" :loading="state.creating" @click="createPoolAccounts">
           Create Pool token accounts
         </q-btn>
       </div>
@@ -153,7 +180,7 @@ function setPoolMint() {
       </div>
 
       <div class="q-mt-xl row">
-        <q-btn class="q-ml-auto" @click="createTokenSwap">
+        <q-btn class="q-ml-auto" :loading="state.creating" @click="createTokenSwap">
           Create Pool
         </q-btn>
       </div>
