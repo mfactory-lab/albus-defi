@@ -284,48 +284,6 @@ aside {
       padding: 0 0 0 54px;
       white-space: nowrap;
     }
-
-    .q-toggle {
-      margin-top: -12px;
-    }
-
-    .q-toggle__track {
-      height: 26px;
-      width: 50px;
-      border-radius: 20px;
-      border: 1px solid #fff;
-      opacity: 1;
-    }
-
-    .q-toggle--dark .q-toggle__inner {
-      color: #fffefe4a;
-    }
-
-    .q-toggle__thumb {
-      top: 5px !important;
-      left: 2px !important;
-      width: 22px;
-      height: 22px;
-    }
-
-    .q-toggle__inner--truthy .q-toggle__thumb {
-      left: 25px !important;
-    }
-
-    .q-toggle:not(.disabled) .q-toggle__thumb:before {
-      background: none !important;
-    }
-
-    .q-toggle__inner--truthy {
-      .q-toggle__track {
-        opacity: 1;
-        color: transparent;
-      }
-
-      .q-toggle__thumb {
-        color: #fff;
-      }
-    }
   }
 
   .active-route {

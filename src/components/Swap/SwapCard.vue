@@ -3,10 +3,10 @@ import { evaRefresh } from '@quasar/extras/eva-icons'
 import { useWallet } from 'solana-wallets-vue'
 import { formatBalance, formatPct, lamportsToSol, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
-import { SOL_MINT, type TokenData } from '@/config'
+import { MIN_FEE, RENT_FEE, SOL_MINT, TRANSFER_FEE_CONST, type TokenData, WRAPPED_SOL_MINT } from '@/config'
 
 const swapStore = useSwapStore()
-const { state, loadingPoolTokens, changeDirection, openSlippage, closeSlippage, setMax, swapSubmit, loadPoolTokenAccounts } = swapStore
+const { state, loadingPoolTokens, changeDirection, openSlippage, closeSlippage, swapSubmit, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
 const { handleSearchToken, handleFilterToken, tokens } = useToken()
 handleFilterToken(SOL_MINT)
@@ -37,7 +37,11 @@ function setToken(t: TokenData, direction: true) {
 }
 
 function setMaxAmount() {
-  setMax(balanceFrom.value)
+  if (state.from?.mint === SOL_MINT || state.from?.mint === WRAPPED_SOL_MINT) {
+    state.from.amount = balanceFrom.value - RENT_FEE - 3 * MIN_FEE - TRANSFER_FEE_CONST
+  } else {
+    state.from.amount = balanceFrom.value
+  }
 }
 
 const insufficientError = computed(() => {
@@ -118,7 +122,7 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
       </div>
 
       <div class="swap-info q-mt-md q-pt-xs">
-        <dl>
+        <dl class="text-weight-medium">
           <dt>Minimum Received</dt>
           <dd>
             {{ formatBalance(lamportsToSol(state.minimumReceived, state.to.decimals)) }} {{ state.to.symbol.toUpperCase() }}
@@ -181,13 +185,11 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
         </dl>
         <dl>
           <dt>Pool {{ state.from.symbol }} balance</dt>
-          <dd>
-            {{ formatBalance(poolBalanceA) }}
-          </dd>
+          <dd>{{ formatBalance(poolBalanceA) }} {{ state.from.symbol }}</dd>
         </dl>
         <dl>
           <dt>Pool {{ state.to.symbol }} balance</dt>
-          <dd>{{ formatBalance(poolBalanceB) }}</dd>
+          <dd>{{ formatBalance(poolBalanceB) }} {{ state.to.symbol }}</dd>
         </dl>
       </div>
     </q-card-section>

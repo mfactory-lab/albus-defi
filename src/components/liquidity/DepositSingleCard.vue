@@ -2,14 +2,14 @@
 import { evaRefresh } from '@quasar/extras/eva-icons'
 import { formatBalance, lamportsToSol, onlyNumber } from '@/utils'
 import swapCircle from '@/assets/img/swap-circle.svg?raw'
-import { SOL_MINT, type TokenData } from '@/config'
+import { MIN_FEE, RENT_FEE, SOL_MINT, TRANSFER_FEE_CONST, type TokenData, WRAPPED_SOL_MINT } from '@/config'
 
 const swapStore = useSwapStore()
-const { state: swapState, loadingPoolTokens, changeDirection, openSlippage, closeSlippage, setMax, loadPoolTokenAccounts } = swapStore
+const { state: swapState, loadingPoolTokens, changeDirection, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
 
-const liquidityStore = useLiquidityStore()
-const { state, depositSingleToken } = liquidityStore
+const liquiditySingleStore = useLiquiditySingleStore()
+const { state, depositSingleToken } = liquiditySingleStore
 
 const { handleSearchToken, handleFilterToken, tokens } = useToken()
 handleFilterToken(SOL_MINT)
@@ -35,7 +35,11 @@ function setToken(t: TokenData, direction: true) {
 }
 
 function setMaxAmount() {
-  setMax(balanceFrom.value)
+  if (swapState.from?.mint === SOL_MINT || swapState.from?.mint === WRAPPED_SOL_MINT) {
+    state.amountTokenA = balanceFrom.value - RENT_FEE - 3 * MIN_FEE - TRANSFER_FEE_CONST
+  } else {
+    state.amountTokenA = balanceFrom.value
+  }
 }
 
 const insufficientError = computed(() => {
@@ -54,7 +58,7 @@ watch([() => state.amountTokenA, tokenSwap, balanceFrom], (_a) => {
 <template>
   <q-card class="swap-card swap-widget">
     <q-card-section class="swap-card__header">
-      Liquidity
+      Deposit
     </q-card-section>
 
     <q-card-section class="swap-card__body">
@@ -101,7 +105,7 @@ watch([() => state.amountTokenA, tokenSwap, balanceFrom], (_a) => {
               </div>
             </div>
           </div>
-          <q-input readonly :maxlength="14" outlined class="swap-input">
+          <q-input v-model="undefined" readonly outlined class="swap-input">
             <template #append>
               <select-token
                 :swap-token="String(swapState.from.symbol)" :options="tokens" :direction="true" :token="swapState.to" :destination-unavailable="!tokenSwap"
@@ -115,7 +119,7 @@ watch([() => state.amountTokenA, tokenSwap, balanceFrom], (_a) => {
       <select-pool class="q-mt-md" />
 
       <div class="swap-submit q-mt-lg">
-        <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap" rounded :ripple="false" @click="depositSingleToken">
+        <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap || !state.amountTokenA" rounded :ripple="false" @click="depositSingleToken">
           Add Liquidity ({{ swapState.from.symbol }})
         </q-btn>
       </div>
@@ -154,19 +158,4 @@ watch([() => state.amountTokenA, tokenSwap, balanceFrom], (_a) => {
 
     <q-inner-loading :showing="swapState?.loading" class="swap-loading" color="grey" />
   </q-card>
-  <q-dialog v-model="state.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
-    <q-card>
-      <q-card-section>
-        <q-btn-toggle
-          v-model="state.slippage" spread no-caps unelevated :ripple="false" toggle-color="secondary"
-          color="white" text-color="dark" :options="[
-            { label: '0.1%', value: 0.001 },
-            { label: '0.5%', value: 0.005 },
-            { label: '1%', value: 0.01 },
-            { label: '5%', value: 0.05 },
-          ]" @update:model-value="closeSlippage"
-        />
-      </q-card-section>
-    </q-card>
-  </q-dialog>
 </template>
