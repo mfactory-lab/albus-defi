@@ -1,6 +1,9 @@
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
 import { CurveType } from '@albus-finance/swap-sdk'
+import type { DataV2 } from '@metaplex-foundation/mpl-token-metadata'
+import { PROGRAM_ID, createCreateMetadataAccountV3Instruction, createUpdateMetadataAccountV2Instruction } from '@metaplex-foundation/mpl-token-metadata'
+import { createSetAuthorityInstruction } from '@solana/spl-token'
 import { getCreateMintTx, getOrInitAssociatedTokenAddress, sendTransaction } from '@/utils'
 import { LP_DECIMALS, type PolicyItem, type TokenData } from '@/config'
 
@@ -33,6 +36,13 @@ export function useCreateSwap() {
     swapTokenB: undefined,
   })
 
+  const metadataState = reactive<LPTMetadataState>({
+    name: '',
+    symbol: '',
+    metadataUrl: '',
+    isMutable: false,
+  })
+
   async function generateSwapKeypair() {
     if (!publicKey.value || !wallet.value) {
       return
@@ -48,29 +58,117 @@ export function useCreateSwap() {
     }
     const swapAuthority = swapStore.swapClient.swapAuthority(state.tokenSwap.publicKey)
     const tx = new Transaction()
-    const poolMint = await getCreateMintTx(connectionStore.connection, tx, publicKey.value, swapAuthority, LP_DECIMALS)
-    console.log('[create swap] poolMint = ', poolMint.publicKey.toBase58())
-    if (tx.instructions.length > 0) {
-      await monitorTransaction(
-        sendTransaction(connectionStore.connection, wallet.value!, tx.instructions, [poolMint]),
+
+    state.creating = true
+    try {
+      const poolMint = await getCreateMintTx(connectionStore.connection, tx, publicKey.value, publicKey.value, LP_DECIMALS)
+
+      const metadata = PublicKey.findProgramAddressSync(
+        [
+        // eslint-disable-next-line n/prefer-global/buffer
+          Buffer.from('metadata'),
+          PROGRAM_ID.toBuffer(),
+          poolMint.publicKey.toBuffer(),
+        ],
+        PROGRAM_ID,
+      )[0]
+
+      const tokenMetadata = {
+        name: metadataState.name,
+        symbol: metadataState.symbol,
+        uri: metadataState.metadataUrl,
+        sellerFeeBasisPoints: 0,
+        creators: null,
+        collection: null,
+        uses: null,
+      } as DataV2
+
+      const createMetadataInstruction = createCreateMetadataAccountV3Instruction(
         {
-          onSuccess: () => {
-            state.poolMint = poolMint.publicKey
-            notify({
-              type: 'positive',
-              message: 'Pool mint created successfully.',
-            })
+          metadata,
+          mint: poolMint.publicKey,
+          mintAuthority: publicKey.value,
+          payer: publicKey.value,
+          updateAuthority: publicKey.value,
+        },
+        {
+          createMetadataAccountArgsV3: {
+            data: tokenMetadata,
+            isMutable: metadataState.isMutable,
+            collectionDetails: null,
           },
         },
       )
-    } else {
-      state.poolMint = poolMint.publicKey
+      tx.add(createMetadataInstruction)
+
+      const setAuthorityInstruction = createSetAuthorityInstruction(
+        poolMint.publicKey,
+        publicKey.value,
+        0,
+        swapAuthority,
+      )
+      tx.add(setAuthorityInstruction)
+
+      const updateMetadataInstruction = createUpdateMetadataAccountV2Instruction(
+        {
+          metadata,
+          updateAuthority: publicKey.value,
+        },
+        {
+          updateMetadataAccountArgsV2: {
+            data: tokenMetadata,
+            updateAuthority: swapAuthority,
+            primarySaleHappened: true,
+            isMutable: true,
+          },
+        },
+      )
+      tx.add(updateMetadataInstruction)
+
+      console.log('[create swap] poolMint = ', poolMint.publicKey.toBase58())
+      if (tx.instructions.length > 0) {
+        await monitorTransaction(
+          sendTransaction(connectionStore.connection, wallet.value!, tx.instructions, [poolMint]),
+          {
+            onSuccess: () => {
+              state.poolMint = poolMint.publicKey
+              notify({
+                type: 'positive',
+                message: 'Pool mint created successfully.',
+              })
+            },
+          },
+        )
+      }
+    } catch (e) {
+      console.error(e)
+      notify({
+        type: 'negative',
+        message: `${e}`,
+      })
+    } finally {
+      state.creating = false
     }
   }
 
   async function createPoolAccounts() {
-    if (!publicKey.value || !wallet.value || !state.tokenSwap || !state.poolMint) {
-      return
+    if (!publicKey.value || !wallet.value) {
+      return notify({
+        type: 'negative',
+        message: 'Connect wallet',
+      })
+    }
+    if (!state.tokenSwap) {
+      return notify({
+        type: 'negative',
+        message: 'Define tokenSwap',
+      })
+    }
+    if (!state.poolMint) {
+      return notify({
+        type: 'negative',
+        message: 'Define pool mint',
+      })
     }
     if (!state.tokenA || !state.tokenB) {
       return notify({
@@ -80,32 +178,44 @@ export function useCreateSwap() {
     }
     const swapAuthority = swapStore.swapClient.swapAuthority(state.tokenSwap.publicKey)
     const tx = new Transaction()
-    const poolFeeAccount = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, state.poolMint, publicKey.value)
-    const swapTokenA = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, new PublicKey(state.tokenA.mint), swapAuthority, publicKey.value, true)
-    const swapTokenB = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, new PublicKey(state.tokenB.mint), swapAuthority, publicKey.value, true)
-    console.log('[create swap] poolFeeAccount = ', poolFeeAccount.toBase58())
-    console.log('[create swap] swapTokenA = ', swapTokenA.toBase58())
-    console.log('[create swap] swapTokenB = ', swapTokenB.toBase58())
-    if (tx.instructions.length > 0) {
-      await monitorTransaction(
-        sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
-        {
-          commitment: 'finalized',
-          onSuccess: () => {
-            state.poolFeeAccount = poolFeeAccount
-            state.swapTokenA = swapTokenA
-            state.swapTokenB = swapTokenB
-            notify({
-              type: 'positive',
-              message: 'Pool accounts created successfully.',
-            })
+
+    state.creating = true
+    try {
+      const poolFeeAccount = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, state.poolMint, publicKey.value)
+      const swapTokenA = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, new PublicKey(state.tokenA.mint), swapAuthority, publicKey.value, true)
+      const swapTokenB = await getOrInitAssociatedTokenAddress(connectionStore.connection, tx, new PublicKey(state.tokenB.mint), swapAuthority, publicKey.value, true)
+      console.log('[create swap] poolFeeAccount = ', poolFeeAccount.toBase58())
+      console.log('[create swap] swapTokenA = ', swapTokenA.toBase58())
+      console.log('[create swap] swapTokenB = ', swapTokenB.toBase58())
+      if (tx.instructions.length > 0) {
+        await monitorTransaction(
+          sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
+          {
+            commitment: 'finalized',
+            onSuccess: () => {
+              state.poolFeeAccount = poolFeeAccount
+              state.swapTokenA = swapTokenA
+              state.swapTokenB = swapTokenB
+              notify({
+                type: 'positive',
+                message: 'Pool accounts created successfully.',
+              })
+            },
           },
-        },
-      )
-    } else {
-      state.poolFeeAccount = poolFeeAccount
-      state.swapTokenA = swapTokenA
-      state.swapTokenB = swapTokenB
+        )
+      } else {
+        state.poolFeeAccount = poolFeeAccount
+        state.swapTokenA = swapTokenA
+        state.swapTokenB = swapTokenB
+      }
+    } catch (e) {
+      console.error(e)
+      notify({
+        type: 'negative',
+        message: `${e}`,
+      })
+    } finally {
+      state.creating = false
     }
     /**
      * transfer tokens to pool token accounts
@@ -157,32 +267,44 @@ export function useCreateSwap() {
         hostFeeDenominator: state.hostFeeDenominator,
       },
     })
-    const tokenSwapRes = await swapStore.swapClient.createTokenSwap({
-      tokenSwap: state.tokenSwap,
-      poolMint: state.poolMint,
-      poolFee: state.poolFeeAccount,
-      destination: state.poolFeeAccount,
-      tokenA: state.swapTokenA,
-      tokenB: state.swapTokenB,
-      policy: state.policy.pubkey,
-      curveType: CurveType.ConstantProduct,
-      curveParameters: [],
-      fees: {
-        tradeFeeNumerator: state.tradeFeeNumerator,
-        tradeFeeDenominator: state.tradeFeeDenominator,
-        ownerTradeFeeNumerator: state.ownerTradeFeeNumerator,
-        ownerTradeFeeDenominator: state.ownerTradeFeeDenominator,
-        ownerWithdrawFeeNumerator: state.ownerWithdrawFeeNumerator,
-        ownerWithdrawFeeDenominator: state.ownerWithdrawFeeDenominator,
-        hostFeeNumerator: state.hostFeeNumerator,
-        hostFeeDenominator: state.hostFeeDenominator,
-      },
-    })
-    notify({
-      type: 'positive',
-      message: `Swap Pool created successfully. ${state.tokenSwap?.publicKey.toBase58()}`,
-    })
-    console.log('[create swap] tokenSwap result = ', tokenSwapRes)
+
+    state.creating = true
+    try {
+      const tokenSwapRes = await swapStore.swapClient.createTokenSwap({
+        tokenSwap: state.tokenSwap,
+        poolMint: state.poolMint,
+        poolFee: state.poolFeeAccount,
+        destination: state.poolFeeAccount,
+        tokenA: state.swapTokenA,
+        tokenB: state.swapTokenB,
+        policy: state.policy.pubkey,
+        curveType: CurveType.ConstantProduct,
+        curveParameters: [],
+        fees: {
+          tradeFeeNumerator: state.tradeFeeNumerator,
+          tradeFeeDenominator: state.tradeFeeDenominator,
+          ownerTradeFeeNumerator: state.ownerTradeFeeNumerator,
+          ownerTradeFeeDenominator: state.ownerTradeFeeDenominator,
+          ownerWithdrawFeeNumerator: state.ownerWithdrawFeeNumerator,
+          ownerWithdrawFeeDenominator: state.ownerWithdrawFeeDenominator,
+          hostFeeNumerator: state.hostFeeNumerator,
+          hostFeeDenominator: state.hostFeeDenominator,
+        },
+      })
+      notify({
+        type: 'positive',
+        message: `Swap Pool created successfully. ${state.tokenSwap?.publicKey.toBase58()}`,
+      })
+      console.log('[create swap] tokenSwap result = ', tokenSwapRes)
+    } catch (e) {
+      console.error(e)
+      notify({
+        type: 'negative',
+        message: `${e}`,
+      })
+    } finally {
+      state.creating = false
+    }
   }
 
   function reset() {
@@ -197,10 +319,15 @@ export function useCreateSwap() {
     state.policy = undefined
     state.tokenA = undefined
     state.tokenB = undefined
+
+    metadataState.name = ''
+    metadataState.symbol = ''
+    metadataState.metadataUrl = ''
   }
 
   return {
     state,
+    metadataState,
     reset,
     generateSwapKeypair,
     createPoolMint,
@@ -228,4 +355,11 @@ interface CreateSwapState {
   poolFeeAccount: PublicKey | undefined
   swapTokenA: PublicKey | undefined
   swapTokenB: PublicKey | undefined
+}
+
+interface LPTMetadataState {
+  name: string
+  symbol: string
+  metadataUrl: string
+  isMutable: boolean
 }
