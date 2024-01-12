@@ -10,8 +10,6 @@ const {
   generateSwapKeypair,
   createPoolMint,
   metadataState,
-  createMetadataLPT,
-  updateMetadataLPT,
 } = useCreateSwap()
 const { handleSearchToken, tokens } = useToken()
 
@@ -71,7 +69,7 @@ function setPoolMint() {
           option-value="mint" option-label="name"
         >
           <template #selected>
-            <select-policy-item v-if="state.policy" :key="state.policy.pubkey" :policy="state.policy.pubkey" :policy-data="state.policy.data" />
+            <select-policy-item v-if="state.policy" :key="state.policy.pubkey?.toBase58()" :policy="state.policy.pubkey" :policy-data="state.policy.data" />
           </template>
           <template #option="scope">
             <q-item v-bind="scope.itemProps" class="token-select__token">
@@ -128,8 +126,15 @@ function setPoolMint() {
         </div>
       </q-expansion-item>
 
-      <div class="q-mt-xl row">
-        <q-btn class="q-ml-auto" :disable="!!state.poolMint" @click="createPoolMint">
+      <div class="q-mt-xl column">
+        <div>LP token metadata</div>
+        <q-input v-model="metadataState.name" class="q-mr-md" label="name" />
+        <q-input v-model="metadataState.symbol" class="q-mr-md" label="symbol" />
+        <q-input v-model="metadataState.metadataUrl" class="q-mr-md" label="url" />
+        <q-toggle v-model="metadataState.isMutable" class="q-mr-md q-mt-sm" size="lg" label="is Mutable" />
+      </div>
+      <div class="q-mt-xs row">
+        <q-btn class="q-ml-auto" :disable="!!state.poolMint" :loading="state.creating" @click="createPoolMint">
           Create Pool Mint
         </q-btn>
       </div>
@@ -149,23 +154,6 @@ function setPoolMint() {
           </q-btn>
         </div>
       </q-expansion-item>
-
-      <div class="q-mt-lg column">
-        <div>LP token metadata</div>
-        <q-input v-model="metadataState.name" class="q-mr-md" label="name" />
-        <q-input v-model="metadataState.symbol" class="q-mr-md" label="symbol" />
-        <q-input v-model="metadataState.metadataUrl" class="q-mr-md" label="url" />
-        <q-toggle v-model="metadataState.isMutable" class="q-mr-md q-mt-sm" size="lg" label="is Mutable" />
-
-        <div class="q-mt-sm row">
-          <q-btn class="q-ml-auto" :disable="!state.poolMint" :loading="state.creating" @click="updateMetadataLPT">
-            Update LP token metadata
-          </q-btn>
-          <q-btn class="q-ml-md" :disable="!state.poolMint" :loading="state.creating" @click="createMetadataLPT">
-            Create LP token metadata
-          </q-btn>
-        </div>
-      </div>
 
       <div class="q-mt-xl row">
         <q-btn class="q-ml-auto" :loading="state.creating" @click="createPoolAccounts">

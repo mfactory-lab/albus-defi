@@ -3,6 +3,7 @@ import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
 import { CurveType } from '@albus-finance/swap-sdk'
 import type { DataV2 } from '@metaplex-foundation/mpl-token-metadata'
 import { PROGRAM_ID, createCreateMetadataAccountV3Instruction, createUpdateMetadataAccountV2Instruction } from '@metaplex-foundation/mpl-token-metadata'
+import { createSetAuthorityInstruction } from '@solana/spl-token'
 import { getCreateMintTx, getOrInitAssociatedTokenAddress, sendTransaction } from '@/utils'
 import { LP_DECIMALS, type PolicyItem, type TokenData } from '@/config'
 
@@ -60,7 +61,70 @@ export function useCreateSwap() {
 
     state.creating = true
     try {
-      const poolMint = await getCreateMintTx(connectionStore.connection, tx, publicKey.value, swapAuthority, LP_DECIMALS)
+      const poolMint = await getCreateMintTx(connectionStore.connection, tx, publicKey.value, publicKey.value, LP_DECIMALS)
+
+      const metadata = PublicKey.findProgramAddressSync(
+        [
+        // eslint-disable-next-line n/prefer-global/buffer
+          Buffer.from('metadata'),
+          PROGRAM_ID.toBuffer(),
+          poolMint.publicKey.toBuffer(),
+        ],
+        PROGRAM_ID,
+      )[0]
+
+      const tokenMetadata = {
+        name: metadataState.name,
+        symbol: metadataState.symbol,
+        uri: metadataState.metadataUrl,
+        sellerFeeBasisPoints: 0,
+        creators: null,
+        collection: null,
+        uses: null,
+      } as DataV2
+
+      const createMetadataInstruction = createCreateMetadataAccountV3Instruction(
+        {
+          metadata,
+          mint: poolMint.publicKey,
+          mintAuthority: publicKey.value,
+          payer: publicKey.value,
+          updateAuthority: publicKey.value,
+        },
+        {
+          createMetadataAccountArgsV3: {
+            data: tokenMetadata,
+            isMutable: metadataState.isMutable,
+            collectionDetails: null,
+          },
+        },
+      )
+      tx.add(createMetadataInstruction)
+
+      const setAuthorityInstruction = createSetAuthorityInstruction(
+        poolMint.publicKey,
+        publicKey.value,
+        0,
+        swapAuthority,
+      )
+      tx.add(setAuthorityInstruction)
+
+      const updateMetadataInstruction = createUpdateMetadataAccountV2Instruction(
+        {
+          metadata,
+          updateAuthority: publicKey.value,
+        },
+        {
+          updateMetadataAccountArgsV2: {
+            data: tokenMetadata,
+            updateAuthority: swapAuthority,
+            primarySaleHappened: true,
+            isMutable: true,
+          },
+        },
+      )
+      tx.add(updateMetadataInstruction)
+
       console.log('[create swap] poolMint = ', poolMint.publicKey.toBase58())
       if (tx.instructions.length > 0) {
         await monitorTransaction(
@@ -75,8 +139,6 @@ export function useCreateSwap() {
             },
           },
         )
-      } else {
-        state.poolMint = poolMint.publicKey
       }
     } catch (e) {
       console.error(e)
@@ -245,153 +307,6 @@ export function useCreateSwap() {
     }
   }
 
-  async function createMetadataLPT() {
-    if (!publicKey.value || !wallet.value) {
-      return notify({
-        type: 'negative',
-        message: 'Connect wallet',
-      })
-    }
-    if (!state.poolMint) {
-      return notify({
-        type: 'negative',
-        message: 'Define pool mint',
-      })
-    }
-
-    state.creating = true
-    try {
-      const createMetadataInstruction = createCreateMetadataAccountV3Instruction(
-        {
-          metadata: PublicKey.findProgramAddressSync(
-            [
-            // eslint-disable-next-line n/prefer-global/buffer
-              Buffer.from('metadata'),
-              PROGRAM_ID.toBuffer(),
-              state.poolMint.toBuffer(),
-            ],
-            PROGRAM_ID,
-          )[0],
-          mint: state.poolMint,
-          mintAuthority: publicKey.value,
-          payer: publicKey.value,
-          updateAuthority: publicKey.value,
-        },
-        {
-          createMetadataAccountArgsV3: {
-            data: {
-              name: metadataState.name,
-              symbol: metadataState.symbol,
-              uri: metadataState.metadataUrl,
-              creators: null,
-              sellerFeeBasisPoints: 0,
-              uses: null,
-              collection: null,
-            },
-            isMutable: metadataState.isMutable,
-            collectionDetails: null,
-          },
-        },
-      )
-      await monitorTransaction(
-        sendTransaction(connectionStore.connection, wallet.value!, [createMetadataInstruction]),
-        {
-          commitment: 'finalized',
-          onSuccess: () => {
-            notify({
-              type: 'positive',
-              message: 'LP token metadata created',
-            })
-          },
-        },
-      )
-    } catch (e) {
-      console.error(e)
-      notify({
-        type: 'negative',
-        message: `${e}`,
-      })
-    } finally {
-      state.creating = false
-    }
-  }
-
-  async function updateMetadataLPT() {
-    if (!publicKey.value || !wallet.value) {
-      return notify({
-        type: 'negative',
-        message: 'Connect wallet',
-      })
-    }
-    if (!state.poolMint) {
-      return notify({
-        type: 'negative',
-        message: 'Define pool mint',
-      })
-    }
-
-    state.creating = true
-    try {
-      const mint = new PublicKey(state.poolMint)
-
-      const metadataPDA = PublicKey.findProgramAddressSync(
-        [
-          // eslint-disable-next-line n/prefer-global/buffer
-          Buffer.from('metadata'),
-          PROGRAM_ID.toBuffer(),
-          mint.toBuffer(),
-        ],
-        PROGRAM_ID,
-      )[0]
-
-      const tokenMetadata = {
-        name: metadataState.name,
-        symbol: metadataState.symbol,
-        uri: metadataState.metadataUrl,
-        sellerFeeBasisPoints: 0,
-        creators: null,
-        collection: null,
-        uses: null,
-      } as DataV2
-
-      const updateMetadataInstruction = createUpdateMetadataAccountV2Instruction(
-        {
-          metadata: metadataPDA,
-          updateAuthority: publicKey.value,
-        },
-        {
-          updateMetadataAccountArgsV2: {
-            data: tokenMetadata,
-            updateAuthority: publicKey.value,
-            primarySaleHappened: true,
-            isMutable: true,
-          },
-        },
-      )
-
-      await monitorTransaction(
-        sendTransaction(connectionStore.connection, wallet.value!, [updateMetadataInstruction]),
-        {
-          commitment: 'finalized',
-          onSuccess: () => {
-            notify({
-              type: 'positive',
-              message: 'LP token metadata updated',
-            })
-          },
-        },
-      )
-    } catch (e) {
-      console.error(e)
-      notify({
-        type: 'negative',
-        message: `${e}`,
-      })
-    } finally {
-      state.creating = false
-    }
-  }
-
   function reset() {
     state.hostFeeNumerator = 0
     state.hostFeeDenominator = 1000
@@ -418,8 +333,6 @@ export function useCreateSwap() {
     createPoolMint,
     createPoolAccounts,
     createTokenSwap,
-    createMetadataLPT,
-    updateMetadataLPT,
   }
 }
 
