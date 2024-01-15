@@ -3,7 +3,7 @@ import { evaClose, evaMenu } from '@quasar/extras/eva-icons'
 
 const _route = useRoute()
 
-const routes = ['transfer', 'swap', 'pools', 'about', 'support']
+const routes = ['transfer', 'swap', 'liquidity', 'pools', 'about']
 
 const isOpen = ref(false)
 
@@ -27,9 +27,9 @@ watch(isOpen, (o) => {
     <q-btn flat :ripple="false" :icon="menuIcon">
       <q-menu
         :model-value="isOpen" transition-show="jump-down" transition-hide="jump-up" anchor="center middle"
-        self="center middle" style="min-width: 100vw" class="menu-container" @update:model-value="handleShow"
+        self="center middle" max-width="250px" class="menu-container" @update:model-value="handleShow"
       >
-        <q-list>
+        <q-list class="q-pt-lg">
           <q-item v-for="route in routes" :key="route" clickable>
             <q-item-section>
               <router-link :to="route" :class="{ 'active-route': _route.name === route }">
@@ -37,6 +37,7 @@ watch(isOpen, (o) => {
               </router-link>
             </q-item-section>
           </q-item>
+          <dark-theme-toggle prop-class="sidebar-theme" />
           <q-item clickable>
             <social-links />
           </q-item>
@@ -66,15 +67,40 @@ watch(isOpen, (o) => {
     align-items: center;
   }
 
-  .q-item:nth-child(3),
+  .sidebar-theme {
+    height: 48px;
+
+    span{
+      color: $primary;
+      font-family: $font-primary;
+      font-size: 14px;
+      text-transform: uppercase;
+
+      .body--dark & {
+        color: #fff;
+      }
+    }
+  }
+
+  .sidebar-theme,
+  .q-item:nth-child(4),
   .q-item:nth-child(5) {
     border-bottom: 1px solid rgba(78, 76, 76, 0.56);
+
+    .body--dark & {
+      border-bottom: 1px solid $light-gray;
+    }
   }
 
   .social-links {
-    margin: 12px auto;
+    margin: 0 auto;
     display: flex;
     gap: 10px;
+
+    svg {
+      width: 30px;
+      height: 30px;
+    }
   }
 }
 
