@@ -9,6 +9,10 @@ body {
     min-height: 100vh;
 }
 
+.body--light {
+    background-color: #fff;
+}
+
 main {
     padding: 30px 40px;
     flex-grow: 1;
