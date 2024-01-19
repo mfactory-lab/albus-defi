@@ -44,8 +44,8 @@ export const useLiquidityWithdrawStore = defineStore('liquidity-withdraw', () =>
       state.minAmountTokenB = 0
     }
 
-    state.minAmountTokenA = Math.floor(rate * swapState.value.poolBalance[swapState.value.from.mint] * (1 - state.slippage))
-    state.minAmountTokenB = Math.floor(rate * swapState.value.poolBalance[swapState.value.to.mint] * (1 - state.slippage))
+    state.minAmountTokenA = Math.floor(rate * swapState.value.poolBalance[swapState.value.from.mint] * (1 - state.slippage) * (1 - swapState.value.fees.ownerWithdraw))
+    state.minAmountTokenB = Math.floor(rate * swapState.value.poolBalance[swapState.value.to.mint] * (1 - state.slippage) * (1 - swapState.value.fees.ownerWithdraw))
   }
 
   watch(
