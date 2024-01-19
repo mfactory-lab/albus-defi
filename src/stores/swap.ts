@@ -482,6 +482,7 @@ export const useSwapStore = defineStore('swap', () => {
     changeDirection,
     swapSubmit,
     getPoolFee,
+    init,
     // TODO: rework liquidity
     tokenAMint,
     tokenBMint,

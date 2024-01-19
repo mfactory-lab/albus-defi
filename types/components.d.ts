@@ -57,5 +57,6 @@ declare module 'vue' {
     WidBothCard: typeof import('./../src/components/liquidity/WidBothCard.vue')['default']
     WithdrawBothCard: typeof import('./../src/components/liquidity/WithdrawBothCard.vue')['default']
     WithdrawSingleCard: typeof import('./../src/components/liquidity/WithdrawSingleCard.vue')['default']
+    WrapSolCard: typeof import('./../src/components/CreatePool/WrapSolCard.vue')['default']
   }
 }

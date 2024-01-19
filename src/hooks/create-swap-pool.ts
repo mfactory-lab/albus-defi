@@ -295,6 +295,7 @@ export function useCreateSwap() {
         type: 'positive',
         message: `Swap Pool created successfully. ${state.tokenSwap?.publicKey.toBase58()}`,
       })
+      swapStore.init()
       console.log('[create swap] tokenSwap result = ', tokenSwapRes)
     } catch (e) {
       console.error(e)
