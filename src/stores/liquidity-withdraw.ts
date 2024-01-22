@@ -144,8 +144,8 @@ export const useLiquidityWithdrawStore = defineStore('liquidity-withdraw', () =>
         poolTokenAmount: solToLamports(state.poolAmount, LP_DECIMALS),
         minimumTokenA,
         minimumTokenB,
-        // tokenAMint: tokenSwap.value.data.tokenAMint,
-        // tokenBMint: tokenSwap.value.data.tokenBMint,
+        tokenAMint: tokenSwap.value.data.tokenAMint,
+        tokenBMint: tokenSwap.value.data.tokenBMint,
       })
 
       const signature = await swapClient.value.withdrawAllTokenTypes({
@@ -162,8 +162,8 @@ export const useLiquidityWithdrawStore = defineStore('liquidity-withdraw', () =>
         poolTokenAmount: solToLamports(state.poolAmount, LP_DECIMALS),
         minimumTokenA,
         minimumTokenB,
-        // tokenAMint: tokenSwap.value.data.tokenAMint,
-        // tokenBMint: tokenSwap.value.data.tokenBMint,
+        tokenAMint: tokenSwap.value.data.tokenAMint,
+        tokenBMint: tokenSwap.value.data.tokenBMint,
       }, { commitment: 'confirmed' })
 
       // showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)
