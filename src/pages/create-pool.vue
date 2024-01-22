@@ -1,5 +1,6 @@
 <template>
   <div class="main-block row justify-center">
-    <create-swap-card class="q-mt-md" />
+    <wrap-sol-card class="q-mt-md" />
+    <create-swap-card class="q-mt-lg" />
   </div>
 </template>

@@ -44,8 +44,8 @@ export const useLiquidityWithdrawStore = defineStore('liquidity-withdraw', () =>
       state.minAmountTokenB = 0
     }
 
-    state.minAmountTokenA = Math.floor(rate * swapState.value.poolBalance[swapState.value.from.mint] * (1 - state.slippage))
-    state.minAmountTokenB = Math.floor(rate * swapState.value.poolBalance[swapState.value.to.mint] * (1 - state.slippage))
+    state.minAmountTokenA = Math.floor(rate * swapState.value.poolBalance[swapState.value.from.mint] * (1 - state.slippage) * (1 - swapState.value.fees.ownerWithdraw))
+    state.minAmountTokenB = Math.floor(rate * swapState.value.poolBalance[swapState.value.to.mint] * (1 - state.slippage) * (1 - swapState.value.fees.ownerWithdraw))
   }
 
   watch(
@@ -144,8 +144,8 @@ export const useLiquidityWithdrawStore = defineStore('liquidity-withdraw', () =>
         poolTokenAmount: solToLamports(state.poolAmount, LP_DECIMALS),
         minimumTokenA,
         minimumTokenB,
-        // tokenAMint: tokenSwap.value.data.tokenAMint,
-        // tokenBMint: tokenSwap.value.data.tokenBMint,
+        tokenAMint: tokenSwap.value.data.tokenAMint,
+        tokenBMint: tokenSwap.value.data.tokenBMint,
       })
 
       const signature = await swapClient.value.withdrawAllTokenTypes({
@@ -162,8 +162,8 @@ export const useLiquidityWithdrawStore = defineStore('liquidity-withdraw', () =>
         poolTokenAmount: solToLamports(state.poolAmount, LP_DECIMALS),
         minimumTokenA,
         minimumTokenB,
-        // tokenAMint: tokenSwap.value.data.tokenAMint,
-        // tokenBMint: tokenSwap.value.data.tokenBMint,
+        tokenAMint: tokenSwap.value.data.tokenAMint,
+        tokenBMint: tokenSwap.value.data.tokenBMint,
       }, { commitment: 'confirmed' })
 
       // showTransactionResultDialog(`https://explorer.solana.com/tx/${signature}?cluster=${connectionStore.cluster}`)

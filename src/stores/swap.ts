@@ -272,18 +272,19 @@ export const useSwapStore = defineStore('swap', () => {
     const poolFrom = lamportsToSol(Number(state.poolBalance[state.from.mint] ?? 0), state.from.decimals)
     const poolTo = lamportsToSol(Number(state.poolBalance[state.to.mint] ?? 0), state.to.decimals)
 
+    const feeCoef = 1 - state.fees.ownerTrade - state.fees.trade
     if (fromAmount === 0 || Number.isNaN(fromAmount)) {
       state.to.amount = 0
-      state.rate = Number(poolTo) / Number(poolFrom)
+      state.rate = Number(poolTo) / Number(poolFrom) * feeCoef
       state.impact = 0
       state.minimumReceived = 0
       return
     }
 
-    const toAmount = poolTo - (poolFrom * poolTo / (poolFrom + fromAmount))
+    const toAmount = poolTo - (poolFrom * poolTo / (poolFrom + fromAmount * feeCoef))
     state.rate = fromAmount ? toAmount / fromAmount : poolTo / poolFrom
-    state.to.amount = toAmount ? Number(formatBalance(toAmount * (1 - state.fees.ownerTrade - state.fees.trade), state.to.decimals)) : 0
-    state.impact = fromAmount ? 1 - (toAmount / fromAmount) / (poolTo / poolFrom) : 0
+    state.to.amount = toAmount ? Number(formatBalance(toAmount, state.to.decimals)) : 0
+    state.impact = fromAmount ? 1 - (toAmount / fromAmount / feeCoef) / (poolTo / poolFrom) : 0
     state.minimumReceived = solToLamports(state.to.amount - (state.to.amount * state.slippage), state.to.decimals)
   }
 
@@ -482,6 +483,7 @@ export const useSwapStore = defineStore('swap', () => {
     changeDirection,
     swapSubmit,
     getPoolFee,
+    init,
     // TODO: rework liquidity
     tokenAMint,
     tokenBMint,

@@ -86,6 +86,10 @@ watch([() => state.poolAmount, balance], () => {
           <a href="#" @click="openSlippage">{{ formatPercent(state.slippage) }}</a>
         </dd>
       </dl>
+      <dl>
+        <dt>Withdraw fee</dt>
+        <dd>{{ formatPercent(swapState.fees.ownerWithdraw) }} SOL</dd>
+      </dl>
     </div>
 
     <select-pool class="q-mt-md" />
