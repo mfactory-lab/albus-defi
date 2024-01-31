@@ -22,6 +22,10 @@ const routes = [
     name: 'pools',
     icon: stakeIcon,
   },
+  {
+    name: 'converter',
+    icon: swapIcon,
+  },
 ]
 
 const currentRoute = ref('')
