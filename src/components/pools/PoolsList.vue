@@ -7,6 +7,9 @@ const onlyMyPools = ref(false)
 const swapStore = useSwapStore()
 const tokenSwapsAllFiltered = computed(() => swapStore.tokenSwapsAllFiltered.filter(p => !connected.value || !onlyMyPools.value || swapStore.userPoolsTokens[p.data.poolMint.toBase58()]))
 const { state } = swapStore
+
+const poolsStatsStore = usePoolsStatsStore()
+const poolDataLoading = computed(() => poolsStatsStore.poolsLoading)
 </script>
 
 <template>
@@ -15,7 +18,7 @@ const { state } = swapStore
     <q-toggle v-model="onlyMyPools" color="secondary" dense class="app-toggle" />
   </div>
   <div>
-    <q-inner-loading :showing="state?.loading" class="swap-loading" color="grey" />
+    <q-inner-loading :showing="state?.loading || poolDataLoading" class="swap-loading" color="grey" />
     <div class="row justify-center">
       <pools-list-item
         v-for="(pool, idx) in tokenSwapsAllFiltered"

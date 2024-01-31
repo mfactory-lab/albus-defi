@@ -95,14 +95,14 @@ export const TOKEN_C = {
   name: PoolTokenSymbol.TOKEN_C,
   image: usdtToken,
   decimals: 9,
-  mint: 'EkXuCiyaoToaK1VKFNrziSx9Nj171EJ2V7ksMtB6JKtW',
+  mint: '5snBnRp3ZaFZHyQqVFSCzCoCHRPrUuLVzUtTN8wdZM41',
 }
 
 export const TOKENS_DEV = [
   // TOKEN_A,
-  TOKEN_B,
   SOL_TOKEN,
   WRAPPED_SOL_TOKEN,
+  TOKEN_B,
   USDC_TOKEN_DEV,
   // USDT_TOKEN_DEV,
   // TOKEN_C,
@@ -114,3 +114,12 @@ export const TOKENS_MAIN = [
   USDC_TOKEN_MAIN,
   JSOL_TOKEN_MAIN,
 ]
+
+export const TOKENS_PRICE_NAME = {
+  'So11111111111111111111111111111111111111112': 'solana',
+  '7Q2afV64in6N6SeZsAAB81TJzwDoD6zpqmHkzi9Dcavn': 'jpool',
+  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v': 'usd-coin',
+  // devnet:
+  '6rdejLXbi2Ws2z3Ff1wRhRS9WqrXRDuM8YpSkiektRgw': 'jpool',
+  '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU': 'usd-coin',
+}
