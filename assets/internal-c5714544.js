@@ -1,0 +1,1 @@
+import{P as r}from"./index-ee4f1418.js";function l(e,s,a){if(a.length){e.push({pubkey:s,isSigner:!1,isWritable:!1});for(const i of a)e.push({pubkey:i instanceof r?i:i.publicKey,isSigner:!0,isWritable:!1})}else e.push({pubkey:s,isSigner:!0,isWritable:!1});return e}export{l as a};
