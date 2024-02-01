@@ -3,7 +3,7 @@ import { debounce } from 'lodash-es'
 import { type PoolData, type TxData, getCoinsPrice, getPoolsStats, getPoolsTransactions, lamportsToSol } from '@/utils'
 import { TOKENS_PRICE_NAME } from '@/config'
 
-export interface PoolStats {
+interface PoolStats {
   tokenAMint: string
   tokenBMint: string
   amountTokenA: number
@@ -14,6 +14,12 @@ export interface PoolStats {
   apr24: number
 }
 
+interface PoolStatsTotal {
+  tvl: number
+  volume24: number
+  fees24: number
+}
+
 export const usePoolsStatsStore = defineStore('pools-stats', () => {
   const poolsData = ref<PoolData[]>([])
   const poolsLoading = ref(true)
@@ -22,6 +28,11 @@ export const usePoolsStatsStore = defineStore('pools-stats', () => {
   const priceData = ref<Record<string, number>>({})
   const priceLoading = ref(true)
   const poolsStats = ref<Record<string, PoolStats>>({})
+  const poolsStatsTotal = ref<PoolStatsTotal>({
+    tvl: 0,
+    volume24: 0,
+    fees24: 0,
+  })
 
   const connectionStore = useConnectionStore()
   const tokenStore = useTokenStore()
@@ -74,6 +85,11 @@ export const usePoolsStatsStore = defineStore('pools-stats', () => {
     if (poolsLoading.value || txLoading.value || priceLoading.value) {
       return
     }
+    const total: PoolStatsTotal = {
+      tvl: 0,
+      volume24: 0,
+      fees24: 0,
+    }
     const list: Record<string, PoolStats> = swapPools.value.reduce((acc, cur) => {
       acc[cur.pubkey.toBase58()] = {
         tokenAMint: cur.data.tokenAMint.toBase58(),
@@ -100,12 +116,25 @@ export const usePoolsStatsStore = defineStore('pools-stats', () => {
         const tokenA = tokenStore.tokenByMint(list[t.poolAddress].tokenAMint)
         const tokenB = tokenStore.tokenByMint(list[t.poolAddress].tokenBMint)
         if (Number(t.amountTokenA) > 0) {
-          list[t.poolAddress].volume24 += lamportsToSol(Number(t.amountTokenA), tokenA?.decimals) * t.priceTokenA
+          const volume = lamportsToSol(Number(t.amountTokenA), tokenA?.decimals) * t.priceTokenA
+          list[t.poolAddress].volume24 += volume
           list[t.poolAddress].fees24 += lamportsToSol(Number(t.feeTokenB), tokenB?.decimals) * t.priceTokenB
+          total.volume24 += volume
         }
         if (Number(t.amountTokenB) > 0) {
+          const volume = lamportsToSol(Number(t.amountTokenB), tokenB?.decimals) * t.priceTokenB
           list[t.poolAddress].volume24 += lamportsToSol(Number(t.amountTokenB), tokenB?.decimals) * t.priceTokenB
-          list[t.poolAddress].fees24 += lamportsToSol(Number(t.feeTokenA), tokenA?.decimals) * t.priceTokenA
+          total.volume24 += volume
+        }
+        if (Number(t.feeTokenA) > 0) {
+          const fee = lamportsToSol(Number(t.feeTokenA), tokenA?.decimals) * t.priceTokenA
+          list[t.poolAddress].fees24 += fee
+          total.fees24 += fee
+        }
+        if (Number(t.feeTokenB) > 0) {
+          const fee = lamportsToSol(Number(t.feeTokenB), tokenB?.decimals) * t.priceTokenB
+          list[t.poolAddress].fees24 += fee
+          total.fees24 += fee
         }
       }
     })
@@ -114,15 +143,19 @@ export const usePoolsStatsStore = defineStore('pools-stats', () => {
       const tokenA = tokenStore.tokenByMint(list[k].tokenAMint)
       const tokenB = tokenStore.tokenByMint(list[k].tokenBMint)
 
-      list[k].tvl = (
-        lamportsToSol(list[k].amountTokenA, tokenA?.decimals) * (priceData.value[TOKENS_PRICE_NAME[list[k].tokenAMint]] ?? 0)
+      const tvl = lamportsToSol(list[k].amountTokenA, tokenA?.decimals) * (priceData.value[TOKENS_PRICE_NAME[list[k].tokenAMint]] ?? 0)
         + lamportsToSol(list[k].amountTokenB, tokenB?.decimals) * (priceData.value[TOKENS_PRICE_NAME[list[k].tokenBMint]] ?? 0)
-      )
+      list[k].tvl = tvl
+      total.tvl += tvl
 
       list[k].apr24 = list[k].fees24 / list[k].tvl * 365
     })
+
+    poolsStats.value = list
+    poolsStatsTotal.value = total
     // console.log('[pools stats] end: ', new Date())
     console.log('[pools stats]: ', list)
+    console.log('[pools stats] total: ', total)
   })
 
   return {
@@ -130,5 +163,6 @@ export const usePoolsStatsStore = defineStore('pools-stats', () => {
     txLoading,
     priceLoading,
     poolsStats,
+    poolsStatsTotal,
   }
 })
