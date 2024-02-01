@@ -31,7 +31,7 @@ const route = useRoute()
 const router = useRouter()
 watch(route, () => {
   if (route.name === 'index' || route.name === 'all' || (route.name && !router.hasRoute(route.name))) {
-    router.push('/transfer')
+    router.push('/swap')
   }
 }, { immediate: true })
 </script>

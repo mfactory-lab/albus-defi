@@ -7,20 +7,20 @@ const router = useRoute()
 
 const routes = [
   {
-    name: 'transfer',
-    icon: transferIcon,
-  },
-  {
     name: 'swap',
     icon: swapIcon,
+  },
+  {
+    name: 'pools',
+    icon: stakeIcon,
   },
   {
     name: 'liquidity',
     icon: swapIcon,
   },
   {
-    name: 'pools',
-    icon: stakeIcon,
+    name: 'transfer',
+    icon: transferIcon,
   },
 ]
 
