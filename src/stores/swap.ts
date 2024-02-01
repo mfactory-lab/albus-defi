@@ -47,6 +47,7 @@ export enum SwapDirection {
 
 export const useSwapStore = defineStore('swap', () => {
   const connectionStore = useConnectionStore()
+  const tokenStore = useTokenStore()
   const userStore = useUserStore()
   const wallet = useAnchorWallet()
   const { publicKey } = useWallet()
@@ -200,7 +201,11 @@ export const useSwapStore = defineStore('swap', () => {
     () => userStore.servicePolicy,
   ], async () => {
     console.log('tokenSwapsAll: ', tokenSwapsAll.value)
-    tokenSwapsAllFiltered.value = tokenSwapsAll.value.filter(p => !!userStore.servicePolicy.find(sp => sp.pubkey.toBase58() === p.data.policy?.toBase58()))
+    tokenSwapsAllFiltered.value = tokenSwapsAll.value.filter(p => !!userStore.servicePolicy.find(sp =>
+      sp.pubkey.toBase58() === p.data.policy?.toBase58()
+      && !!tokenStore.tokenByMint(p.data.tokenAMint.toBase58())
+      && !!tokenStore.tokenByMint(p.data.tokenBMint.toBase58()),
+    ))
   }, { immediate: true })
 
   watch([

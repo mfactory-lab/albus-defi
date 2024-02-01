@@ -3,11 +3,12 @@ import { debounce } from 'lodash-es'
 import { type PoolData, type TxData, getCoinsPrice, getPoolsStats, getPoolsTransactions, lamportsToSol } from '@/utils'
 import { TOKENS_PRICE_NAME } from '@/config'
 
-interface PoolStats {
+export interface PoolStats {
   tokenAMint: string
   tokenBMint: string
   amountTokenA: number
   amountTokenB: number
+  poolTokenSupply: number
   tvl: number
   volume24: number
   fees24: number
@@ -94,6 +95,7 @@ export const usePoolsStatsStore = defineStore('pools-stats', () => {
       acc[cur.pubkey.toBase58()] = {
         tokenAMint: cur.data.tokenAMint.toBase58(),
         tokenBMint: cur.data.tokenBMint.toBase58(),
+        poolTokenSupply: 0,
         amountTokenA: 0,
         amountTokenB: 0,
         tvl: 0,
@@ -108,6 +110,7 @@ export const usePoolsStatsStore = defineStore('pools-stats', () => {
       if (list[p.address]) {
         list[p.address].amountTokenA = Number(p.tokenABalance)
         list[p.address].amountTokenB = Number(p.tokenBBalance)
+        list[p.address].poolTokenSupply = Number(p.poolTokenSupply)
       }
     })
 

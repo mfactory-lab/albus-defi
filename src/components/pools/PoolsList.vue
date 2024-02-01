@@ -6,13 +6,16 @@ const onlyMyPools = ref(false)
 
 const swapStore = useSwapStore()
 const tokenSwapsAllFiltered = computed(() => swapStore.tokenSwapsAllFiltered.filter(p => !connected.value || !onlyMyPools.value || swapStore.userPoolsTokens[p.data.poolMint.toBase58()]))
+const userPoolsTokens = computed(() => swapStore.userPoolsTokens)
 const { state } = swapStore
 
 const poolsStatsStore = usePoolsStatsStore()
 const poolDataLoading = computed(() => poolsStatsStore.poolsLoading)
+const poolsStats = computed(() => poolsStatsStore.poolsStats)
 </script>
 
 <template>
+  <pools-total class="q-mb-sm" />
   <div v-if="connected" class="full-width app-description row items-center justify-start q-mb-md">
     <span class="q-mr-sm">My Liquidity</span>
     <q-toggle v-model="onlyMyPools" color="secondary" dense class="app-toggle" />
@@ -22,9 +25,11 @@ const poolDataLoading = computed(() => poolsStatsStore.poolsLoading)
     <div class="row justify-center">
       <pools-list-item
         v-for="(pool, idx) in tokenSwapsAllFiltered"
-        :key="pool.pubkey?.toBase58() ?? idx"
+        :key="pool.pubkey.toBase58() ?? idx"
         :pubkey="pool.pubkey"
         :data="pool.data"
+        :user-tokens="userPoolsTokens[pool.data.poolMint.toBase58()]"
+        :pool-stats="poolsStats[pool.pubkey.toBase58()]"
         class="q-mx-sm q-mb-md"
       />
       <div v-if="!state.loading && !tokenSwapsAllFiltered.length" class="text-h5">

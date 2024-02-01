@@ -1,23 +1,28 @@
 <script setup lang="ts">
+import { useWallet } from 'solana-wallets-vue'
 import type { TokenSwap } from '@albus-finance/swap-sdk'
 import type { PublicKey } from '@solana/web3.js'
-import { formatPct } from '@/utils'
+import { formatBalance, formatPct } from '@/utils'
 import { shortenAddress } from '~/utils/web3'
+import type { PoolStats } from '@/stores'
 
 const props = defineProps({
   pubkey: Object as PropType<PublicKey>,
   data: Object as PropType<TokenSwap>,
+  poolStats: Object as PropType<PoolStats>,
+  userTokens: Number,
   useEmit: Boolean,
 })
 defineEmits(['selectPool'])
 
+const { connected } = useWallet()
 const tokenStore = useTokenStore()
 const tokens = computed(() => tokenStore.tokens)
 const tokenAData = computed(() => tokens.value.find(t => t.mint === props.data?.tokenAMint.toBase58()))
 const tokenBData = computed(() => tokens.value.find(t => t.mint === props.data?.tokenBMint.toBase58()))
 
-const userStore = useUserStore()
-const policyData = computed(() => userStore.servicePolicy.find(t => t.pubkey.toBase58() === props.data?.policy?.toBase58()))
+// const userStore = useUserStore()
+// const policyData = computed(() => userStore.servicePolicy.find(t => t.pubkey.toBase58() === props.data?.policy?.toBase58()))
 
 const swapStore = useSwapStore()
 const router = useRouter()
@@ -46,21 +51,51 @@ const dialog = ref(false)
 
 <template>
   <q-card v-if="pubkey && data && tokenAData && tokenBData" class="pool-card" @click="useEmit ? $emit('selectPool') : undefined">
-    <q-card-section class="pool-card__body">
-      <div class="pool-card__subtitle row justify-center items-center">
-        <span>{{ tokenAData?.symbol }} / {{ tokenBData?.symbol }}</span>
-        <span class="policy-info q-ml-md" @click="dialog = true">
+    <q-card-section class="pool-card__body full-height">
+      <div class="row">
+        <div class="pool-card__icons row justify-center q-mr-md">
+          <img v-if="tokenAData?.image" :src="tokenAData?.image" :alt="tokenAData?.symbol">
+          <img v-if="tokenBData?.image" :src="tokenBData?.image" :alt="tokenBData?.symbol">
+        </div>
+        <div class="pool-card__subtitle row justify-center items-center">
+          <span>{{ tokenAData?.symbol }} / {{ tokenBData?.symbol }}</span>
+        </div>
+        <span class="policy-info q-ml-auto" @click="dialog = true">
           i
         </span>
       </div>
-      <div class="pool-card__icons row justify-center q-mt-xs">
-        <img v-if="tokenAData?.image" :src="tokenAData?.image" :alt="tokenAData?.symbol">
-        <img v-if="tokenBData?.image" :src="tokenBData?.image" :alt="tokenBData?.symbol">
+
+      <div v-if="poolStats" class="row q-mt-sm q-mb-auto q-pt-xs pool-card__stats">
+        <div class="row col-6 q-mt-xs">
+          Liquidity:&nbsp;
+          <span :class="{ 'full-width': $q.screen.lt.sm }">${{ formatBalance(poolStats.tvl, 2) }}</span>
+        </div>
+        <div class="row col-6 q-mt-xs">
+          Volume 24h:&nbsp;
+          <span :class="{ 'full-width': $q.screen.lt.sm }">${{ formatBalance(poolStats.volume24, 2) }}</span>
+        </div>
+        <div class="row col-6 q-mt-xs">
+          Fees 24h:&nbsp;
+          <span :class="{ 'full-width': $q.screen.lt.sm }">${{ formatBalance(poolStats.fees24, 2) }}</span>
+        </div>
+        <div class="row col-6 q-mt-xs">
+          APR 24h:&nbsp;
+          <span :class="{ 'full-width': $q.screen.lt.sm }">{{ formatPct.format(poolStats.apr24) }}</span>
+        </div>
+        <div v-if="userTokens && connected" class="q-py-md" />
+        <div v-if="userTokens && connected" class="row col-6 q-mt-xs">
+          Your Liquidity:&nbsp;
+          <span :class="{ 'full-width': $q.screen.lt.sm }">${{ formatBalance(userTokens / poolStats.poolTokenSupply * poolStats.tvl, 2) }}</span>
+        </div>
+        <div v-if="userTokens && connected" class="row col-6 q-mt-xs">
+          Your share:&nbsp;
+          <span :class="{ 'full-width': $q.screen.lt.sm }">{{ formatPct.format(userTokens / poolStats.poolTokenSupply) }}</span>
+        </div>
       </div>
 
-      <div class="q-mt-md row justify-center">
+      <!-- <div class="q-mt-md row justify-center">
         <policy-card-view :required-policy="data.policy?.toBase58()" :required-policy-data="policyData?.data" />
-      </div>
+      </div> -->
 
       <div v-if="!useEmit" class="row q-mt-md">
         <div class="col">
@@ -114,8 +149,12 @@ const dialog = ref(false)
           </span>
         </div>
         <div class="row items-center q-mt-xs">
-          Pool fee:&nbsp;
+          Swap fee:&nbsp;
           <span class="pool-card__pubkey">{{ formatPct.format(swapFee) }}</span>
+        </div>
+        <div class="row items-center q-mt-xs">
+          Withdraw fee:&nbsp;
+          <span class="pool-card__pubkey">{{ formatPct.format(fees.ownerWithdraw) }}</span>
         </div>
       </q-card>
     </q-dialog>
