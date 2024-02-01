@@ -415,10 +415,6 @@ export const useSwapStore = defineStore('swap', () => {
     state.direction = state.direction === SwapDirection.ASC ? SwapDirection.DESC : SwapDirection.ASC
   }
 
-  function openSlippage() {
-    state.slippageDialog = true
-  }
-
   function closeSlippage() {
     state.slippageDialog = false
   }
@@ -484,7 +480,6 @@ export const useSwapStore = defineStore('swap', () => {
     loadPoolTokenAccounts,
     setTokenSwap,
     closeSlippage,
-    openSlippage,
     changeDirection,
     swapSubmit,
     getPoolFee,

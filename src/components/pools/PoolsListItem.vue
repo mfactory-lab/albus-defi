@@ -60,8 +60,48 @@ const dialog = ref(false)
         <div class="pool-card__subtitle row justify-center items-center">
           <span>{{ tokenAData?.symbol }} / {{ tokenBData?.symbol }}</span>
         </div>
-        <span class="policy-info q-ml-auto" @click="dialog = true">
+        <span class="policy-info q-ml-auto">
           i
+          <q-menu v-model="dialog" transition-duration="100" transition-show="fade" transition-hide="fade">
+            <q-card class="q-pa-md">
+              <div class="row items-center">
+                Pool address:&nbsp;
+                <span>
+                  <span class="pool-card__pubkey monoscaped">{{ shortenAddress(pubkey.toBase58()) }}</span>
+                  <copy-to-clipboard :text="pubkey.toBase58()" />
+                </span>
+              </div>
+              <div class="row items-center">
+                Token A mint:&nbsp;
+                <span>
+                  <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.tokenAMint.toBase58()) }}</span>
+                  <copy-to-clipboard :text="data.tokenAMint.toBase58()" />
+                </span>
+              </div>
+              <div class="row items-center">
+                Token B mint:&nbsp;
+                <span>
+                  <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.tokenBMint.toBase58()) }}</span>
+                  <copy-to-clipboard :text="data.tokenBMint.toBase58()" />
+                </span>
+              </div>
+              <div class="row items-center">
+                LP token mint:&nbsp;
+                <span>
+                  <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.poolMint.toBase58()) }}</span>
+                  <copy-to-clipboard :text="data.poolMint.toBase58()" />
+                </span>
+              </div>
+              <div class="row items-center q-mt-xs">
+                Swap fee:&nbsp;
+                <span class="pool-card__pubkey">{{ formatPct.format(swapFee) }}</span>
+              </div>
+              <div class="row items-center q-mt-xs">
+                Withdraw fee:&nbsp;
+                <span class="pool-card__pubkey">{{ formatPct.format(fees.ownerWithdraw) }}</span>
+              </div>
+            </q-card>
+          </q-menu>
         </span>
       </div>
 
@@ -118,45 +158,5 @@ const dialog = ref(false)
         </div>
       </div>
     </q-card-section>
-    <q-dialog v-model="dialog" transition-duration="100" transition-show="fade" transition-hide="fade">
-      <q-card class="q-pa-md">
-        <div class="row items-center">
-          Pool address:&nbsp;
-          <span>
-            <span class="pool-card__pubkey monoscaped">{{ shortenAddress(pubkey.toBase58()) }}</span>
-            <copy-to-clipboard :text="pubkey.toBase58()" />
-          </span>
-        </div>
-        <div class="row items-center">
-          Token A mint:&nbsp;
-          <span>
-            <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.tokenAMint.toBase58()) }}</span>
-            <copy-to-clipboard :text="data.tokenAMint.toBase58()" />
-          </span>
-        </div>
-        <div class="row items-center">
-          Token B mint:&nbsp;
-          <span>
-            <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.tokenBMint.toBase58()) }}</span>
-            <copy-to-clipboard :text="data.tokenBMint.toBase58()" />
-          </span>
-        </div>
-        <div class="row items-center">
-          LP token mint:&nbsp;
-          <span>
-            <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.poolMint.toBase58()) }}</span>
-            <copy-to-clipboard :text="data.poolMint.toBase58()" />
-          </span>
-        </div>
-        <div class="row items-center q-mt-xs">
-          Swap fee:&nbsp;
-          <span class="pool-card__pubkey">{{ formatPct.format(swapFee) }}</span>
-        </div>
-        <div class="row items-center q-mt-xs">
-          Withdraw fee:&nbsp;
-          <span class="pool-card__pubkey">{{ formatPct.format(fees.ownerWithdraw) }}</span>
-        </div>
-      </q-card>
-    </q-dialog>
   </q-card>
 </template>

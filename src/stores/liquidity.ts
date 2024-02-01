@@ -206,10 +206,6 @@ export const useLiquidityStore = defineStore('liquidity', () => {
     }
   }
 
-  function openSlippage() {
-    state.slippageDialog = true
-  }
-
   function closeSlippage() {
     state.slippageDialog = false
   }
@@ -218,7 +214,6 @@ export const useLiquidityStore = defineStore('liquidity', () => {
     state,
     calcRate,
     closeSlippage,
-    openSlippage,
     depositBothTokens,
   }
 })

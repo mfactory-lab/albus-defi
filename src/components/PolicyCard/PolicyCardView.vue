@@ -41,8 +41,18 @@ function getStatusLineColor() {
     </div>
     <div v-else class="row nowrap full-height">
       <div class="certificate-card__info row">
-        <div class="policy-info q-mr-sm" @click="dialog = true">
+        <div class="policy-info q-mr-sm">
           i
+          <q-menu v-model="dialog" :offset="[0, 20]" transition-duration="100" transition-show="fade" transition-hide="fade">
+            <policy-info-view
+              :required-policy-data="requiredPolicyData"
+              :certificate="certificate"
+              :certificate-valid="!!certificateValid"
+              :certificate-loading="certificateLoading"
+              :certificate-link="certificateLink"
+              @close-dialog="dialog = false"
+            />
+          </q-menu>
         </div>
         <div class="certificate-card__info__status column row justify-between">
           <div class="certificate-card__info__title">
@@ -70,15 +80,5 @@ function getStatusLineColor() {
         </a>
       </div>
     </div>
-    <q-dialog v-model="dialog" transition-duration="100" transition-show="fade" transition-hide="fade">
-      <policy-info-view
-        :required-policy-data="requiredPolicyData"
-        :certificate="certificate"
-        :certificate-valid="!!certificateValid"
-        :certificate-loading="certificateLoading"
-        :certificate-link="certificateLink"
-        @close-dialog="dialog = false"
-      />
-    </q-dialog>
   </q-card>
 </template>
