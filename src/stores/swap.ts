@@ -201,11 +201,12 @@ export const useSwapStore = defineStore('swap', () => {
     () => userStore.servicePolicy,
   ], async () => {
     console.log('tokenSwapsAll: ', tokenSwapsAll.value)
-    tokenSwapsAllFiltered.value = tokenSwapsAll.value.filter(p => !!userStore.servicePolicy.find(sp =>
-      sp.pubkey.toBase58() === p.data.policy?.toBase58()
+    tokenSwapsAllFiltered.value = tokenSwapsAll.value.filter(p =>
+      !!userStore.servicePolicy.find(sp => sp.pubkey.toBase58() === p.data.swapPolicy?.toBase58())
+      && !!userStore.servicePolicy.find(sp => sp.pubkey.toBase58() === p.data.addLiquidityPolicy?.toBase58())
       && !!tokenStore.tokenByMint(p.data.tokenAMint.toBase58())
       && !!tokenStore.tokenByMint(p.data.tokenBMint.toBase58()),
-    ))
+    )
   }, { immediate: true })
 
   watch([
@@ -226,7 +227,10 @@ export const useSwapStore = defineStore('swap', () => {
           /**
            * find if there is a pool for which the user already has a certificate
            */
-          const userHasPolicy = tokenSwaps.value.find(pool => userStore.state.certificates?.find(cert => cert.data?.policy.toBase58() === pool.data.policy?.toBase58()))
+          const userHasPolicy = tokenSwaps.value.find(pool => userStore.state.certificates?.find(cert =>
+            cert.data?.policy.toBase58() === pool.data.swapPolicy?.toBase58()
+            || cert.data?.policy.toBase58() === pool.data.addLiquidityPolicy?.toBase58(),
+          ))
           if (userHasPolicy) {
             tokenSwap.value = userHasPolicy
           }
@@ -239,6 +243,7 @@ export const useSwapStore = defineStore('swap', () => {
       tokenSwaps.value = []
       tokenSwap.value = undefined
       userStore.setContractPolicy('', 'swap')
+      userStore.setContractPolicy('', 'liquidity')
       state.poolBalance = {}
     }
   }, { immediate: true })
@@ -247,7 +252,8 @@ export const useSwapStore = defineStore('swap', () => {
     tokenSwap,
   ], async () => {
     console.log('Token SWAP: ', tokenSwap.value)
-    userStore.setContractPolicy(tokenSwap.value?.data.policy?.toBase58() ?? '', 'swap')
+    userStore.setContractPolicy(tokenSwap.value?.data.swapPolicy?.toBase58() ?? '', 'swap')
+    userStore.setContractPolicy(tokenSwap.value?.data.addLiquidityPolicy?.toBase58() ?? '', 'liquidity')
     if (tokenSwap.value) {
       loadPoolTokenAccounts()
       if (tokenSwap.value.data.tokenAMint.toBase58() === state.from.mint) {

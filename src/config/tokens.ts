@@ -122,4 +122,5 @@ export const TOKENS_PRICE_NAME = {
   // devnet:
   '6rdejLXbi2Ws2z3Ff1wRhRS9WqrXRDuM8YpSkiektRgw': 'jpool',
   '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU': 'usd-coin',
+  '5snBnRp3ZaFZHyQqVFSCzCoCHRPrUuLVzUtTN8wdZM41': 'usd-coin',
 }
