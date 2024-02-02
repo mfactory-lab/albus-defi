@@ -38,12 +38,12 @@ export const useUserStore = defineStore('user', () => {
   const contractPolicy = ref<{ [key: string]: string }>({})
   const requiredPolicy = computed<string>(() => {
     if (route.name) {
-      return contractPolicy.value[route.name] ?? pagePolicy.value
+      return contractPolicy.value[String(route.name)] ?? pagePolicy.value
     }
     return ''
   })
   function setContractPolicy(policy: string, page?: string) {
-    contractPolicy.value[page ?? route.name] = policy
+    contractPolicy.value[String(page) ?? route.name] = policy
     // TODO: better solution
     if (page === 'swap') {
       setContractPolicy(policy, 'liquidity')

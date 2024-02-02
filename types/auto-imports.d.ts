@@ -151,6 +151,7 @@ declare global {
   const useColorMode: typeof import('@vueuse/core')['useColorMode']
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
   const useConnectionStore: typeof import('../src/stores/connection')['useConnectionStore']
+  const useConverterStore: typeof import('../src/stores/convertet')['useConverterStore']
   const useCounter: typeof import('@vueuse/core')['useCounter']
   const useCreateSwap: typeof import('../src/hooks/create-swap-pool')['useCreateSwap']
   const useCssModule: typeof import('vue')['useCssModule']
