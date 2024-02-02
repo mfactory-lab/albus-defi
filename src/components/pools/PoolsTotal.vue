@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatBalance } from '@/utils'
+import { formatUsd } from '@/utils'
 
 const poolsStatsStore = usePoolsStatsStore()
 const poolsStatsTotal = computed(() => poolsStatsStore.poolsStatsTotal)
@@ -9,15 +9,29 @@ const priceLoading = computed(() => poolsStatsStore.priceLoading)
 </script>
 
 <template>
-  <div class="full-width q-pl-md">
+  <div>
     <q-inner-loading
       :showing="poolsStatsTotal.tvl === 0 && (poolsLoading || txLoading || priceLoading)"
       class="swap-loading"
       color="grey"
     />
-    <div class="row justify-start text-subtitle1 q-pl-xs">
-      <span class="q-mr-md">TVL: ${{ formatBalance(poolsStatsTotal.tvl, 2) }}</span>
-      <span>Volume 24h: ${{ formatBalance(poolsStatsTotal.volume24, 2) }}</span>
+    <div class="row justify-start">
+      <div class="pools-total q-mr-md q-mb-md">
+        <div class="pools-total__name">
+          Total value locked
+        </div>
+        <div class="pools-total__value">
+          ${{ formatUsd.format(poolsStatsTotal.tvl) }}
+        </div>
+      </div>
+      <div class="pools-total q-mb-md">
+        <div class="pools-total__name">
+          Volume 24h
+        </div>
+        <div class="pools-total__value">
+          ${{ formatUsd.format(poolsStatsTotal.volume24) }}
+        </div>
+      </div>
     </div>
   </div>
 </template>

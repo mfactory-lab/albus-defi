@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { useWallet } from 'solana-wallets-vue'
 import type { TokenSwap } from '@albus-finance/swap-sdk'
 import type { PublicKey } from '@solana/web3.js'
-import { formatBalance, formatPct } from '@/utils'
+import { formatPct, formatUsd } from '@/utils'
 import { shortenAddress } from '~/utils/web3'
 import type { PoolStats } from '@/stores'
 
@@ -15,7 +14,6 @@ const props = defineProps({
 })
 defineEmits(['selectPool'])
 
-const { connected } = useWallet()
 const tokenStore = useTokenStore()
 const tokens = computed(() => tokenStore.tokens)
 const tokenAData = computed(() => tokens.value.find(t => t.mint === props.data?.tokenAMint.toBase58()))
@@ -39,12 +37,8 @@ async function swapAction(liquidity = false) {
   }
 }
 
-const fees = computed(() => {
-  return props.data ? swapStore.getPoolFee(props.data) : {}
-})
-
-// @ts-expect-error valid params
-const swapFee = computed(() => fees.value.ownerTrade + fees.value.trade)
+const fees = computed(() => props.data && swapStore.getPoolFee(props.data))
+const swapFee = computed(() => fees.value && (fees.value.ownerTrade + fees.value.trade))
 
 const dialog = ref(false)
 </script>
@@ -53,12 +47,12 @@ const dialog = ref(false)
   <q-card v-if="pubkey && data && tokenAData && tokenBData" class="pool-card" @click="useEmit ? $emit('selectPool') : undefined">
     <q-card-section class="pool-card__body full-height">
       <div class="row">
-        <div class="pool-card__icons row justify-center q-mr-md">
+        <div class="pool-card__icons row justify-center q-mr-md q-ml-sm">
           <img v-if="tokenAData?.image" :src="tokenAData?.image" :alt="tokenAData?.symbol">
           <img v-if="tokenBData?.image" :src="tokenBData?.image" :alt="tokenBData?.symbol">
         </div>
         <div class="pool-card__subtitle row justify-center items-center">
-          <span>{{ tokenAData?.symbol }} / {{ tokenBData?.symbol }}</span>
+          <span>{{ tokenAData?.symbol }}/{{ tokenBData?.symbol }}</span>
         </div>
         <span class="policy-info q-ml-auto">
           i
@@ -92,11 +86,11 @@ const dialog = ref(false)
                   <copy-to-clipboard :text="data.poolMint.toBase58()" />
                 </span>
               </div>
-              <div class="row items-center q-mt-xs">
+              <div v-if="swapFee" class="row items-center q-mt-xs">
                 Swap fee:&nbsp;
                 <span class="pool-card__pubkey">{{ formatPct.format(swapFee) }}</span>
               </div>
-              <div class="row items-center q-mt-xs">
+              <div v-if="fees" class="row items-center q-mt-xs">
                 Withdraw fee:&nbsp;
                 <span class="pool-card__pubkey">{{ formatPct.format(fees.ownerWithdraw) }}</span>
               </div>
@@ -105,31 +99,59 @@ const dialog = ref(false)
         </span>
       </div>
 
-      <div v-if="poolStats" class="row q-mt-sm q-mb-auto q-pt-xs pool-card__stats">
-        <div class="row col-6 q-mt-xs">
-          Liquidity:&nbsp;
-          <span :class="{ 'full-width': $q.screen.lt.sm }">${{ formatBalance(poolStats.tvl, 2) }}</span>
+      <div class="pool-card__income q-mt-md">
+        <div>
+          <div class="pool-card__apr-label">
+            APR 24H
+          </div>
+          <div class="pool-card__apr-amount">
+            {{ poolStats ? `${formatPct.format(poolStats.apr24)}` : '---' }}
+          </div>
         </div>
-        <div class="row col-6 q-mt-xs">
-          Volume 24h:&nbsp;
-          <span :class="{ 'full-width': $q.screen.lt.sm }">${{ formatBalance(poolStats.volume24, 2) }}</span>
+        <div class="row q-ml-auto">
+          <div class="q-mr-md">
+            <div class="pool-card__label">
+              My Liquidity
+            </div>
+            <div class="pool-card__amount">
+              {{ poolStats && userTokens ? `$${formatUsd.format(userTokens / poolStats.poolTokenSupply * poolStats.tvl)}` : '---' }}
+            </div>
+          </div>
+          <div>
+            <div class="pool-card__label">
+              My Share
+            </div>
+            <div class="pool-card__amount">
+              {{ poolStats && userTokens ? `${formatPct.format(userTokens / poolStats.poolTokenSupply)}` : '---' }}
+            </div>
+          </div>
         </div>
-        <div class="row col-6 q-mt-xs">
-          Fees 24h:&nbsp;
-          <span :class="{ 'full-width': $q.screen.lt.sm }">${{ formatBalance(poolStats.fees24, 2) }}</span>
+      </div>
+
+      <div class="row q-mt-sm q-mb-auto q-pt-xs pool-card__stats">
+        <div class="col-4 q-mt-xs text-center">
+          <div class="pool-card__label">
+            Volume 24H
+          </div>
+          <div class="pool-card__amount">
+            {{ poolStats ? `$${formatUsd.format(poolStats.volume24)}` : '---' }}
+          </div>
         </div>
-        <div class="row col-6 q-mt-xs">
-          APR 24h:&nbsp;
-          <span :class="{ 'full-width': $q.screen.lt.sm }">{{ formatPct.format(poolStats.apr24) }}</span>
+        <div class="col-4 q-mt-xs text-center">
+          <div class="pool-card__label">
+            Liquidity
+          </div>
+          <div class="pool-card__amount">
+            {{ poolStats ? `$${formatUsd.format(poolStats.tvl)}` : '---' }}
+          </div>
         </div>
-        <div v-if="userTokens && connected" class="q-py-md" />
-        <div v-if="userTokens && connected" class="row col-6 q-mt-xs">
-          Your Liquidity:&nbsp;
-          <span :class="{ 'full-width': $q.screen.lt.sm }">${{ formatBalance(userTokens / poolStats.poolTokenSupply * poolStats.tvl, 2) }}</span>
-        </div>
-        <div v-if="userTokens && connected" class="row col-6 q-mt-xs">
-          Your share:&nbsp;
-          <span :class="{ 'full-width': $q.screen.lt.sm }">{{ formatPct.format(userTokens / poolStats.poolTokenSupply) }}</span>
+        <div class="col-4 q-mt-xs text-center">
+          <div class="pool-card__label">
+            Fees 24H
+          </div>
+          <div class="pool-card__amount">
+            {{ poolStats ? `$${formatUsd.format(poolStats.fees24)}` : '---' }}
+          </div>
         </div>
       </div>
 
@@ -139,18 +161,19 @@ const dialog = ref(false)
 
       <div v-if="!useEmit" class="row q-mt-md">
         <div class="col">
-          <q-btn-group spread>
+          <q-btn-group spread unelevated square style="height: 56px">
             <q-btn
               label="ADD LIQUIDITY"
-              color="warning"
-              text-color="#282828"
+              color="primary"
+              text-color="white"
               target="_blank"
+              class="q-mr-md"
               @click="swapAction(true)"
             />
             <q-btn
               label="SWAP"
-              color="primary"
-              text-color="white"
+              color="warning"
+              text-color="black"
               target="_blank"
               @click="swapAction(false)"
             />

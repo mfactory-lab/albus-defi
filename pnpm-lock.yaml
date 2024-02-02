@@ -9,8 +9,8 @@ dependencies:
     specifier: 0.2.6
     version: 0.2.6
   '@albus-finance/swap-sdk':
-    specifier: 0.1.5-next.3
-    version: 0.1.5-next.3
+    specifier: 0.1.5-next.4
+    version: 0.1.5-next.4
   '@albus-finance/transfer-sdk':
     specifier: 0.2.4
     version: 0.2.4
@@ -206,8 +206,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@albus-finance/swap-sdk@0.1.5-next.3:
-    resolution: {integrity: sha512-HMiFs6GWYMldF2G9ncszuVoiwMFRJZHFH0T48z2L2gjvcYY+voLLtCUSmLcToibcwaNIhK/VCGfOLhwLsUWs8g==}
+  /@albus-finance/swap-sdk@0.1.5-next.4:
+    resolution: {integrity: sha512-A0pZ4Pl3JYusxiItlfXbz3OxEpwf81IzmhJ8ie08xSUDKioeRDVyUGRAMAyPWmohTO15DpTGW8pZOnXUosflzA==}
     dependencies:
       '@coral-xyz/anchor': 0.29.0
       '@metaplex-foundation/beet': 0.7.2
