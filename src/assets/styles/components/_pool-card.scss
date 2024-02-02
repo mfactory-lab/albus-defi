@@ -27,6 +27,22 @@
     .body--dark & {
       background-color: $primary;
     }
+
+    &__user {
+      @media(max-width: $breakpoint-xs) {
+        justify-content: flex-end;
+      }
+      .pool-card__label {
+        @media(max-width: $breakpoint-xs) {
+          text-align: right;
+        }
+      }
+      > div:first-child {
+        @media(max-width: $breakpoint-xs) {
+          margin-bottom: 4px;
+        }
+      }
+    }
   }
 
   &__income &__label {
@@ -58,11 +74,27 @@
 
   &__stats {
     font-size: 15px;
+    display: flex;
+
+    &__item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 0 8px;
+      margin: 0 auto;
+    }
+
+    &__delimiter {
+      height: 38px;
+      width: 1px;
+      margin: 0 auto;
+      background-color: #A4A4A4;
+    }
   }
 
   &__label {
     font-size: 11px;
-    list-style: 13px;
+    line-height: 13px;
     color: $secondary;
     .body--dark & {
       color: #fff;
@@ -91,6 +123,13 @@
       margin-left: -14px;
     }
   }
+
+  &__actions {
+    height: 56px;
+    .q-btn__content {
+      font-size: 17px;
+    }
+  }
   
   &__subtitle {
     font-weight: 500;
@@ -100,6 +139,12 @@
 
   &__pubkey {
     word-break: break-all;
+    font-size: 16px;
+    color: #000;
+    font-family: Courier;
+    .body--dark & {
+      color: #fff;
+    }
   }
 
   body.body--dark & {
@@ -133,5 +178,26 @@
   &__value {
     font-size: 25px;
     color: #fff;
+  }
+}
+
+.pool-info {
+  width: 390px;
+  max-width: 80vw;
+
+  &__delimiter {
+    height: 38px;
+    width: 1px;
+    margin: 0 16px;
+    background-color: #A4A4A4;
+  }
+  &__fees {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #A4A4A4;
+  }
+  &__addresses {
+    .pool-card__label {
+      margin-bottom: -8px;
+    }
   }
 }

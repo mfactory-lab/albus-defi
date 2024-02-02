@@ -57,42 +57,63 @@ const dialog = ref(false)
         <span class="policy-info q-ml-auto">
           i
           <q-menu v-model="dialog" transition-duration="100" transition-show="fade" transition-hide="fade">
-            <q-card class="q-pa-md">
-              <div class="row items-center">
-                Pool address:&nbsp;
-                <span>
-                  <span class="pool-card__pubkey monoscaped">{{ shortenAddress(pubkey.toBase58()) }}</span>
-                  <copy-to-clipboard :text="pubkey.toBase58()" />
-                </span>
+            <q-card class="pool-info q-pa-md">
+              <div class="pool-info__fees row items-center">
+                <div>
+                  <div class="pool-card__label">
+                    Swap fee
+                  </div>
+                  <div v-if="swapFee" class="pool-card__amount">
+                    {{ formatPct.format(swapFee) }}
+                  </div>
+                </div>
+                <div class="pool-info__delimiter" />
+                <div>
+                  <div class="pool-card__label">
+                    Withdraw fee
+                  </div>
+                  <div v-if="fees" class="pool-card__amount">
+                    {{ formatPct.format(fees.ownerWithdraw) }}
+                  </div>
+                </div>
               </div>
-              <div class="row items-center">
-                Token A mint:&nbsp;
-                <span>
-                  <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.tokenAMint.toBase58()) }}</span>
-                  <copy-to-clipboard :text="data.tokenAMint.toBase58()" />
-                </span>
-              </div>
-              <div class="row items-center">
-                Token B mint:&nbsp;
-                <span>
-                  <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.tokenBMint.toBase58()) }}</span>
-                  <copy-to-clipboard :text="data.tokenBMint.toBase58()" />
-                </span>
-              </div>
-              <div class="row items-center">
-                LP token mint:&nbsp;
-                <span>
-                  <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.poolMint.toBase58()) }}</span>
-                  <copy-to-clipboard :text="data.poolMint.toBase58()" />
-                </span>
-              </div>
-              <div v-if="swapFee" class="row items-center q-mt-xs">
-                Swap fee:&nbsp;
-                <span class="pool-card__pubkey">{{ formatPct.format(swapFee) }}</span>
-              </div>
-              <div v-if="fees" class="row items-center q-mt-xs">
-                Withdraw fee:&nbsp;
-                <span class="pool-card__pubkey">{{ formatPct.format(fees.ownerWithdraw) }}</span>
+              <div class="pool-info__addresses">
+                <div class="column justify-center items-between q-mt-md">
+                  <div class="pool-card__label">
+                    Pool address
+                  </div>
+                  <div class="row justify-between items-center">
+                    <span class="pool-card__pubkey monoscaped">{{ shortenAddress(pubkey.toBase58(), 14) }}</span>
+                    <copy-to-clipboard :text="pubkey.toBase58()" />
+                  </div>
+                </div>
+                <div class="column justify-center items-between">
+                  <div class="pool-card__label">
+                    Token A mint
+                  </div>
+                  <div class="row justify-between items-center">
+                    <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.tokenAMint.toBase58(), 14) }}</span>
+                    <copy-to-clipboard :text="data.tokenAMint.toBase58()" />
+                  </div>
+                </div>
+                <div class="column justify-center items-between">
+                  <div class="pool-card__label">
+                    Token B mint
+                  </div>
+                  <div class="row justify-between items-center">
+                    <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.tokenBMint.toBase58(), 14) }}</span>
+                    <copy-to-clipboard :text="data.tokenBMint.toBase58()" />
+                  </div>
+                </div>
+                <div class="column justify-center items-between">
+                  <div class="pool-card__label">
+                    LP token mint
+                  </div>
+                  <div class="row justify-between items-center">
+                    <span class="pool-card__pubkey monoscaped">{{ shortenAddress(data.poolMint.toBase58(), 14) }}</span>
+                    <copy-to-clipboard :text="data.poolMint.toBase58()" />
+                  </div>
+                </div>
               </div>
             </q-card>
           </q-menu>
@@ -108,8 +129,8 @@ const dialog = ref(false)
             {{ poolStats ? `${formatPct.format(poolStats.apr24)}` : '---' }}
           </div>
         </div>
-        <div class="row q-ml-auto">
-          <div class="q-mr-md">
+        <div class="pool-card__income__user row q-ml-auto">
+          <div>
             <div class="pool-card__label">
               My Liquidity
             </div>
@@ -117,7 +138,7 @@ const dialog = ref(false)
               {{ poolStats && userTokens ? `$${formatUsd.format(userTokens / poolStats.poolTokenSupply * poolStats.tvl)}` : '---' }}
             </div>
           </div>
-          <div>
+          <div class="q-ml-md">
             <div class="pool-card__label">
               My Share
             </div>
@@ -128,8 +149,8 @@ const dialog = ref(false)
         </div>
       </div>
 
-      <div class="row q-mt-sm q-mb-auto q-pt-xs pool-card__stats">
-        <div class="col-4 q-mt-xs text-center">
+      <div class="pool-card__stats q-mt-sm q-mb-auto q-pt-xs">
+        <div class="pool-card__stats__item q-mt-xs text-center">
           <div class="pool-card__label">
             Volume 24H
           </div>
@@ -137,7 +158,8 @@ const dialog = ref(false)
             {{ poolStats ? `$${formatUsd.format(poolStats.volume24)}` : '---' }}
           </div>
         </div>
-        <div class="col-4 q-mt-xs text-center">
+        <div class="pool-card__stats__delimiter" />
+        <div class="pool-card__stats__item q-mt-xs text-center">
           <div class="pool-card__label">
             Liquidity
           </div>
@@ -145,7 +167,8 @@ const dialog = ref(false)
             {{ poolStats ? `$${formatUsd.format(poolStats.tvl)}` : '---' }}
           </div>
         </div>
-        <div class="col-4 q-mt-xs text-center">
+        <div class="pool-card__stats__delimiter" />
+        <div class="pool-card__stats__item q-mt-xs text-center">
           <div class="pool-card__label">
             Fees 24H
           </div>
@@ -161,7 +184,7 @@ const dialog = ref(false)
 
       <div v-if="!useEmit" class="row q-mt-md">
         <div class="col">
-          <q-btn-group spread unelevated square style="height: 56px">
+          <q-btn-group spread unelevated square class="pool-card__actions">
             <q-btn
               label="ADD LIQUIDITY"
               color="primary"
