@@ -91,19 +91,26 @@ const insufficientError = computed(() => {
           </dd>
         </dl>
         <dl>
-          <dt>Swap fee</dt>
+          <dt>Locked amount</dt>
+          <dd>1 SOL</dd>
+        </dl>
+        <dl>
+          <dt>Ratio</dt>
+          <dd>1 SOL</dd>
+        </dl>
+        <dl>
+          <dt>Lock fee</dt>
           <dd>1 SOL</dd>
         </dl>
       </div>
-
+      <!--
+      args.unlockFee,
+      args.feeReceiver, -->
       <policy-card class="q-mt-md q-mx-auto" />
 
       <div class="swap-submit q-mt-md">
         <q-btn
-          :loading="state.converting"
-          :disable="!connected || !state.from.amount"
-          rounded
-          :ripple="false"
+          :loading="state.converting" :disable="!connected || !state.from.amount" rounded :ripple="false"
           @click="() => console.log('converting')"
         >
           Lock token

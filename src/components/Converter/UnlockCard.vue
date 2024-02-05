@@ -68,14 +68,22 @@ watch([() => state.poolAmount, balance], () => {
 
     <div class="swap-info q-mt-md q-pt-xs">
       <dl class="text-weight-medium">
-        <dt>Min {{ swapState.from.symbol.toUpperCase() }} received</dt>
+        <dt>Received</dt>
         <dd>
-          {{ formatBalance(lamportsToSol(state.minAmountTokenA, swapState.from.decimals), swapState.from.decimals) }} {{ swapState.from.symbol.toUpperCase() }}
+          1
         </dd>
       </dl>
       <dl>
-        <dt>Fee</dt>
-        <dd>{{ formatPercent(swapState.fees.ownerWithdraw) }} SOL</dd>
+        <dt>Locked amount</dt>
+        <dd>1 SOL</dd>
+      </dl>
+      <dl>
+        <dt>Ratio</dt>
+        <dd>1 SOL</dd>
+      </dl>
+      <dl>
+        <dt>Unlock fee</dt>
+        <dd>1 SOL</dd>
       </dl>
     </div>
 

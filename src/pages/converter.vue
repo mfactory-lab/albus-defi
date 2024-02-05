@@ -5,5 +5,4 @@
   </div>
   <app-description class="q-mt-lg" />
   <warning-disclaimer class="q-mt-lg" />
-  <mint-token-a class="q-mt-lg" />
 </template>
