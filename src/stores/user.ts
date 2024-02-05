@@ -43,11 +43,7 @@ export const useUserStore = defineStore('user', () => {
     return ''
   })
   function setContractPolicy(policy: string, page?: string) {
-    contractPolicy.value[String(page) ?? route.name] = policy
-    // TODO: better solution
-    if (page === 'swap') {
-      setContractPolicy(policy, 'liquidity')
-    }
+    contractPolicy.value[page ?? route.name] = policy
     console.log('[swap] policies = ', contractPolicy.value)
   }
 

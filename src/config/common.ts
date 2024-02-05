@@ -4,6 +4,7 @@ export const TWITTER_URL = 'https://twitter.com/AlbusProtocol'
 export const DISCORD_URL = ''
 
 export const ALBUS_APP_URL = import.meta.env.VITE_ALBUS_APP_URL || (import.meta.env.DEV && 'https://dev.app.albus.finance') || 'https://app.albus.finance'
+export const POOLS_API_URL = import.meta.env.VITE_POOLS_API_URL || (import.meta.env.DEV && 'http://localhost:3000')
 
 export const RENT_FEE = 0.00203928
 export const MIN_TRANSFER_FEE = 0.00203928

@@ -18,7 +18,8 @@ export function useCreateSwap() {
   const state = reactive<CreateSwapState>({
     tokenA: undefined,
     tokenB: undefined,
-    policy: undefined,
+    swapPolicy: undefined,
+    addLiquidityPolicy: undefined,
     hostFeeNumerator: 0,
     hostFeeDenominator: 1000,
     tradeFeeNumerator: 0,
@@ -40,7 +41,7 @@ export function useCreateSwap() {
     name: '',
     symbol: '',
     metadataUrl: '',
-    isMutable: false,
+    isMutable: true,
   })
 
   async function generateSwapKeypair() {
@@ -240,10 +241,16 @@ export function useCreateSwap() {
         message: 'Select tokens',
       })
     }
-    if (!state.policy) {
+    if (!state.swapPolicy) {
       return notify({
         type: 'negative',
-        message: 'Select policy',
+        message: 'Select swap policy',
+      })
+    }
+    if (!state.addLiquidityPolicy) {
+      return notify({
+        type: 'negative',
+        message: 'Select liquidity policy',
       })
     }
     console.log('createTokenSwap: ', {
@@ -253,7 +260,8 @@ export function useCreateSwap() {
       destination: state.poolFeeAccount.toBase58(),
       tokenA: state.swapTokenA.toBase58(),
       tokenB: state.swapTokenB.toBase58(),
-      policy: state.policy.pubkey.toBase58(),
+      swapPolicy: state.swapPolicy.pubkey.toBase58(),
+      addLiquidityPolicy: state.addLiquidityPolicy.pubkey.toBase58(),
       curveType: CurveType.ConstantProduct,
       curveParameters: [],
       fees: {
@@ -277,7 +285,8 @@ export function useCreateSwap() {
         destination: state.poolFeeAccount,
         tokenA: state.swapTokenA,
         tokenB: state.swapTokenB,
-        policy: state.policy.pubkey,
+        swapPolicy: state.swapPolicy.pubkey,
+        addLiquidityPolicy: state.addLiquidityPolicy.pubkey,
         curveType: CurveType.ConstantProduct,
         curveParameters: [],
         fees: {
@@ -299,6 +308,7 @@ export function useCreateSwap() {
       console.log('[create swap] tokenSwap result = ', tokenSwapRes)
     } catch (e) {
       console.error(e)
+      console.error(e.logs)
       notify({
         type: 'negative',
         message: `${e}`,
@@ -317,7 +327,8 @@ export function useCreateSwap() {
     state.ownerTradeFeeDenominator = 1000
     state.ownerWithdrawFeeNumerator = 0
     state.ownerWithdrawFeeDenominator = 1000
-    state.policy = undefined
+    state.swapPolicy = undefined
+    state.addLiquidityPolicy = undefined
     state.tokenA = undefined
     state.tokenB = undefined
 
@@ -340,7 +351,8 @@ export function useCreateSwap() {
 interface CreateSwapState {
   tokenA: TokenData | undefined
   tokenB: TokenData | undefined
-  policy: PolicyItem | undefined
+  swapPolicy: PolicyItem | undefined
+  addLiquidityPolicy: PolicyItem | undefined
   hostFeeNumerator: number
   hostFeeDenominator: number
   tradeFeeNumerator: number

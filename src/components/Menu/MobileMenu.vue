@@ -3,7 +3,7 @@ import { evaClose, evaMenu } from '@quasar/extras/eva-icons'
 
 const _route = useRoute()
 
-const routes = ['transfer', 'swap', 'liquidity', 'pools', 'about']
+const routes = ['swap', 'pools', 'liquidity', 'transfer', 'about']
 
 const isOpen = ref(false)
 

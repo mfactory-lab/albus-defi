@@ -37,6 +37,7 @@ declare module 'vue' {
     PolicyInfoView: typeof import('./../src/components/PolicyCard/PolicyInfoView.vue')['default']
     PoolsList: typeof import('./../src/components/pools/PoolsList.vue')['default']
     PoolsListItem: typeof import('./../src/components/pools/PoolsListItem.vue')['default']
+    PoolsTotal: typeof import('./../src/components/pools/PoolsTotal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectPair: typeof import('./../src/components/liquidity/SelectPair.vue')['default']

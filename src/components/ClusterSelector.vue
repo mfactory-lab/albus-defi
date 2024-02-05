@@ -29,7 +29,7 @@ function select(e: Endpoint) {
     :label="endpoint.cluster"
     :model-value="false"
     auto-close
-    color="yellow"
+    color="warning"
     text-color="black"
     rounded
     unelevated
