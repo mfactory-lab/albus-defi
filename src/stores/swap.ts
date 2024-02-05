@@ -402,6 +402,7 @@ export const useSwapStore = defineStore('swap', () => {
       reload()
     } catch (e) {
       console.log(e)
+      console.error(e.logs)
       if (!`${e}`.includes('User rejected the request')) {
         notify({
           type: 'negative',

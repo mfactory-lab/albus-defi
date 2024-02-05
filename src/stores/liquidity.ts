@@ -164,7 +164,7 @@ export const useLiquidityStore = defineStore('liquidity', () => {
       console.log('poolTokenAmount = ', state.poolAmount)
 
       const signature = await swapClient.value.depositAllTokenTypes({
-        // proofRequest: userStore.certificate?.pubkey,
+        proofRequest: userStore.certificate?.pubkey,
         // authority,
         tokenSwap: tokenSwap.value.pubkey,
         poolMint: tokenSwap.value.data.poolMint,
@@ -195,6 +195,7 @@ export const useLiquidityStore = defineStore('liquidity', () => {
       reload()
     } catch (e) {
       console.log(e)
+      console.error(e.logs)
       if (!`${e}`.includes('User rejected the request')) {
         notify({
           type: 'negative',
