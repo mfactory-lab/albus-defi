@@ -1,6 +1,4 @@
-import { AnchorProvider, Program } from '@project-serum/anchor'
 import { defineStore } from 'pinia'
-import { Keypair } from '@solana/web3.js'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { SmartConverterClient } from '@/sdk/src'
 
@@ -8,28 +6,32 @@ export const useConverterStore = defineStore('converter', () => {
   const connectionStore = useConnectionStore()
   const anchorWallet = useAnchorWallet()
 
-  function newProvider() {
-    const userKeypair = Keypair.generate()
-    const opts = AnchorProvider.defaultOptions()
-    return new AnchorProvider(
-      connectionStore.connection,
-      userKeypair,
-      opts,
-    )
-  }
-
   const converterClient = computed(() => {
-    const provider = anchorWallet.value ?? newProvider()
-    console.log(provider)
-    return new SmartConverterClient({
-      program: new Program(SmartConverterClient.IDL, SmartConverterClient.programId, provider),
-      wallet: provider,
-    })
+    return SmartConverterClient.fromWallet(connectionStore.connection, anchorWallet.value)
   })
 
   watch(converterClient, async (c) => {
-    const m = await converterClient.value.findManagers()
-    console.log(m)
+    if (c.provider.publicKey.toBase58() !== '9SwiEpL5AnkYC2SCYGvWVQ2VLhN55osuEprecAXUGuse') {
+      return
+    }
+    /*  try {
+      const mintA = new PublicKey('5d3vLM78TbzgjhHMZAtBWBteh8HS1fjkaNTiVBndJqP2')
+      const mintB = new PublicKey('CEWptykxAS8nqSQx1eVz43eSPSXF1nnsWcK1fKYUtz2x')
+      const policy = new PublicKey('ANGgdHwXQd9UmfZdHvMDJ6b5ATzrmTCJz4bcbZzB5a76')
+      const tx = await converterClient.value.addPair({
+        ratio: {
+          num: 10,
+          denom: 1,
+        },
+        tokenA: mintA,
+        tokenB: mintB,
+        policy,
+      })
+      console.log(tx)
+    } catch (err) {
+      console.log(err)
+    } */
+    console.log(c)
   }, { immediate: true })
 
   const state = reactive({

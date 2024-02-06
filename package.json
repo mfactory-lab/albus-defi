@@ -41,6 +41,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.4",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@metaplex-foundation/solita": "^0.20.1",
     "@quasar/extras": "^1.16.8",
     "@quasar/vite-plugin": "^1.6.0",
     "@types/bn.js": "^5.1.1",
