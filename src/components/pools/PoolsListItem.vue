@@ -126,7 +126,7 @@ const dialog = ref(false)
             APR 24H
           </div>
           <div class="pool-card__apr-amount">
-            {{ poolStats ? `${formatPct.format(poolStats.apr24)}` : '---' }}
+            {{ poolStats && !Number.isNaN(poolStats.apr24) ? `${formatPct.format(poolStats.apr24)}` : '---' }}
           </div>
         </div>
         <div class="pool-card__income__user row q-ml-auto">
@@ -135,7 +135,7 @@ const dialog = ref(false)
               My Liquidity
             </div>
             <div class="pool-card__amount">
-              {{ poolStats && userTokens ? `$${formatUsd.format(userTokens / poolStats.poolTokenSupply * poolStats.tvl)}` : '---' }}
+              {{ poolStats && !Number.isNaN(poolStats.poolTokenSupply) && userTokens ? `$${formatUsd.format(userTokens / poolStats.poolTokenSupply * poolStats.tvl)}` : '---' }}
             </div>
           </div>
           <div class="q-ml-md">
@@ -143,7 +143,7 @@ const dialog = ref(false)
               My Share
             </div>
             <div class="pool-card__amount">
-              {{ poolStats && userTokens ? `${formatPct.format(userTokens / poolStats.poolTokenSupply)}` : '---' }}
+              {{ poolStats && !Number.isNaN(poolStats.poolTokenSupply) && userTokens ? `${formatPct.format(userTokens / poolStats.poolTokenSupply)}` : '---' }}
             </div>
           </div>
         </div>

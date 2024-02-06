@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { POOLS_API_URL } from '@/config'
+import type { Cluster } from '@solana/web3.js'
+import { DEV_POOLS_API_URL, MAIN_POOLS_API_URL } from '@/config'
 
 export interface PoolData {
   id: number
@@ -42,17 +43,24 @@ export interface TxData {
   type?: string
 }
 
-export async function getPoolsStats(): Promise<PoolData[]> {
-  const { data } = await axios.get(`${POOLS_API_URL}`)
+export async function getPoolsStats(cluster: Cluster): Promise<PoolData[]> {
+  const { data } = await axios.get(`${getApiUrl(cluster)}`)
   return data
 }
 
-export async function getPoolsTransactions(): Promise<TxData[]> {
-  const { data } = await axios.get(`${POOLS_API_URL}/transactions?type=swap`)
+export async function getPoolsTransactions(cluster: Cluster): Promise<TxData[]> {
+  const { data } = await axios.get(`${getApiUrl(cluster)}/transactions?type=swap`)
   return data
 }
 
-export async function getCoinsPrice(): Promise<Record<string, number>> {
-  const { data } = await axios.get(`${POOLS_API_URL}/coin-price`)
+export async function getCoinsPrice(cluster: Cluster): Promise<Record<string, number>> {
+  const { data } = await axios.get(`${getApiUrl(cluster)}/coin-price`)
   return data
+}
+
+function getApiUrl(cluster: Cluster) {
+  if (cluster === 'mainnet-beta') {
+    return MAIN_POOLS_API_URL
+  }
+  return DEV_POOLS_API_URL
 }

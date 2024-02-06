@@ -105,7 +105,7 @@ export const TOKENS_DEV = [
   TOKEN_B,
   USDC_TOKEN_DEV,
   // USDT_TOKEN_DEV,
-  TOKEN_C,
+  // TOKEN_C,
 ]
 
 export const TOKENS_MAIN = [
