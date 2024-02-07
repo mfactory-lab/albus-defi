@@ -1,30 +1,120 @@
 <script setup lang="ts">
-import { useWallet } from 'solana-wallets-vue'
-import { onlyNumber } from '@/utils'
-import { type TokenData } from '@/config'
+import {
+  type DataV2,
+  PROGRAM_ID,
+  createCreateMetadataAccountV3Instruction,
+  createUpdateMetadataAccountV2Instruction,
+} from '@metaplex-foundation/mpl-token-metadata'
+import { PublicKey, Transaction } from '@solana/web3.js'
+import { createSetAuthorityInstruction } from '@solana/spl-token'
+import { useAnchorWallet } from 'solana-wallets-vue'
+import { formatBalance, onlyNumber, sendTransaction } from '@/utils'
+import unrecognizedTokenIcon from '@/assets/img/icons/unrecognized-token.svg'
 
 const { state } = useConverterStore()
+const { options, setToken, handleSearchToken } = useConverter()
 
-const { connected } = useWallet()
+const { monitorTransaction } = useMonitorTransaction()
+const wallet = useAnchorWallet()
+const connectionStore = useConnectionStore()
 
-function setToken(t: TokenData, direction: true) {
-}
+const balanceFrom = computed(() => state.from.balance)
+const balanceTo = computed(() => state.to.balance)
 
 function setMaxAmount() {
+  state.from.amount = balanceFrom.value
+}
 
+async function setMetadata() {
+  const mint = new PublicKey('5d3vLM78TbzgjhHMZAtBWBteh8HS1fjkaNTiVBndJqP2')
+  const payer = new PublicKey('9SwiEpL5AnkYC2SCYGvWVQ2VLhN55osuEprecAXUGuse')
+
+  const metadata = PublicKey.findProgramAddressSync(
+    [
+      // eslint-disable-next-line n/prefer-global/buffer
+      Buffer.from('metadata'),
+      PROGRAM_ID.toBuffer(),
+      mint.toBuffer(),
+    ],
+    PROGRAM_ID,
+  )[0]
+
+  const tokenMetadata = {
+    name: 'securitySampleToken',
+    symbol: 'SST',
+    uri: 'https://arweave.net/eP7n7tNz5gjbJWMUP3t6uS80maOivJNFe6xEyISAzbE',
+    sellerFeeBasisPoints: 0,
+    creators: null,
+    collection: null,
+    uses: null,
+  } as DataV2
+
+  const tx = new Transaction()
+
+  const createMetadataInstruction = createCreateMetadataAccountV3Instruction(
+    {
+      metadata,
+      mint,
+      mintAuthority: payer,
+      payer,
+      updateAuthority: payer,
+    },
+    {
+      createMetadataAccountArgsV3: {
+        data: tokenMetadata,
+        isMutable: true,
+        collectionDetails: null,
+      },
+    },
+  )
+  tx.add(createMetadataInstruction)
+
+  const setAuthorityInstruction = createSetAuthorityInstruction(
+    mint,
+    payer,
+    0,
+    payer,
+  )
+  tx.add(setAuthorityInstruction)
+
+  const updateMetadataInstruction = createUpdateMetadataAccountV2Instruction(
+    {
+      metadata,
+      updateAuthority: payer,
+    },
+    {
+      updateMetadataAccountArgsV2: {
+        data: tokenMetadata,
+        updateAuthority: payer,
+        primarySaleHappened: true,
+        isMutable: true,
+      },
+    },
+  )
+  tx.add(updateMetadataInstruction)
+
+  await monitorTransaction(
+    sendTransaction(connectionStore.connection, wallet.value!, tx.instructions, []),
+    {
+      onSuccess: () => {
+        console.log('ADD METADATA!!!!!')
+      },
+    },
+  )
+  console.log(metadata)
+}
+
+function tokenIcon(icon?: string) {
+  return icon ?? unrecognizedTokenIcon
 }
 
 const insufficientError = computed(() => {
-  if (0 > 1) {
+  if (state.from.amount > balanceFrom.value) {
     return 'Insufficient funds'
   } else {
     return false
   }
 })
-
-/* watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
-  state.active = !insufficientError.value
-}) */
 </script>
 
 <template>
@@ -41,7 +131,7 @@ const insufficientError = computed(() => {
                 <div v-if="insufficientError" class="insufficient-error">
                   {{ insufficientError }}
                 </div>
-                Balance: 0
+                Balance: {{ formatBalance(balanceFrom) }}
               </div>
             </div>
           </div>
@@ -53,10 +143,10 @@ const insufficientError = computed(() => {
               <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount">
                 MAX
               </q-btn>
-              <!-- <select-token
-                :options="tokens" :token="state.from" :swap-token="String(state.to.symbol)"
-                @handle-search-token="handleSearchToken" @set-token="setToken"
-              /> -->
+              <select-token
+                v-if="state.from?.symbol" :options="options" :token="state.token"
+                :swap-token="String(state.to.symbol)" @handle-search-token="handleSearchToken" @set-token="setToken"
+              />
             </template>
           </q-input>
         </div>
@@ -68,16 +158,15 @@ const insufficientError = computed(() => {
                 TO:
               </div>
               <div class="col swap-field__balance">
-                Balance: 0
+                Balance: {{ formatBalance(balanceTo) }}
               </div>
             </div>
           </div>
           <q-input v-model="state.to.amount" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
-            <template #append>
-              <!-- <select-token
-                :swap-token="String(state.from.symbol)" :options="tokens" :direction="true" :token="state.to" :destination-unavailable="!tokenSwap"
-                @handle-search-token="handleSearchToken" @set-token="setToken"
-              /> -->
+            <template v-if="state.to?.symbol" #append>
+              <div class="convert-to">
+                <img :src="tokenIcon(state.to?.image)"> <span>{{ state.to?.symbol }}</span>
+              </div>
             </template>
           </q-input>
         </div>
@@ -110,8 +199,8 @@ const insufficientError = computed(() => {
 
       <div class="swap-submit q-mt-md">
         <q-btn
-          :loading="state.converting" :disable="!connected || !state.from.amount" rounded :ripple="false"
-          @click="() => console.log('converting')"
+          :loading="state.converting" rounded :ripple="false"
+          :disable="!wallet?.publicKey || !state.from.amount || !!insufficientError" @click="() => console.log(11)"
         >
           Lock token
         </q-btn>
@@ -127,3 +216,30 @@ const insufficientError = computed(() => {
     <q-inner-loading :showing="state?.loading" class="swap-loading" color="grey" />
   </q-card>
 </template>
+
+<style scoped>
+.convert-to {
+  width: 135px;
+  padding: 0 0 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 11px;
+
+  img {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+  }
+
+  span {
+    width: 70px;
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 18px;
+    color: #455A64;
+  }
+
+}
+</style>
