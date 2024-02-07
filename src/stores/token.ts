@@ -37,9 +37,12 @@ export const useTokenStore = defineStore('token', () => {
     }))
   })
 
+  const tokenByMint = (mint: string) => tokens.value.find(t => t.mint === mint)
+
   return {
     tokens,
     loading,
     getTokenList,
+    tokenByMint,
   }
 })

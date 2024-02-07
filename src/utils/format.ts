@@ -10,6 +10,11 @@ export const formatPct = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2,
 })
 
+export const formatUsd = new Intl.NumberFormat('en-US', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})
+
 export function formatDate(date: Date) {
   return new Intl.DateTimeFormat().format(date)
 }

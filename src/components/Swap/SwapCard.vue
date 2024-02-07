@@ -6,7 +6,7 @@ import swapCircle from '@/assets/img/swap-circle.svg?raw'
 import { MIN_FEE, RENT_FEE, SOL_MINT, TRANSFER_FEE_CONST, type TokenData, WRAPPED_SOL_MINT } from '@/config'
 
 const swapStore = useSwapStore()
-const { state, loadingPoolTokens, changeDirection, openSlippage, closeSlippage, swapSubmit, loadPoolTokenAccounts } = swapStore
+const { state, loadingPoolTokens, changeDirection, closeSlippage, swapSubmit, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
 const { handleSearchToken, handleFilterToken, tokens } = useToken()
 handleFilterToken(SOL_MINT)
@@ -131,7 +131,24 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
         <dl>
           <dt>Slippage Tolerance</dt>
           <dd>
-            <a href="#" @click="openSlippage">{{ formatPercent(state.slippage) }}</a>
+            <a href="#">
+              {{ formatPercent(state.slippage) }}
+              <q-menu v-model="state.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
+                <q-card>
+                  <q-card-section>
+                    <q-btn-toggle
+                      v-model="state.slippage" spread no-caps unelevated :ripple="false" toggle-color="secondary"
+                      color="white" text-color="dark" :options="[
+                        { label: '0.1%', value: 0.001 },
+                        { label: '0.5%', value: 0.005 },
+                        { label: '1%', value: 0.01 },
+                        { label: '5%', value: 0.05 },
+                      ]" @update:model-value="closeSlippage"
+                    />
+                  </q-card-section>
+                </q-card>
+              </q-menu>
+            </a>
           </dd>
         </dl>
         <dl>
@@ -196,19 +213,4 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
 
     <q-inner-loading :showing="state?.loading" class="swap-loading" color="grey" />
   </q-card>
-  <q-dialog v-model="state.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
-    <q-card>
-      <q-card-section>
-        <q-btn-toggle
-          v-model="state.slippage" spread no-caps unelevated :ripple="false" toggle-color="secondary"
-          color="white" text-color="dark" :options="[
-            { label: '0.1%', value: 0.001 },
-            { label: '0.5%', value: 0.005 },
-            { label: '1%', value: 0.01 },
-            { label: '5%', value: 0.05 },
-          ]" @update:model-value="closeSlippage"
-        />
-      </q-card-section>
-    </q-card>
-  </q-dialog>
 </template>

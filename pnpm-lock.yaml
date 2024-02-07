@@ -9,8 +9,8 @@ dependencies:
     specifier: 0.2.6
     version: 0.2.6
   '@albus-finance/swap-sdk':
-    specifier: 0.1.5-next.1
-    version: 0.1.5-next.1
+    specifier: 0.1.5-next.4
+    version: 0.1.5-next.4
   '@albus-finance/transfer-sdk':
     specifier: 0.2.4
     version: 0.2.4
@@ -206,11 +206,11 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@albus-finance/swap-sdk@0.1.5-next.1:
-    resolution: {integrity: sha512-OL4/olCOkoVPHB0RjyJHgwzw9IyLUUNvwdBNGWwsyb4QoAypB2TsZrVEY9Rejcqq1D/L4ES1aYKwFm7n/aXVjg==}
+  /@albus-finance/swap-sdk@0.1.5-next.4:
+    resolution: {integrity: sha512-A0pZ4Pl3JYusxiItlfXbz3OxEpwf81IzmhJ8ie08xSUDKioeRDVyUGRAMAyPWmohTO15DpTGW8pZOnXUosflzA==}
     dependencies:
       '@coral-xyz/anchor': 0.29.0
-      '@metaplex-foundation/beet': 0.7.1
+      '@metaplex-foundation/beet': 0.7.2
       '@solana/spl-token': 0.3.9(@solana/web3.js@1.87.6)
       '@solana/web3.js': 1.87.6
     transitivePeerDependencies:
@@ -1299,6 +1299,17 @@ packages:
     resolution: {integrity: sha512-hNCEnS2WyCiYyko82rwuISsBY3KYpe828ubsd2ckeqZr7tl0WVLivGkoyA/qdiaaHEBGdGl71OpfWa2rqL3DiA==}
     dependencies:
       ansicolors: 0.3.2
+      bn.js: 5.2.1
+      debug: 4.3.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /@metaplex-foundation/beet@0.7.2:
+    resolution: {integrity: sha512-K+g3WhyFxKPc0xIvcIjNyV1eaTVJTiuaHZpig7Xx0MuYRMoJLLvhLTnUXhFdR5Tu2l2QSyKwfyXDgZlzhULqFg==}
+    dependencies:
+      ansicolors: 0.3.2
+      assert: 2.1.0
       bn.js: 5.2.1
       debug: 4.3.4
     transitivePeerDependencies:

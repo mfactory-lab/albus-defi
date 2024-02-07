@@ -62,14 +62,42 @@ function setPoolMint() {
       </div>
 
       <div class="q-mt-md">
-        <div>Policy:</div>
+        <div>Swap policy:</div>
         <q-select
-          v-model="state.policy" option-disable="inactive" popup-content-class="transition-duration" outlined
+          v-model="state.swapPolicy" option-disable="inactive" popup-content-class="transition-duration" outlined
           :options="servicePolicy" dense :options-dense="false"
           option-value="mint" option-label="name"
         >
           <template #selected>
-            <select-policy-item v-if="state.policy" :key="state.policy.pubkey?.toBase58()" :policy="state.policy.pubkey" :policy-data="state.policy.data" />
+            <select-policy-item
+              v-if="state.swapPolicy"
+              :key="state.swapPolicy.pubkey?.toBase58()"
+              :policy="state.swapPolicy.pubkey"
+              :policy-data="state.swapPolicy.data"
+            />
+          </template>
+          <template #option="scope">
+            <q-item v-bind="scope.itemProps" class="token-select__token">
+              <select-policy-item :key="scope.opt.pubkey" :policy="scope.opt.pubkey" :policy-data="scope.opt.data" />
+            </q-item>
+          </template>
+        </q-select>
+      </div>
+
+      <div class="q-mt-md">
+        <div>Liqudity policy:</div>
+        <q-select
+          v-model="state.addLiquidityPolicy" option-disable="inactive" popup-content-class="transition-duration" outlined
+          :options="servicePolicy" dense :options-dense="false"
+          option-value="mint" option-label="name"
+        >
+          <template #selected>
+            <select-policy-item
+              v-if="state.addLiquidityPolicy"
+              :key="state.addLiquidityPolicy.pubkey?.toBase58()"
+              :policy="state.addLiquidityPolicy.pubkey"
+              :policy-data="state.addLiquidityPolicy.data"
+            />
           </template>
           <template #option="scope">
             <q-item v-bind="scope.itemProps" class="token-select__token">

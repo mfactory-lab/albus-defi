@@ -4,37 +4,115 @@
   border: 1px solid #fff;
 
   @media(min-width: $breakpoint-md) {
-    min-width: 397px;
-    max-width: 397px;
+    min-width: calc(50% - 24px);
+    max-width: calc(50% - 24px);
   }
 
   @media(max-width: 389px) {
     min-width: 316px;
   }
 
+  &__body {
+    display: flex;
+    flex-direction: column;
+  }
 
-  &__head {
+  &__income {
+    display: flex;
+    align-items: center;
+    background-color: #F9F9F9;
+    margin-right: -16px; 
+    margin-left: -16px; 
+    padding: 8px 24px;
+    .body--dark & {
+      background-color: $primary;
+    }
+
+    &__user {
+      @media(max-width: $breakpoint-xs) {
+        justify-content: flex-end;
+      }
+      .pool-card__label {
+        @media(max-width: $breakpoint-xs) {
+          text-align: right;
+        }
+      }
+      > div:first-child {
+        @media(max-width: $breakpoint-xs) {
+          margin-bottom: 4px;
+        }
+      }
+    }
+  }
+
+  &__income &__label {
+    color: #000;
+    .body--dark & {
+      color: #fff;
+    }
+  }
+
+  &__apr-label {
+    font-size: 13px;
+    line-height: 15px;
+    color: $secondary;
+    font-weight: 500;
+    .body--dark & {
+      color: #fff;
+    }
+  }
+
+  &__apr-amount {
+    color: #000;
+    font-size: 32px;
+    line-height: 34px;
+    font-weight: 500;
+    .body--dark & {
+      color: #fff;
+    }
+  }
+
+  &__stats {
     font-size: 15px;
-    font-weight: 500;
-    padding: 9px 20px;
-    background-color: $secondary;
-    color: #fff;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    display: flex;
+
+    &__item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 0 8px;
+      margin: 0 auto;
+    }
+
+    &__delimiter {
+      height: 38px;
+      width: 1px;
+      margin: 0 auto;
+      background-color: #A4A4A4;
+    }
   }
 
-  &__subtitle {
-    font-weight: 500;
-    font-size: 16px;
-    text-transform: uppercase;
+  &__label {
+    font-size: 11px;
+    line-height: 13px;
+    color: $secondary;
+    .body--dark & {
+      color: #fff;
+    }
   }
 
-  &__pubkey {
-    word-break: break-all;
+  &__amount {
+    font-size: 19px;
+    line-height: 19px;
+    color: #000;
+    font-weight: 500;
+    .body--dark & {
+      color: #fff;
+    }
   }
 
   &__icons {
-    height: 36px;
+    height: 46px;
 
     img {
       height: 100%;
@@ -42,11 +120,84 @@
     }
 
     :nth-child(2) {
-      margin-left: -8px;
+      margin-left: -14px;
+    }
+  }
+
+  &__actions {
+    height: 56px;
+    .q-btn__content {
+      font-size: 17px;
+    }
+  }
+  
+  &__subtitle {
+    font-weight: 500;
+    font-size: 23px;
+    text-transform: uppercase;
+  }
+
+  &__pubkey {
+    word-break: break-all;
+    font-size: 16px;
+    color: #000;
+    font-family: Courier;
+    .body--dark & {
+      color: #fff;
     }
   }
 
   body.body--dark & {
     border: 1px solid #ffffff42;
+  }
+
+  .policy-info {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 16px;
+  }
+}
+
+.pools-total {
+  display: flex;
+  flex-direction: column;
+  background-color: $primary;
+  border-radius: 6px;
+  padding: 13px 24px;
+  font-weight: 500;
+  min-width: 181px;
+  .body--dark & {
+    background-color: $secondary;
+  }
+  &__name {
+    text-transform: uppercase;
+    color: #E1E1E1;
+    font-size: 13px;
+  }
+  &__value {
+    font-size: 25px;
+    color: #fff;
+  }
+}
+
+.pool-info {
+  width: 390px;
+  max-width: 80vw;
+
+  &__delimiter {
+    height: 38px;
+    width: 1px;
+    margin: 0 16px;
+    background-color: #A4A4A4;
+  }
+  &__fees {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #A4A4A4;
+  }
+  &__addresses {
+    .pool-card__label {
+      margin-bottom: -8px;
+    }
   }
 }

@@ -181,6 +181,7 @@ export const useLiquidityWithdrawStore = defineStore('liquidity-withdraw', () =>
       reload()
     } catch (e) {
       console.log(e)
+      console.error(e.logs)
       if (!`${e}`.includes('User rejected the request')) {
         notify({
           type: 'negative',
@@ -192,10 +193,6 @@ export const useLiquidityWithdrawStore = defineStore('liquidity-withdraw', () =>
     }
   }
 
-  function openSlippage() {
-    state.slippageDialog = true
-  }
-
   function closeSlippage() {
     state.slippageDialog = false
   }
@@ -203,7 +200,6 @@ export const useLiquidityWithdrawStore = defineStore('liquidity-withdraw', () =>
   return {
     state,
     closeSlippage,
-    openSlippage,
     depositBothTokens,
   }
 })
