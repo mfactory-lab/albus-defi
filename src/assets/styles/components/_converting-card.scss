@@ -1,0 +1,28 @@
+.converting-card {
+  .token-select .q-field__control-container span {
+    text-transform: initial;
+  }
+
+  .convert-to {
+    width: 135px;
+    padding: 0 0 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 11px;
+
+    img {
+      width: 35px;
+      height: 35px;
+      object-fit: contain;
+    }
+
+    span {
+      width: 70px;
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 18px;
+      color: $secondary;
+    }
+  }
+}

@@ -1,42 +1,115 @@
 import type { TokenData } from '@/config'
+import type { ConvertToken } from '@/stores/convertet'
+import { convertTokenSymbol } from '@/utils/converter'
 
 export function useConverter() {
-  const { state } = useConverterStore()
+  const converterStore = useConverterStore()
+  const userStore = useUserStore()
 
-  function setToken(t: { [key: string]: any }) {
+  const { notify } = useQuasar()
+
+  function setToken(t: ConvertToken) {
     console.log('set token ======== ', t)
-    state.token = t
+    converterStore.state.selectedPair = converterStore.state.pairs.find(p => p.publicKey.toBase58() === t?.publicKey?.toBase58())
+    converterStore.state.token = t
   }
 
   function handleSearchToken(token: string) {
-    state.searchToken = token
+    converterStore.state.searchToken = token
   }
 
-  const options = computed(() => {
-    const tokens: TokenData[] = state.pairs.map((p) => {
-      const token = Object.entries(p.tokensMetadata)[0]
+  const options = computed<any>(() => {
+    const tokens: TokenData[] = converterStore.state.pairs.map((p) => {
+      const token = Object.entries(p.tokensMetadata)[converterStore.state.isLock ? 0 : 1]
       return { ...token[1], mint: token[0], publicKey: p.publicKey }
     })
-    /*     const t = [tokens, {
-      name: 'Security Second Token',
-      symbol: 'SST2',
-      description: 'Security Albus token',
-      seller_fee_basis_points: 500,
-      external_url: 'https://app.albus.finance',
-      image: 'https://arweave.net/Z-h4U6izy-JCuGVMxzv1rzOA_LJ8j1hUqwTNtW-h0Hc',
-    }] */
-    const filterTokens = tokens.flat().filter(_t => _t.symbol.toLowerCase().includes(state.searchToken.toLowerCase()))
+    const filterTokens = tokens.flat().filter(_t => _t.symbol.toLowerCase().includes(converterStore.state.searchToken.toLowerCase()))
     return filterTokens
   })
 
-  watch(options, (o) => {
-    if (o.length !== 0 && !state.token) {
+  const pairAccount = computed(() => converterStore.state.selectedPair?.account)
+  const pairRatio = computed(() => pairAccount.value?.ratio?.num?.toNumber() ?? 1)
+  const pairLockedAmount = computed(() => pairAccount.value?.lockedAmount?.toNumber() ?? 0)
+  const pairLockFee = computed(() => pairAccount.value?.lockFee)
+
+  const tokenASymbol = computed(() => {
+    const mint = pairAccount.value?.tokenA?.toString()
+    return convertTokenSymbol(mint, converterStore.state.selectedPair?.tokensMetadata)
+  })
+
+  const tokenBSymbol = computed(() => {
+    const mint = pairAccount.value?.tokenB?.toString()
+    return convertTokenSymbol(mint, converterStore.state.selectedPair?.tokensMetadata)
+  })
+
+  const isHaveCertificate = computed(() => {
+    return !!userStore.state.certificates?.find(c => c.data?.policy.toBase58() === String(userStore.requiredPolicy))
+  })
+
+  async function lockUnlockToken(lock = true) {
+    if (!pairAccount.value) {
+      return
+    }
+    try {
+      converterStore.state.converting = true
+      const tokenA = pairAccount.value.tokenA
+      const tokenB = pairAccount.value.tokenB
+      const proofRequest = pairAccount.value.policy
+      const amount = Number(converterStore.state.from.amount)
+
+      if (lock) {
+        await converterStore.converterClient.lockTokens({
+          tokenA,
+          tokenB,
+          amount,
+          proofRequest,
+        })
+      } else {
+        await converterStore.converterClient.unlockTokens({
+          tokenA,
+          tokenB,
+          amount,
+          proofRequest,
+        })
+      }
+
+      await converterStore.getAllTokens()
+    } catch (err) {
+      console.error('lockedToken error: ', err)
+      notify({
+        type: 'negative',
+        message: `${err}`,
+      })
+    } finally {
+      converterStore.state.converting = false
+    }
+  }
+
+  watchDebounced(options, (o) => {
+    if (o.length !== 0 && !converterStore.state.token) {
       setToken(o[0])
     }
-  }, { immediate: true })
+  }, { immediate: true, debounce: 100, maxWait: 1000 })
+
+  watch(() => converterStore.state.from.amount, (amount) => {
+    if (!amount) {
+      return
+    }
+    converterStore.state.to.amount = converterStore.state.isLock
+      ? amount * pairRatio.value
+      : amount / pairRatio.value
+  })
+
   return {
     options,
     setToken,
     handleSearchToken,
+    pairRatio,
+    pairLockedAmount,
+    pairLockFee,
+    tokenASymbol,
+    tokenBSymbol,
+    isHaveCertificate,
+    lockUnlockToken,
   }
 }

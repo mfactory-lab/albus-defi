@@ -1,105 +1,146 @@
 <script setup lang="ts">
-import { formatBalance, formatPct, lamportsToSol, onlyNumber, solToLamports } from '@/utils'
-import { LP_DECIMALS } from '@/config'
+import { useAnchorWallet } from 'solana-wallets-vue'
+import { convertTokenIcon, formatBalance, onlyNumber } from '@/utils'
 
-const swapStore = useSwapStore()
-const { state: swapState, loadingPoolTokens, loadPoolTokenAccounts } = swapStore
-const tokenSwap = computed(() => swapStore.tokenSwap)
+const { state } = useConverterStore()
+const {
+  options,
+  setToken,
+  handleSearchToken,
+  pairRatio,
+  pairLockedAmount,
+  pairLockFee,
+  tokenASymbol,
+  tokenBSymbol,
+  isHaveCertificate,
+  lockUnlockToken,
+} = useConverter()
 
-const liquidityWithdrawStore = useLiquidityWithdrawStore()
-const { state, depositBothTokens, openSlippage, closeSlippage } = liquidityWithdrawStore
+state.isLock = false
 
-const balance = computed(() => (tokenSwap.value && swapStore.userPoolsTokens[tokenSwap.value.data.poolMint.toBase58()]) || 0)
-const poolBalanceA = computed(() => swapState.poolBalance[swapState.from.mint] ? lamportsToSol(swapState.poolBalance[swapState.from.mint], swapState.from.decimals) : 0)
-const poolBalanceB = computed(() => swapState.poolBalance[swapState.to.mint] ? lamportsToSol(swapState.poolBalance[swapState.to.mint], swapState.to.decimals) : 0)
+const wallet = useAnchorWallet()
 
-const formatPercent = (n: number) => formatPct.format(n)
+const balanceFrom = computed(() => state.from.balance)
+const balanceTo = computed(() => state.to.balance)
+
+const tokenReceived = computed(() => state.to.amount)
 
 function setMaxAmount() {
-  state.poolAmount = lamportsToSol(balance.value, LP_DECIMALS)
+  state.from.amount = balanceFrom.value
+}
+
+async function handleUnlock() {
+  await lockUnlockToken(false)
 }
 
 const insufficientError = computed(() => {
-  if (Number(solToLamports(state.poolAmount, LP_DECIMALS)) > balance.value) {
+  if (state.from.amount > balanceFrom.value) {
     return 'Insufficient funds'
   } else {
     return false
   }
 })
-
-// TODO: refactory in all components
-watch([() => state.poolAmount, balance], () => {
-  state.active = !insufficientError.value
-})
 </script>
 
 <template>
-  <q-card-section class="swap-card__body">
-    <select-pair />
-    <div class="swap-form q-mt-md">
-      <div class="swap-field">
-        <div class="swap-field__info">
-          <div class="row">
-            <div class="col-2 swap-field__label">
-              AMOUNT
-            </div>
-            <div class="col row justify-end swap-field__balance q-pr-sm">
-              <div v-if="insufficientError" class="insufficient-error">
-                Insufficient funds
+  <q-card class="swap-card swap-widget converting-card">
+    <q-card-section class="swap-card__body">
+      <div class="swap-form">
+        <div class="swap-field">
+          <div class="swap-field__info">
+            <div class="row items-end">
+              <div class="col swap-field__label">
+                FROM:
               </div>
-              Balance: {{ formatBalance(lamportsToSol(balance, LP_DECIMALS)) }}
+              <div class="col-8 col-xs-10 row justify-end swap-field__balance">
+                <div v-if="insufficientError" class="insufficient-error">
+                  {{ insufficientError }}
+                </div>
+                Balance: {{ formatBalance(balanceFrom) }}
+              </div>
             </div>
           </div>
-        </div>
-        <div class="row justify-between" style="gap: 10px">
           <q-input
-            v-model="state.poolAmount" :maxlength="14" outlined placeholder="0.0"
-            class="swap-input col" @keypress="onlyNumber"
+            v-model="state.from.amount" :maxlength="14" outlined placeholder="0.0" class="swap-input"
+            @keypress="onlyNumber"
           >
             <template #append>
               <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount">
                 MAX
               </q-btn>
+              <select-token
+                v-if="state.token" :options="options" :token="state.token"
+                :swap-token="String(state.to.symbol)" @handle-search-token="handleSearchToken" @set-token="setToken"
+              />
+            </template>
+          </q-input>
+        </div>
+        <div class="swap-change" />
+        <div class="swap-field">
+          <div class="swap-field__info">
+            <div class="row">
+              <div class="col swap-field__label">
+                TO:
+              </div>
+              <div class="col swap-field__balance">
+                Balance: {{ formatBalance(balanceTo) }}
+              </div>
+            </div>
+          </div>
+          <q-input v-model="state.to.amount" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
+            <template v-if="state.to?.symbol" #append>
+              <div class="convert-to">
+                <img :src="convertTokenIcon(state.to?.image)"> <span>{{ state.to?.symbol }}</span>
+              </div>
             </template>
           </q-input>
         </div>
       </div>
-    </div>
 
-    <div class="swap-info q-mt-md q-pt-xs">
-      <dl class="text-weight-medium">
-        <dt>Received</dt>
-        <dd>
-          1
-        </dd>
-      </dl>
-      <dl>
-        <dt>Locked amount</dt>
-        <dd>1 SOL</dd>
-      </dl>
-      <dl>
-        <dt>Ratio</dt>
-        <dd>1 SOL</dd>
-      </dl>
-      <dl>
-        <dt>Unlock fee</dt>
-        <dd>1 SOL</dd>
-      </dl>
-    </div>
+      <div class="swap-info q-mt-md q-pt-xs">
+        <dl class="text-weight-medium">
+          <dt>Received</dt>
+          <dd>
+            {{ tokenReceived }} {{ tokenBSymbol }}
+          </dd>
+        </dl>
+        <dl>
+          <dt>Locked amount</dt>
+          <dd>{{ pairLockedAmount }} {{ tokenASymbol }}</dd>
+        </dl>
+        <dl>
+          <dt>Ratio</dt>
+          <dd v-if="pairRatio">
+            {{ pairRatio }}:1
+          </dd>
+          <dd v-else>
+            -
+          </dd>
+        </dl>
+        <dl>
+          <dt>Lock fee</dt>
+          <dd>{{ pairLockFee }} SOL</dd>
+        </dl>
+      </div>
+      <policy-card class="q-mt-md q-mx-auto" />
 
-    <select-pool class="q-mt-md" />
-    <policy-card class="q-mt-md q-mx-auto" />
+      <div class="swap-submit q-mt-md">
+        <q-btn
+          :loading="state.converting" rounded :ripple="false"
+          :disable="!wallet?.publicKey || !state.from.amount || state.from.amount <= 0 || !!insufficientError || !isHaveCertificate"
+          @click="handleUnlock"
+        >
+          Unlock token
+        </q-btn>
+      </div>
 
-    <div class="swap-submit q-mt-md">
-      <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap || !state.poolAmount" rounded :ripple="false" @click="depositBothTokens">
-        Unlock token
-      </q-btn>
-    </div>
+      <div class="row q-mt-md text-center relative-position full-width">
+        <div class="swap-rate q-mx-auto">
+          1 {{ tokenBSymbol }}  = {{ 1 / pairRatio }} {{ tokenASymbol }}
+        </div>
+      </div>
+    </q-card-section>
 
-    <div v-if="!tokenSwap" class="text-weight-medium fs-13 text-center q-mt-md text-negative">
-      Pool not found
-    </div>
-
-    <q-inner-loading :showing="swapState?.loading" class="swap-loading" color="grey" />
-  </q-card-section>
+    <q-inner-loading :showing="state?.loading" class="swap-loading" color="grey" />
+  </q-card>
 </template>
