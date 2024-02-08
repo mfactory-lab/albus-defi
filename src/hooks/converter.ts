@@ -1,3 +1,4 @@
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import type { TokenData } from '@/config'
 import type { ConvertToken } from '@/stores/convertet'
 import { convertTokenSymbol } from '@/utils/converter'
@@ -5,6 +6,7 @@ import { convertTokenSymbol } from '@/utils/converter'
 export function useConverter() {
   const converterStore = useConverterStore()
   const userStore = useUserStore()
+  const connectionStore = useConnectionStore()
 
   const { notify } = useQuasar()
 
@@ -29,7 +31,7 @@ export function useConverter() {
 
   const pairAccount = computed(() => converterStore.state.selectedPair?.account)
   const pairRatio = computed(() => pairAccount.value?.ratio?.num?.toNumber() ?? 1)
-  const pairLockedAmount = computed(() => pairAccount.value?.lockedAmount?.toNumber() ?? 0)
+  const pairLockedAmount = computed(() => pairAccount.value?.lockedAmount?.toNumber() / LAMPORTS_PER_SOL ?? 0)
   const pairLockFee = computed(() => pairAccount.value?.lockFee)
 
   const tokenASymbol = computed(() => {
@@ -47,31 +49,48 @@ export function useConverter() {
   })
 
   async function lockUnlockToken(lock = true) {
-    if (!pairAccount.value) {
+    const proofRequest = userStore.state.certificates?.find(c => c.data?.policy.toBase58() === String(userStore.requiredPolicy))?.pubkey
+
+    if (!pairAccount.value || !proofRequest) {
       return
     }
     try {
       converterStore.state.converting = true
       const tokenA = pairAccount.value.tokenA
       const tokenB = pairAccount.value.tokenB
-      const proofRequest = pairAccount.value.policy
-      const amount = Number(converterStore.state.from.amount)
+      const amount = Number(converterStore.state.from.amount * LAMPORTS_PER_SOL)
+
+      let res
 
       if (lock) {
-        await converterStore.converterClient.lockTokens({
+        res = await converterStore.converterClient.lockTokens({
           tokenA,
           tokenB,
           amount,
           proofRequest,
         })
       } else {
-        await converterStore.converterClient.unlockTokens({
+        res = await converterStore.converterClient.unlockTokens({
           tokenA,
           tokenB,
           amount,
           proofRequest,
         })
       }
+
+      console.log(res)
+
+      notify({
+        message: 'Transaction confirmed',
+        type: 'positive',
+        actions: [{
+          label: 'Explore',
+          color: 'white',
+          target: '_blank',
+          href: `https://explorer.solana.com/tx/${res.signature}?cluster=${connectionStore.cluster}`,
+          onClick: () => false,
+        }],
+      })
 
       await converterStore.getAllTokens()
     } catch (err) {
