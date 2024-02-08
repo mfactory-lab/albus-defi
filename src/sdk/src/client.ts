@@ -1,8 +1,8 @@
 import { Buffer } from 'node:buffer'
 import type { Address } from '@coral-xyz/anchor'
+import { AnchorProvider, BN, Program, web3 } from '@coral-xyz/anchor'
 import type { ConfirmOptions, Connection } from '@solana/web3.js'
 import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
-import { AnchorProvider, BN, Program, web3 } from '@coral-xyz/anchor'
 import {
   MINT_SIZE,
   TOKEN_PROGRAM_ID,
@@ -13,6 +13,8 @@ import {
   getAccount,
   getAssociatedTokenAddressSync,
   getMinimumBalanceForRentExemptMint,
+  createSetAuthorityInstruction,
+  AuthorityType
 } from '@solana/spl-token'
 import type { Admin, Manager, Pair, Ratio, User, WhitelistedUserInfo } from './generated'
 import {
@@ -194,6 +196,13 @@ export class SmartConverterClient {
     } else {
       pair = this.pda.pair(tokenA, tokenB)[0]
       pairAuthority = this.pda.pairAuthority(pair)[0]
+
+      tx.add(createSetAuthorityInstruction(
+        tokenB,
+        this.provider.publicKey,
+        AuthorityType.MintTokens,
+        pairAuthority
+      ))
     }
 
     await this.handleMissingTokenAccount(tx, tokenA, pairAuthority)
@@ -674,13 +683,13 @@ class SmartConverterPDA {
   }
 }
 
-export interface Wallet {
+export type Wallet = {
   signTransaction(tx: Transaction): Promise<Transaction>
   signAllTransactions(txs: Transaction[]): Promise<Transaction[]>
   publicKey: PublicKey
 }
 
-interface AddPairProps {
+type AddPairProps = {
   /// Security token mint address
   tokenA: PublicKey
   /// Utility token mint address
@@ -692,17 +701,17 @@ interface AddPairProps {
   policy?: PublicKey
 }
 
-interface WhitelistProps {
+type WhitelistProps = {
   userWallet: PublicKey
   tokenA: PublicKey
   tokenB: PublicKey
 }
 
-interface UpdateUserProps {
+type UpdateUserProps = {
   userWallet: PublicKey
 }
 
-interface LockTokensProps {
+type LockTokensProps = {
   /// Mint A
   tokenA: PublicKey
   /// Mint B
@@ -718,27 +727,27 @@ interface LockTokensProps {
   proofRequest?: PublicKey
 }
 
-interface ManagerProps {
+type ManagerProps = {
   managerWallet: PublicKey
 }
 
-interface RemovePairProps {
+type RemovePairProps = {
   tokenA: PublicKey
   tokenB: PublicKey
 }
 
-interface SetAdminProps {
+type SetAdminProps = {
   authority: PublicKey
 }
 
-interface WithdrawFeeProps {
+type WithdrawFeeProps = {
   tokenA: PublicKey
   tokenB: PublicKey
   destination: PublicKey
   amount: number | BN
 }
 
-interface UnlockTokensProps {
+type UnlockTokensProps = {
   tokenA: PublicKey
   tokenB: PublicKey
   amount: number | BN
@@ -746,7 +755,7 @@ interface UnlockTokensProps {
   proofRequest?: PublicKey
 }
 
-interface UpdatePairProps {
+type UpdatePairProps = {
   tokenA: PublicKey
   tokenB: PublicKey
   newAuthority?: PublicKey
