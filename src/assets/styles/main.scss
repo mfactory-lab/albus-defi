@@ -106,3 +106,55 @@ main {
         }
     }
 }
+
+
+.swap-change {
+    position: relative;
+    height: 10px;
+  
+    .q-btn {
+      position: absolute;
+      z-index: 1;
+      left: 50%;
+      top: -16px;
+      border-radius: 100%;
+      height: 68px;
+      width: 68px;
+      margin: 0 0 0 -34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.5s;
+      background: $primary;
+      border-radius: 50%;
+      
+      @media (max-width: $breakpoint-xs) {
+        width: 56px;
+        height: 56px;
+        top: -12px;
+      }
+  
+      i {
+        height: 68px;
+  
+  
+        circle {
+          fill: transparent;
+        }
+  
+        @media (max-width: $breakpoint-xs) {
+          width: 56px;
+          height: 56px;
+  
+          svg {
+            width: 56px;
+            height: 56px;
+          }
+        }
+      }
+  
+      .q-focus-helper {
+        display: none;
+      }
+    }
+  }
