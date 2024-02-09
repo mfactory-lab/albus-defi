@@ -98,7 +98,7 @@ const insufficientError = computed(() => {
       </div>
 
       <div class="swap-info q-mt-md q-pt-xs">
-        <dl class="text-weight-medium">
+        <dl>
           <dt>Received</dt>
           <dd>
             {{ tokenReceived }} {{ tokenBSymbol }}
