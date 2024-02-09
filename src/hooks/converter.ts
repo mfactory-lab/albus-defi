@@ -44,6 +44,8 @@ export function useConverter() {
     return convertTokenSymbol(mint, converterStore.state.selectedPair?.tokensMetadata)
   })
 
+  const isDisabledInputs = computed(() => converterStore.state.pairs.length === 0)
+
   const isHaveCertificate = computed(() => {
     return !!userStore.state.certificates?.find(c => c.data?.policy.toBase58() === String(userStore.requiredPolicy))
   })
@@ -58,7 +60,7 @@ export function useConverter() {
       converterStore.state.converting = true
       const tokenA = pairAccount.value.tokenA
       const tokenB = pairAccount.value.tokenB
-      const amount = Number(converterStore.state.from.amount * LAMPORTS_PER_SOL)
+      const amount = Number(converterStore.state.from.amount * LAMPORTS_PER_SOL) / (converterStore.state.isLock ? 1 : pairRatio.value)
 
       let res
 
@@ -78,8 +80,6 @@ export function useConverter() {
         })
       }
 
-      console.log(res)
-
       notify({
         message: 'Transaction confirmed',
         type: 'positive',
@@ -92,7 +92,12 @@ export function useConverter() {
         }],
       })
 
-      await converterStore.getAllTokens()
+      setTimeout(async () => {
+        Promise.all([
+          await converterStore.getAllTokens(),
+          await converterStore.updatePairData(converterStore.state.selectedPair!.publicKey.toBase58()),
+        ])
+      }, 1000)
     } catch (err) {
       console.error('lockedToken error: ', err)
       notify({
@@ -112,6 +117,7 @@ export function useConverter() {
 
   watch(() => converterStore.state.from.amount, (amount) => {
     if (!amount) {
+      converterStore.state.to.amount = undefined
       return
     }
     converterStore.state.to.amount = converterStore.state.isLock
@@ -130,5 +136,6 @@ export function useConverter() {
     tokenBSymbol,
     isHaveCertificate,
     lockUnlockToken,
+    isDisabledInputs,
   }
 }

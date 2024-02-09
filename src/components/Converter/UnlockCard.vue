@@ -14,6 +14,7 @@ const {
   tokenBSymbol,
   isHaveCertificate,
   lockUnlockToken,
+  isDisabledInputs,
 } = useConverter()
 
 state.isLock = false
@@ -23,7 +24,7 @@ const wallet = useAnchorWallet()
 const balanceFrom = computed(() => state.from.balance)
 const balanceTo = computed(() => state.to.balance)
 
-const tokenReceived = computed(() => state.to.amount)
+const tokenReceived = computed(() => state.to.amount ?? 0)
 
 function setMaxAmount() {
   state.from.amount = balanceFrom.value
@@ -62,10 +63,10 @@ const insufficientError = computed(() => {
           </div>
           <q-input
             v-model="state.from.amount" :maxlength="14" outlined placeholder="0.0" class="swap-input"
-            @keypress="onlyNumber"
+            :disable="isDisabledInputs" @keypress="onlyNumber"
           >
             <template #append>
-              <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount">
+              <q-btn :disable="isDisabledInputs" dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount">
                 MAX
               </q-btn>
               <select-token
@@ -87,7 +88,7 @@ const insufficientError = computed(() => {
               </div>
             </div>
           </div>
-          <q-input v-model="state.to.amount" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
+          <q-input v-model="state.to.amount" :disable="isDisabledInputs" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
             <template v-if="state.to?.symbol" #append>
               <div class="convert-to">
                 <img :src="convertTokenIcon(state.to?.image)"> <span>{{ state.to?.symbol }}</span>
@@ -98,7 +99,7 @@ const insufficientError = computed(() => {
       </div>
 
       <div class="swap-info q-mt-md q-pt-xs">
-        <dl class="text-weight-medium">
+        <dl>
           <dt>Received</dt>
           <dd>
             {{ tokenReceived }} {{ tokenBSymbol }}
