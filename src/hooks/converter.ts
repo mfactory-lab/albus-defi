@@ -58,7 +58,7 @@ export function useConverter() {
       converterStore.state.converting = true
       const tokenA = pairAccount.value.tokenA
       const tokenB = pairAccount.value.tokenB
-      const amount = Number(converterStore.state.from.amount * LAMPORTS_PER_SOL)
+      const amount = Number(converterStore.state.from.amount * LAMPORTS_PER_SOL) / (converterStore.state.isLock ? 1 : pairRatio.value)
 
       let res
 
