@@ -31,7 +31,9 @@ export function useConverter() {
 
   const pairAccount = computed(() => converterStore.state.selectedPair?.account)
   const pairRatio = computed(() => pairAccount.value?.ratio?.num?.toNumber() ?? 1)
-  const pairLockedAmount = computed(() => pairAccount.value?.lockedAmount?.toNumber() / LAMPORTS_PER_SOL ?? 0)
+  const pairLockedAmount = computed(() => pairAccount.value?.lockedAmount
+    ? pairAccount.value?.lockedAmount?.toNumber() / LAMPORTS_PER_SOL
+    : 0)
   const pairLockFee = computed(() => pairAccount.value?.lockFee)
 
   const tokenASymbol = computed(() => {
