@@ -78,8 +78,6 @@ export function useConverter() {
         })
       }
 
-      console.log(res)
-
       notify({
         message: 'Transaction confirmed',
         type: 'positive',
@@ -92,7 +90,12 @@ export function useConverter() {
         }],
       })
 
-      await converterStore.getAllTokens()
+      setTimeout(async () => {
+        Promise.all([
+          await converterStore.getAllTokens(),
+          await converterStore.updatePairData(converterStore.state.selectedPair!.publicKey.toBase58()),
+        ])
+      }, 1000)
     } catch (err) {
       console.error('lockedToken error: ', err)
       notify({

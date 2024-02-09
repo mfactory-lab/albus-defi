@@ -65,7 +65,7 @@ export const useConverterStore = defineStore('converter', () => {
     }
   }
 
-  watchDebounced(converterClient, async (c) => {
+  const getAllPairs = async () => {
     try {
       state.loading = true
       const pairs = await converterClient.value.findPairs()
@@ -85,12 +85,40 @@ export const useConverterStore = defineStore('converter', () => {
           return { ...p, tokensMetadata }
         }),
       )
+
       state.pairs = preparePairs
     } catch (err) {
       console.log(err)
     } finally {
       state.loading = false
     }
+  }
+
+  const updatePairData = async (address: string) => {
+    try {
+      state.loading = true
+      const newPairData = await converterClient.value.fetchPair(address)
+      if (newPairData) {
+        const existPairIdx = state.pairs.findIndex(p => p.publicKey.toBase58() === address)
+        if (existPairIdx !== -1) {
+          const existPair = state.pairs[existPairIdx]
+          state.pairs[existPairIdx] = {
+            ...existPair,
+            account: newPairData,
+          }
+          state.selectedPair = state.pairs[existPairIdx]
+        }
+      }
+    } catch (err) {
+      console.log(err)
+      await getAllPairs()
+    } finally {
+      state.loading = false
+    }
+  }
+
+  watchDebounced(converterClient, async (c) => {
+    await getAllPairs()
   }, { immediate: true, debounce: 500, maxWait: 1000 })
 
   watch(() => anchorWallet.value?.publicKey, async (pubkey) => {
@@ -141,6 +169,7 @@ export const useConverterStore = defineStore('converter', () => {
   return {
     state,
     getAllTokens,
+    updatePairData,
     converterClient,
   }
 })
