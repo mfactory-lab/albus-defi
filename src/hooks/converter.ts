@@ -44,6 +44,8 @@ export function useConverter() {
     return convertTokenSymbol(mint, converterStore.state.selectedPair?.tokensMetadata)
   })
 
+  const isDisabledInputs = computed(() => converterStore.state.pairs.length === 0)
+
   const isHaveCertificate = computed(() => {
     return !!userStore.state.certificates?.find(c => c.data?.policy.toBase58() === String(userStore.requiredPolicy))
   })
@@ -115,6 +117,7 @@ export function useConverter() {
 
   watch(() => converterStore.state.from.amount, (amount) => {
     if (!amount) {
+      converterStore.state.to.amount = undefined
       return
     }
     converterStore.state.to.amount = converterStore.state.isLock
@@ -133,5 +136,6 @@ export function useConverter() {
     tokenBSymbol,
     isHaveCertificate,
     lockUnlockToken,
+    isDisabledInputs,
   }
 }

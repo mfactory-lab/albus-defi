@@ -118,8 +118,20 @@ export const useConverterStore = defineStore('converter', () => {
   }
 
   watchDebounced(converterClient, async (c) => {
-    await getAllPairs()
+    if (connectionStore.cluster === 'devnet') {
+      await getAllPairs()
+    }
   }, { immediate: true, debounce: 500, maxWait: 1000 })
+
+  watch(() => connectionStore.cluster, (c) => {
+    if (c !== 'devnet') {
+      state.pairs = []
+      state.selectedPair = undefined
+      state.token = undefined
+      state.from = { amount: undefined }
+      state.to = { amount: undefined }
+    }
+  })
 
   watch(() => anchorWallet.value?.publicKey, async (pubkey) => {
     if (!pubkey) {
