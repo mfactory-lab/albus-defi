@@ -11,7 +11,7 @@ import type { TokenData } from '@/config'
 export const useConverterStore = defineStore('converter', () => {
   const connectionStore = useConnectionStore()
   const anchorWallet = useAnchorWallet()
-  const { setContractPolicy, contractPolicy, requiredPolicyData } = useUserStore()
+  const { setContractPolicy, contractPolicy } = useUserStore()
 
   const state = reactive<ConverterState>({
     from: {
