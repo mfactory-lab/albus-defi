@@ -2,14 +2,17 @@
 const storageRPC = useLocalStorage('rpc', '')
 const connectionStore = useConnectionStore()
 
+const isDevRPC = computed(() => storageRPC.value === 'devnet')
+
 function handleSwitch() {
-  connectionStore.setRpc('devnet')
+  if (!isDevRPC.value) {
+    connectionStore.setRpc('devnet')
+  }
 }
 
 onUnmounted(() => {
   const isProd = import.meta.env.MODE === 'prod'
-  const isDevRPC = storageRPC.value === 'devnet'
-  if (isProd && isDevRPC) {
+  if (isProd && isDevRPC.value) {
     connectionStore.setRpc('jfactory-mainnet')
   }
 })
@@ -20,7 +23,7 @@ onUnmounted(() => {
     <div class="app-description__details">
       The converter works exclusively in presentation mode and only on the devnet network. You can get acquainted with the
       functionality by switching Solana RPC Network.
-      <q-btn class="switch-network-btn" unelevated @click="handleSwitch">
+      <q-btn :disable="isDevRPC" class="switch-network-btn" unelevated @click="handleSwitch">
         switch network
       </q-btn>
     </div>
