@@ -4,6 +4,8 @@ import faviconlight from '@/assets/img/favicon/favicon-light.png'
 import './assets/styles/main.scss'
 
 const { state } = useQuasarThemeStore()
+const storageRPC = useLocalStorage('rpc', '')
+const connectionStore = useConnectionStore()
 
 useHead({
   title: import.meta.env.VITE_APP_TITLE,
@@ -30,6 +32,11 @@ const isPasswordProtected = computed(() => auth.isEnabled && !auth.isAuthenticat
 const route = useRoute()
 const router = useRouter()
 watch(route, () => {
+  const isProd = import.meta.env.MODE === 'prod'
+  const isDevRPC = storageRPC.value === 'devnet'
+  if (isProd && isDevRPC) {
+    connectionStore.setRpc('jfactory-mainnet')
+  }
   if (route.name === 'index' || route.name === 'all' || (route.name && !router.hasRoute(route.name))) {
     router.push('/swap')
   }

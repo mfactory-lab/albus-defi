@@ -15,6 +15,7 @@ declare module 'vue' {
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     ConverterCard: typeof import('./../src/components/Converter/ConverterCard.vue')['default']
+    ConverterDescription: typeof import('./../src/components/Converter/ConverterDescription.vue')['default']
     CopyToClipboard: typeof import('./../src/components/CopyToClipboard.vue')['default']
     CreateCertificateBtn: typeof import('./../src/components/PolicyCard/CreateCertificateBtn.vue')['default']
     CreatePoolTokenData: typeof import('./../src/components/CreatePool/CreatePoolTokenData.vue')['default']

@@ -93,8 +93,16 @@ body.body--dark {
         }
     }
 
-    .converter-faucet {
-        background: $secondary;
+    .converter {
+        &-faucet {
+            background: $secondary;
+        }
+
+        &-description {
+            .switch-network-btn {
+                background: $secondary;
+            }
+        }
     }
 
     // menu
