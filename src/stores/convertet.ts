@@ -117,7 +117,7 @@ export const useConverterStore = defineStore('converter', () => {
     }
   }
 
-  watchDebounced(converterClient, async (c) => {
+  watchDebounced([() => connectionStore.cluster, () => converterClient.value], async () => {
     if (connectionStore.cluster === 'devnet') {
       await getAllPairs()
     }
