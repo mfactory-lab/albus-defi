@@ -40,11 +40,11 @@ async function handleFaucet() {
 
 <template>
   <div class="converter">
-    <div v-if="converterStore.state.pairs.length !== 0 && isDevnet && publicKey" class="converter-faucet">
+    <div v-if="converterStore.state.pairs.length !== 0 && isDevnet && publicKey" class="converter-faucet" @click="handleFaucet">
       <div class="converter-faucet__descr">
         To get the opTK token, click on faucet.
       </div>
-      <img :src="faucetIcon" alt="faucet icon" @click="handleFaucet">
+      <img :src="faucetIcon" alt="faucet icon">
     </div>
     <q-card class="liquidity-tabs swap-card swap-widget">
       <q-tabs
@@ -70,7 +70,6 @@ async function handleFaucet() {
 
 <style lang="scss">
 .converter {
-  position: relative;
   display: flex;
   width: 450px;
 
@@ -81,29 +80,36 @@ async function handleFaucet() {
   }
 
   &-faucet {
-    min-width: 118px;
-    width: 118px;
+    min-width: 98px;
+    width: 98px;
+    height: 180px;
     position: absolute;
-    left: -135px;
+    right: 0;
+    background: $primary;
+    border-radius: 6px 0px 0px 6px;
+    text-align: right;
+    padding-top: 10px;
+    cursor: pointer;
 
     @media (max-width: $breakpoint-md) {
       position: initial;
-      left: 0;
+      border-radius: 6px;
     }
 
     &__descr {
       width: 100%;
-      color: $secondary;
-      font-size: 12px;
+      color: #fff;
+      font-size: 10px;
       font-weight: 400;
       line-height: 13px;
       margin-bottom: 14px;
+      padding: 0 13px;
+      text-align: right;
     }
 
     img {
-      width: 115px;
+      width: 67px;
       object-fit: contain;
-      cursor: pointer;
     }
   }
 }
