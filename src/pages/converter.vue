@@ -1,5 +1,5 @@
 <template>
-  <app-description-top class="q-mt-lg" />
+  <converter-description class="q-mt-lg" />
   <div class="main-block row justify-center">
     <converter-card />
   </div>

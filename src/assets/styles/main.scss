@@ -19,7 +19,7 @@ main {
 
     @media (max-width: $breakpoint-xs) {
         padding: 40px 0 30px 0;
-        width: 90%;
+        max-width: 90%;
         margin: 0 auto;
     }
 }
