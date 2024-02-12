@@ -79,6 +79,10 @@ async function handleFaucet() {
     gap: 20px;
   }
 
+  @media (max-width: $breakpoint-xs) {
+    width: 100%;
+  }
+
   &-faucet {
     min-width: 98px;
     width: 98px;
