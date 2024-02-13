@@ -119,7 +119,10 @@ export const useConverterStore = defineStore('converter', () => {
 
   watchDebounced([() => connectionStore.cluster, () => converterClient.value], async () => {
     if (connectionStore.cluster === 'devnet') {
-      await getAllPairs()
+      Promise.all([
+        await getAllPairs(),
+        await getAllTokens(),
+      ])
     }
   }, { immediate: true, debounce: 500, maxWait: 1000 })
 
