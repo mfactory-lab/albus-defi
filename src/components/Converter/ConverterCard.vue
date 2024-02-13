@@ -40,12 +40,15 @@ async function handleFaucet() {
 
 <template>
   <div class="converter">
-    <div v-if="converterStore.state.pairs.length !== 0 && isDevnet && publicKey" class="converter-faucet" @click="handleFaucet">
+    <q-btn
+      v-if="converterStore.state.pairs.length !== 0 && isDevnet && publicKey" class="converter-faucet" unelevated
+      dense :loading="converterStore.state.loading" @click="handleFaucet"
+    >
       <div class="converter-faucet__descr">
         To get the opTK token, click on faucet.
       </div>
       <img :src="faucetIcon" alt="faucet icon">
-    </div>
+    </q-btn>
     <q-card class="liquidity-tabs swap-card swap-widget">
       <q-tabs
         v-model="tab" align="justify" indicator-color="transparent"
@@ -92,23 +95,43 @@ async function handleFaucet() {
     background: $primary;
     border-radius: 6px 0px 0px 6px;
     text-align: right;
-    padding-top: 10px;
+    padding: 10px 0 0;
     cursor: pointer;
 
     @media (max-width: $breakpoint-md) {
-      position: initial;
+      position: relative;
       border-radius: 6px;
+      width: 195px;
+      height: auto;
+      padding: 10px 0;
     }
 
     &__descr {
       width: 100%;
       color: #fff;
+      text-transform: initial;
       font-size: 10px;
       font-weight: 400;
       line-height: 13px;
-      margin-bottom: 14px;
+      margin-bottom: 8px;
       padding: 0 13px;
       text-align: right;
+    }
+
+    .q-btn__content {
+      justify-content: flex-end;
+      align-items: flex-start;
+      gap: 0;
+
+      @media (max-width: $breakpoint-md) {
+        align-items: center;
+        flex-wrap: nowrap;
+        width: 195px;
+      }
+    }
+
+    .q-spinner {
+      color: #fff;
     }
 
     img {

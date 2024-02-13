@@ -10,6 +10,7 @@ declare module 'vue' {
     AppDescription: typeof import('./../src/components/AppDescription.vue')['default']
     AppDescriptionTop: typeof import('./../src/components/AppDescriptionTop.vue')['default']
     AppHeader: typeof import('./../src/components/AppHeader.vue')['default']
+    AppNote: typeof import('./../src/components/AppNote.vue')['default']
     CertificateStatus: typeof import('./../src/components/PolicyCard/CertificateStatus.vue')['default']
     ClockSpinner: typeof import('./../src/components/icons/ClockSpinner.vue')['default']
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
