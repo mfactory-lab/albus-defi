@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { debounce } from 'lodash-es'
+import type { Cluster } from '@solana/web3.js'
 import { type PoolData, type TxData, getCoinsPrice, getPoolsStats, getPoolsTransactions, lamportsToSol } from '@/utils'
 import { TOKENS_PRICE_NAME } from '@/config'
 
@@ -43,7 +44,7 @@ export const usePoolsStatsStore = defineStore('pools-stats', () => {
   const getPoolsData = debounce(async () => {
     poolsLoading.value = true
     try {
-      poolsData.value = await getPoolsStats()
+      poolsData.value = await getPoolsStats(connectionStore.cluster as Cluster)
     } catch (e) {
       console.error('get pools data: ', e)
     } finally {
@@ -52,11 +53,12 @@ export const usePoolsStatsStore = defineStore('pools-stats', () => {
   }, 500)
 
   watch(swapPools, getPoolsData, { immediate: true })
+  setInterval(getPoolsData, 60000)
 
   const getTxData = debounce(async () => {
     txLoading.value = true
     try {
-      txData.value = await getPoolsTransactions()
+      txData.value = await getPoolsTransactions(connectionStore.cluster as Cluster)
     } catch (e) {
       console.error('get tx data: ', e)
     } finally {
@@ -70,7 +72,7 @@ export const usePoolsStatsStore = defineStore('pools-stats', () => {
   const getPriceData = debounce(async () => {
     priceLoading.value = true
     try {
-      priceData.value = await getCoinsPrice()
+      priceData.value = await getCoinsPrice(connectionStore.cluster as Cluster)
     } catch (e) {
       console.error('get tx data: ', e)
     } finally {
