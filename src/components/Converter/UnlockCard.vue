@@ -21,6 +21,8 @@ state.isLock = false
 
 const wallet = useAnchorWallet()
 
+const { certificateExpired } = useCertificate()
+
 const balanceFrom = computed(() => state.from.balance)
 const balanceTo = computed(() => state.to.balance)
 
@@ -128,7 +130,8 @@ const insufficientError = computed(() => {
       <div class="swap-submit q-mt-md">
         <q-btn
           :loading="state.converting" rounded :ripple="false"
-          :disable="!wallet?.publicKey || !state.from.amount || state.from.amount <= 0 || !!insufficientError || !isHaveCertificate"
+          :disable="!wallet?.publicKey || !state.from.amount
+            || state.from.amount <= 0 || !!insufficientError || !isHaveCertificate || certificateExpired"
           @click="handleUnlock"
         >
           Unlock token

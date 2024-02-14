@@ -15,8 +15,13 @@ export function useCertificate(policy?: string) {
 
   const requiredPolicy = computed(() => policy ?? userStore.requiredPolicy)
 
+  const certificateExpired = computed(() => certificate.value?.data?.expiredAt
+    ? Number(certificate.value?.data?.expiredAt) * 1000 < Date.now()
+    : false)
+
   const certificateValid = computed(() => {
-    return !requiredPolicy.value || (certificate.value && certificate.value.data?.status === ProofRequestStatus.Verified)
+    return !requiredPolicy.value || (certificate.value && (certificate.value.data?.status === ProofRequestStatus.Verified)
+    && !certificateExpired.value)
   })
 
   const certificateLink = computed(() => {
@@ -25,7 +30,7 @@ export function useCertificate(policy?: string) {
     if (ENVIRONMENT !== AlbusClientEnv.PROD && cluster.value === 'mainnet-beta') {
       albusUrl = 'https://stage.app.albus.finance'
     }
-    if (certificate.value && certificate.value.data?.status !== ProofRequestStatus.Rejected) {
+    if (certificate.value && certificate.value.data?.status !== ProofRequestStatus.Rejected && !certificateExpired.value) {
       return `${albusUrl}/holder?certificate=${certificate.value.pubkey?.toBase58()}`
     }
     const redirect = encodeURIComponent(`${location.origin}${route.fullPath}`)
@@ -36,5 +41,6 @@ export function useCertificate(policy?: string) {
     certificate,
     certificateLink,
     certificateValid,
+    certificateExpired,
   }
 }

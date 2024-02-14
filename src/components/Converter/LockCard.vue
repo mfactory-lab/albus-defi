@@ -26,6 +26,8 @@ const balanceTo = computed(() => state.to.balance)
 
 const tokenReceived = computed(() => state.to.amount ?? 0)
 
+const { certificateExpired } = useCertificate()
+
 function setMaxAmount() {
   state.from.amount = balanceFrom.value
 }
@@ -66,7 +68,10 @@ const insufficientError = computed(() => {
             :disable="isDisabledInputs" @keypress="onlyNumber"
           >
             <template #append>
-              <q-btn :disable="isDisabledInputs" dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount">
+              <q-btn
+                :disable="isDisabledInputs" dense unelevated :ripple="false" class="swap-input__max"
+                @click="setMaxAmount"
+              >
                 MAX
               </q-btn>
               <select-token
@@ -88,7 +93,10 @@ const insufficientError = computed(() => {
               </div>
             </div>
           </div>
-          <q-input v-model="state.to.amount" :disable="isDisabledInputs" readonly :maxlength="14" outlined placeholder="0.0" class="swap-input">
+          <q-input
+            v-model="state.to.amount" :disable="isDisabledInputs" readonly :maxlength="14" outlined
+            placeholder="0.0" class="swap-input"
+          >
             <template v-if="state.to?.symbol" #append>
               <div class="convert-to">
                 <img :src="convertTokenIcon(state.to?.image)"> <span>{{ state.to?.symbol }}</span>
@@ -128,7 +136,9 @@ const insufficientError = computed(() => {
       <div class="swap-submit q-mt-md">
         <q-btn
           :loading="state.converting" rounded :ripple="false"
-          :disable="!wallet?.publicKey || !state.from.amount || state.from.amount <= 0 || !!insufficientError || !isHaveCertificate"
+          :disable="!wallet?.publicKey
+            || !state.from.amount || state.from.amount <= 0 || !!insufficientError || !isHaveCertificate
+            || certificateExpired"
           @click="handleLock"
         >
           Lock token

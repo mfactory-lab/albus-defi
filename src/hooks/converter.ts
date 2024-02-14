@@ -118,7 +118,7 @@ export function useConverter() {
   }, { immediate: true, debounce: 100, maxWait: 1000 })
 
   watch(() => converterStore.state.from.amount, (amount) => {
-    if (!amount) {
+    if (!amount || Number.isNaN(Number(amount))) {
       converterStore.state.to.amount = undefined
       return
     }

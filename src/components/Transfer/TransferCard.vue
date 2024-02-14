@@ -10,6 +10,8 @@ const { state: userState, tokenBalance } = useUserStore()
 const { handleSearchToken, handleFilterToken, tokens } = useToken()
 handleFilterToken(WRAPPED_SOL_MINT)
 
+const { certificateExpired } = useCertificate()
+
 const filterTokenExist = computed(() => {
   return [...tokens.value].sort((a, b) => tokenBalance(b.symbol) - tokenBalance(a.symbol))
   // const tokensFiltered = tokens.value.filter(token => userState.tokens.find(t => token.name === lowerCase(t.symbol)))
@@ -113,7 +115,7 @@ const active = computed(() => connected.value && Number(state.value) > 0 && vali
       <policy-card class="q-my-md q-mx-auto" />
 
       <div class="swap-submit">
-        <q-btn :loading="state?.loading" :disable="!active" rounded :ripple="false" @click="transferSubmit">
+        <q-btn :loading="state?.loading" :disable="!active || certificateExpired" rounded :ripple="false" @click="transferSubmit">
           Send
         </q-btn>
       </div>
