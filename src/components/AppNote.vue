@@ -14,7 +14,7 @@
   height: 68px;
   background-color: $light-gray;
   color: #000;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
   line-height: normal;
   display: flex;
