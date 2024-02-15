@@ -20,7 +20,7 @@
   display: flex;
   align-items: center;
   margin-right: 40px;
-  border-radius: 6px 0px 0px 6px;
+  border-radius: $btn-border 0px 0px $btn-border;
 
   @media (max-width: $breakpoint-lg) {
     margin-right: 20px;

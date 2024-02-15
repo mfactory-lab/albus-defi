@@ -1,7 +1,7 @@
 .warning-disclaimer {
     display: flex;
     flex-wrap: nowrap;
-    border-radius: 6px 0px 0px 6px;
+    border-radius: $btn-border 0px 0px $btn-border;
     overflow: hidden;
     &__bar {
         background-color: $warning;

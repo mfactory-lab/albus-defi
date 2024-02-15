@@ -51,7 +51,7 @@ onUnmounted(() => {
     border: 1px solid $light-gray-middle;
     font-size: 13px;
     font-weight: 400;
-    border-radius: 6px;
+    border-radius: $btn-border;
     min-width: 148px;
     width: 148px;
     height: 40px;

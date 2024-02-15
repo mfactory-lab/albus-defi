@@ -5,7 +5,7 @@
   <div class="sidebar-footer">
     <nav>
       <a href="https://albus.finance" target="_blanc">
-        about
+        about albus
       </a>
       <!-- <router-link to="/support">
         support

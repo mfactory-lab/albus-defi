@@ -126,8 +126,12 @@
 
   &__actions {
     height: 56px;
-    .q-btn__content {
-      font-size: 17px;
+    .q-btn {
+      border-radius: $btn-border !important;
+
+      &__content {
+        font-size: 17px;
+      }
     }
   }
   
@@ -163,7 +167,7 @@
   display: flex;
   flex-direction: column;
   background-color: $primary;
-  border-radius: 6px;
+  border-radius: $btn-border;
   padding: 13px 24px;
   font-weight: 500;
   min-width: 181px;

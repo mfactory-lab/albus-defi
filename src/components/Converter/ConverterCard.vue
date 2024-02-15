@@ -93,14 +93,14 @@ async function handleFaucet() {
     position: absolute;
     right: 0;
     background: $primary;
-    border-radius: 6px 0px 0px 6px;
+    border-radius: $btn-border 0px 0px $btn-border;
     text-align: right;
     padding: 10px 0 0;
     cursor: pointer;
 
     @media (max-width: $breakpoint-md) {
       position: relative;
-      border-radius: 6px;
+      border-radius: $btn-border;
       width: 195px;
       height: auto;
       padding: 10px 0;
