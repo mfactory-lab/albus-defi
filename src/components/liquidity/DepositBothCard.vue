@@ -11,6 +11,8 @@ const lpBalance = computed(() => (tokenSwap.value && swapStore.userPoolsTokens[t
 const liquidityStore = useLiquidityStore()
 const { state, depositBothTokens, calcRate, closeSlippage } = liquidityStore
 
+const { certificateExpired } = useCertificate()
+
 const { handleSearchToken, handleFilterToken, tokens } = useToken()
 handleFilterToken(SOL_MINT)
 
@@ -75,26 +77,21 @@ watch([() => state.amountTokenA, balanceFrom, () => state.amountTokenB, balanceT
           </div>
         </div>
         <q-input
-          v-model="state.amountTokenA"
-          :maxlength="14" outlined placeholder="0.0" class="swap-input"
+          v-model="state.amountTokenA" :maxlength="14" outlined placeholder="0.0" class="swap-input"
           @update:model-value="(v) => {
             const val = String(v)
             if (val[val.length - 1] !== '.') {
               calcRate()
             }
-          }"
-          @keypress="onlyNumber"
+          }" @keypress="onlyNumber"
         >
           <template #append>
             <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount()">
               MAX
             </q-btn>
             <select-token
-              :options="tokens"
-              :token="swapState.from"
-              :swap-token="String(swapState.to.symbol)"
-              @handle-search-token="handleSearchToken"
-              @set-token="setToken"
+              :options="tokens" :token="swapState.from" :swap-token="String(swapState.to.symbol)"
+              @handle-search-token="handleSearchToken" @set-token="setToken"
             />
           </template>
         </q-input>
@@ -112,27 +109,21 @@ watch([() => state.amountTokenA, balanceFrom, () => state.amountTokenB, balanceT
           </div>
         </div>
         <q-input
-          v-model="state.amountTokenB"
-          :maxlength="14" outlined placeholder="0.0" class="swap-input"
+          v-model="state.amountTokenB" :maxlength="14" outlined placeholder="0.0" class="swap-input"
           @update:model-value="(v) => {
             const val = String(v)
             if (val[val.length - 1] !== '.') {
               calcRate(true)
             }
-          }"
-          @keypress="onlyNumber"
+          }" @keypress="onlyNumber"
         >
           <template #append>
             <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount(true)">
               MAX
             </q-btn>
             <select-token
-              :swap-token="String(swapState.from.symbol)"
-              :options="tokens"
-              :direction="true"
-              :token="swapState.to"
-              :destination-unavailable="!tokenSwap"
-              @handle-search-token="handleSearchToken"
+              :swap-token="String(swapState.from.symbol)" :options="tokens" :direction="true"
+              :token="swapState.to" :destination-unavailable="!tokenSwap" @handle-search-token="handleSearchToken"
               @set-token="setToken"
             />
           </template>
@@ -164,12 +155,15 @@ watch([() => state.amountTokenA, balanceFrom, () => state.amountTokenB, balanceT
         <dd>
           <a href="#">
             {{ formatPercent(state.slippage) }}
-            <q-menu v-model="state.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
+            <q-menu
+              v-model="state.slippageDialog" transition-duration="100" transition-show="fade"
+              transition-hide="fade"
+            >
               <q-card>
                 <q-card-section>
                   <q-btn-toggle
-                    v-model="state.slippage" spread no-caps unelevated :ripple="false" toggle-color="secondary"
-                    color="white" text-color="dark" :options="[
+                    v-model="state.slippage" spread no-caps unelevated :ripple="false"
+                    toggle-color="secondary" color="white" text-color="dark" :options="[
                       { label: '0.1%', value: 0.001 },
                       { label: '0.5%', value: 0.005 },
                       { label: '1%', value: 0.01 },
@@ -188,7 +182,11 @@ watch([() => state.amountTokenA, balanceFrom, () => state.amountTokenB, balanceT
     <policy-card class="q-mt-md q-mx-auto" />
 
     <div class="swap-submit q-mt-md">
-      <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap || !state.amountTokenA" rounded :ripple="false" @click="depositBothTokens">
+      <q-btn
+        :loading="state.swapping"
+        :disable="!state.active || !tokenSwap || !state.amountTokenA || certificateExpired" rounded
+        :ripple="false" @click="depositBothTokens"
+      >
         Add Liquidity
       </q-btn>
     </div>
@@ -199,12 +197,8 @@ watch([() => state.amountTokenA, balanceFrom, () => state.amountTokenB, balanceT
     <div v-else class="row q-mt-md text-center relative-position full-width">
       <div class="absolute-right swap-rate__refresh">
         <q-btn
-          :loading="loadingPoolTokens"
-          class="swap-card__reload"
-          unelevated
-          :color="$q.dark.isActive ? 'white' : 'primary'"
-          round
-          @click="loadPoolTokenAccounts"
+          :loading="loadingPoolTokens" class="swap-card__reload" unelevated
+          :color="$q.dark.isActive ? 'white' : 'primary'" round @click="loadPoolTokenAccounts"
         >
           <q-icon :name="evaRefresh" :color="$q.dark.isActive ? 'primary' : 'white'" />
         </q-btn>

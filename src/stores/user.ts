@@ -38,7 +38,7 @@ export const useUserStore = defineStore('user', () => {
   const contractPolicy = ref<{ [key: string]: string }>({})
   const requiredPolicy = computed<string>(() => {
     if (route.name) {
-      return contractPolicy.value[route.name] ?? pagePolicy.value
+      return contractPolicy.value[String(route.name)] ?? pagePolicy.value
     }
     return ''
   })

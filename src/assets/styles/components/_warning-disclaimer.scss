@@ -1,18 +1,25 @@
 .warning-disclaimer {
     display: flex;
     flex-wrap: nowrap;
+    border-radius: $btn-border 0px 0px $btn-border;
+    overflow: hidden;
     &__bar {
         background-color: $warning;
         align-self: stretch;
-        flex-basis: 30px;
+        flex-basis: 20px;
     }
     &__text {
         background-color: #F4F4F4;
-        padding: 20px 30px;
+        padding: 20px 50px;
         font-size: 12px;
-        font-weight: 500;
+        font-weight: 400;
         color: $black;
         flex-basis: 0;
         flex-grow: 1;
+        line-height: normal;
+
+        @media (max-width: $breakpoint-xs) {
+            padding: 20px 35px 20px 20px;
+        }
     }
 }

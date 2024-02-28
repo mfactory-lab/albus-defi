@@ -87,6 +87,25 @@ body.body--dark {
         }
     }
 
+    .converting-card {
+        .convert-to span {
+            color: #fff;
+        }
+    }
+
+    .converter {
+        &-faucet {
+            background: $secondary;
+        }
+
+        &-description {
+            .switch-network-btn {
+                background: $secondary;
+                color: #fff;
+            }
+        }
+    }
+
     // menu
 
     .menu-container {

@@ -15,6 +15,8 @@ const userStore = useUserStore()
 const poolBalanceA = computed(() => state.poolBalance[state.from.mint] ? lamportsToSol(state.poolBalance[state.from.mint], state.from.decimals) : 0)
 const poolBalanceB = computed(() => state.poolBalance[state.to.mint] ? lamportsToSol(state.poolBalance[state.to.mint], state.to.decimals) : 0)
 
+const { certificateExpired } = useCertificate()
+
 const { connected } = useWallet()
 
 const formatPercent = (n: number) => formatPct.format(n)
@@ -163,7 +165,7 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
       <div class="swap-submit q-mt-md">
         <q-btn
           :loading="state.swapping"
-          :disable="!state.active || !tokenSwap || !connected || !state.from.amount"
+          :disable="!state.active || !tokenSwap || !connected || !state.from.amount || certificateExpired"
           rounded
           :ripple="false"
           @click="swapSubmit"

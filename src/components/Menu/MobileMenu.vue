@@ -3,7 +3,7 @@ import { evaClose, evaMenu } from '@quasar/extras/eva-icons'
 
 const _route = useRoute()
 
-const routes = ['swap', 'pools', 'liquidity', 'transfer', 'about']
+const routes = ['swap', 'pools', 'liquidity', 'transfer', 'converter', 'about']
 
 const isOpen = ref(false)
 
@@ -83,8 +83,8 @@ watch(isOpen, (o) => {
   }
 
   .sidebar-theme,
-  .q-item:nth-child(4),
-  .q-item:nth-child(5) {
+  .q-item:nth-child(5),
+  .q-item:nth-child(6) {
     border-bottom: 1px solid rgba(78, 76, 76, 0.56);
 
     .body--dark & {
