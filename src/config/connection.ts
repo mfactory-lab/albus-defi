@@ -19,14 +19,14 @@ ENDPOINTS.push({
 })
 // }
 
-if (ENVIRONMENT === 'dev' || isDev) {
-  ENDPOINTS.push({
-    id: 'devnet',
-    name: 'DevNet',
-    cluster: 'devnet',
-    url: 'https://jody-hlb1qh-fast-devnet.helius-rpc.com/',
-  })
-}
+// if (ENVIRONMENT === 'dev' || isDev) {
+ENDPOINTS.push({
+  id: 'devnet',
+  name: 'DevNet',
+  cluster: 'devnet',
+  url: 'https://jody-hlb1qh-fast-devnet.helius-rpc.com/',
+})
+// }
 
 export const DEFAULT_ENDPOINT = ENDPOINTS[ENDPOINTS.length - 1] as Endpoint
 
