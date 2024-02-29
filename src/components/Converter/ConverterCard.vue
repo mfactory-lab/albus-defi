@@ -45,7 +45,7 @@ async function handleFaucet() {
       dense :loading="converterStore.state.loading" @click="handleFaucet"
     >
       <div class="converter-faucet__descr">
-        To get the opTK token, click on faucet.
+        Click the faucet to get opTK tokens.
       </div>
       <img :src="faucetIcon" alt="faucet icon">
     </q-btn>

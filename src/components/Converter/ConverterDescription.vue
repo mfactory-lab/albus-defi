@@ -21,7 +21,7 @@ onUnmounted(() => {
 <template>
   <div class="app-description converter-description">
     <q-btn :disable="isDevRPC" class="switch-network-btn" unelevated @click="handleSwitch">
-      switch network
+      {{ isDevRPC ? 'devnet' : 'switch network' }}
     </q-btn>
     <div class="app-description__details">
       The converter works exclusively in presentation mode and only on the <b>devnet network</b>. You can get acquainted
@@ -46,8 +46,8 @@ onUnmounted(() => {
   }
 
   .switch-network-btn {
-    background: $light-gray;
-    color: #000;
+    background: #075C87;
+    color: #fff;
     border: 1px solid $light-gray-middle;
     font-size: 13px;
     font-weight: 400;
@@ -55,6 +55,11 @@ onUnmounted(() => {
     min-width: 148px;
     width: 148px;
     height: 40px;
+
+    &.disabled {
+      background: #E57149;
+      opacity: 1 !important;
+    }
   }
 }
 </style>
