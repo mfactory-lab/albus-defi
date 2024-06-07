@@ -7,7 +7,7 @@ import type { Endpoint } from '@/stores'
 // import { getJFRpcToken } from '@/utils/rpc'
 
 export const ENVIRONMENT = import.meta.env.MODE as AlbusClientEnv
-const isDev = import.meta.env.DEV
+// const isDev = import.meta.env.DEV
 export const ENDPOINTS: Endpoint[] = []
 // TODO: uncomment
 // if (ENVIRONMENT !== 'dev') {

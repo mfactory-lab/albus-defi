@@ -17,13 +17,13 @@ export const useUserStore = defineStore('user', () => {
   const route = useRoute()
   const emitter = useEmitter()
 
-  const enviromentForConverter = computed(() => route.path.includes('converter') && connectionStore.rpc === 'devnet'
+  const environmentForConverter = computed(() => route.path.includes('converter') && connectionStore.rpc === 'devnet'
     ? AlbusClientEnv.DEV
     : ENVIRONMENT,
   )
 
-  const client = computed(() => AlbusClient.fromWallet(connectionStore.connection, anchorWallet.value).env(enviromentForConverter.value).configure('debug', true))
-  watch(client, () => console.log('AlbusClient: ', client.value), { immediate: true })
+  const client = computed(() => AlbusClient.fromWallet(connectionStore.connection, anchorWallet.value).env(environmentForConverter.value).configure('debug', true))
+  watch(client, () => console.log('[debug] AlbusClient: ', client.value), { immediate: true })
   const { tokens } = useToken()
 
   const serviceLoading = ref(false)
@@ -57,7 +57,8 @@ export const useUserStore = defineStore('user', () => {
   const servicePolicy = ref<PolicyItem[]>([])
   const serviceData = ref<ServiceProvider>()
   watch([appConfig, client], debounce(async () => {
-    console.log('[debug] service Code === ', appConfig.value.serviceCode)
+    // console.log('[debug] service Code === ', appConfig.value.serviceCode)
+    // console.log('[debug] environment === ', environmentForConverter.value)
     if (appConfig.value) {
       serviceLoading.value = true
       servicePolicy.value = await client.value?.policy.find({ serviceCode: appConfig.value.serviceCode })
@@ -67,9 +68,9 @@ export const useUserStore = defineStore('user', () => {
       servicePolicy.value = []
       serviceData.value = undefined
     }
-    console.log('[debug] serviceData  === ', serviceData.value)
-    console.log('[debug] required Policy pk === ', requiredPolicy.value)
-    console.log('[debug] service Policy === ', servicePolicy.value)
+    // console.log('[debug] serviceData  === ', serviceData.value)
+    // console.log('[debug] required Policy pk === ', requiredPolicy.value)
+    // console.log('[debug] service Policy === ', servicePolicy.value)
   }, 200), { immediate: true })
   const requiredPolicyData = computed(() => {
     if (requiredPolicy.value) {
@@ -124,7 +125,7 @@ export const useUserStore = defineStore('user', () => {
       })
 
       state.tokens = [solToken, ...tokensState].filter(t => !!t)
-      console.log('[debug] user tokens === ', state.tokens)
+      // console.log('[debug] user tokens === ', state.tokens)
     } finally {
       state.loading = false
     }
@@ -175,7 +176,7 @@ export const useUserStore = defineStore('user', () => {
         user: publicKey.value,
         serviceProviderCode: appConfig.value?.serviceCode,
       })
-      console.log('[debug] certificates === ', state.certificates)
+      // console.log('[debug] certificates === ', state.certificates)
 
       const subscriptions: number[] = []
       state.certificates.forEach((cert) => {
