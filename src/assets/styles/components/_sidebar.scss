@@ -53,7 +53,7 @@ aside {
       margin: 0 auto 17px;
     }
 
-    svg {
+    img {
       margin: 0;
     }
 
@@ -195,7 +195,7 @@ aside {
         color: #fff;
       }
 
-      svg {
+      img {
         width: 21px;
         margin: 0 12px 0 21px;
       }
@@ -293,8 +293,8 @@ aside {
       color: $primary;
     }
 
-    path {
-      fill: $primary;
-    }
+   img {
+    filter: brightness(.3);
+   }
   }
 }

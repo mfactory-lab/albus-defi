@@ -2,7 +2,8 @@
   <div class="warning-disclaimer">
     <div class="warning-disclaimer__bar" />
     <div class="warning-disclaimer__text">
-      Albus DeFi's services and its associated features, including smart contracts, are provided "as is". The smart contracts have not undergone external audits. By using Albus DeFi, you acknowledge and understand that the utilization of the website, software, smart contracts, and all associated services is wholly at your discretion and risk.
+      All services provided by Albus DeFi are subject to verification. To become eligible for a service, pass secure and
+      privacy-preserving verification with Albus Protocol and obtain a Compliance Certificate.
     </div>
   </div>
 </template>

@@ -16,7 +16,7 @@ const expiredAt = computed(() => {
   return Number(props.certificate?.data?.expiredAt) === 0 ? '&infin;' : formatDate(date)
 })
 
-const { certificateLink } = useCertificate()
+const { certificateLink, certificateExpired } = useCertificate()
 </script>
 
 <template>
@@ -39,6 +39,7 @@ const { certificateLink } = useCertificate()
     >
       <span v-if="!certificate">no certificate</span>
       <span v-else-if="certificate.data?.status === ProofRequestStatus.Rejected">invalid certificate</span>
+      <span v-else-if="certificateExpired">expired certificate</span>
       <span v-else>action required</span>
     </div>
   </a>

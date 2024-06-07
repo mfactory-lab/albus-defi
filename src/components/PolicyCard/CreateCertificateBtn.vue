@@ -9,6 +9,8 @@ defineProps({
   certificateLink: String,
 })
 
+const { certificateExpired } = useCertificate()
+
 const { getPaletteColor } = colors
 </script>
 
@@ -29,7 +31,7 @@ const { getPaletteColor } = colors
     target="_blank"
     type="a"
   >
-    <span class="q-mx-auto">{{ certificate ? 'prove' : 'create' }}</span>
+    <span class="q-mx-auto">{{ certificate && !certificateExpired ? 'prove' : 'create' }}</span>
     <q-icon :name="evaArrowIosForwardOutline" size="8px" color="black" />
   </q-btn>
 </template>

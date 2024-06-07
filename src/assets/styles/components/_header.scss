@@ -5,7 +5,6 @@
   justify-content: space-between;
   border-radius: 7px;
   padding: 10px 22px;
-  border-radius: $primary-border;
 
   @media (max-width: $breakpoint-md) {
     padding-right: 30px;
@@ -13,10 +12,11 @@
 
   @media (max-width: $breakpoint-sm) {
     flex-direction: column-reverse;
+    padding: 10px 22px 10px 0;
   }
 
   @media (max-width: $breakpoint-xs) {
-    padding: 20px 18px 0;
+    padding: 10px 0 0 0;
     margin: 0 auto;
     align-items: center;
   }
@@ -37,11 +37,11 @@
 
   &__buttons {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-end;
     margin-left: auto;
 
-    @media(max-width: $breakpoint-xs) {
+    @media (max-width: $breakpoint-xs) {
       justify-content: center;
       margin-right: auto;
     }
@@ -58,7 +58,7 @@
       @media (max-width: $breakpoint-sm) {
         margin-bottom: 16px;
       }
-      @media(max-width: $breakpoint-xs) {
+      @media (max-width: $breakpoint-xs) {
         width: 150px;
         font-size: 12px;
       }
@@ -74,7 +74,7 @@
   }
 
   .policy-card {
-    @media(max-width: $breakpoint-xs) {
+    @media (max-width: $breakpoint-xs) {
       margin-right: 0;
     }
   }
@@ -89,7 +89,7 @@
     }
 
     &:last-child {
-      min-height:  30px;
+      min-height: 30px;
     }
   }
 }

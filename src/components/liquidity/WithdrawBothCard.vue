@@ -7,6 +7,8 @@ const swapStore = useSwapStore()
 const { state: swapState, loadingPoolTokens, loadPoolTokenAccounts } = swapStore
 const tokenSwap = computed(() => swapStore.tokenSwap)
 
+const { certificateExpired } = useCertificate()
+
 const liquidityWithdrawStore = useLiquidityWithdrawStore()
 const { state, depositBothTokens, closeSlippage } = liquidityWithdrawStore
 
@@ -54,8 +56,8 @@ watch([() => state.poolAmount, balance], () => {
         </div>
         <div class="row justify-between" style="gap: 10px">
           <q-input
-            v-model="state.poolAmount" :maxlength="14" outlined placeholder="0.0"
-            class="swap-input col" @keypress="onlyNumber"
+            v-model="state.poolAmount" :maxlength="14" outlined placeholder="0.0" class="swap-input col"
+            @keypress="onlyNumber"
           >
             <template #append>
               <q-btn dense unelevated :ripple="false" class="swap-input__max" @click="setMaxAmount">
@@ -71,13 +73,15 @@ watch([() => state.poolAmount, balance], () => {
       <dl class="text-weight-medium">
         <dt>Min {{ swapState.from.symbol.toUpperCase() }} received</dt>
         <dd>
-          {{ formatBalance(lamportsToSol(state.minAmountTokenA, swapState.from.decimals), swapState.from.decimals) }} {{ swapState.from.symbol.toUpperCase() }}
+          {{ formatBalance(lamportsToSol(state.minAmountTokenA, swapState.from.decimals), swapState.from.decimals) }} {{
+            swapState.from.symbol.toUpperCase() }}
         </dd>
       </dl>
       <dl class="text-weight-medium">
         <dt>Min {{ swapState.to.symbol.toUpperCase() }} received</dt>
         <dd>
-          {{ formatBalance(lamportsToSol(state.minAmountTokenB, swapState.to.decimals), swapState.to.decimals) }} {{ swapState.to.symbol.toUpperCase() }}
+          {{ formatBalance(lamportsToSol(state.minAmountTokenB, swapState.to.decimals), swapState.to.decimals) }} {{
+            swapState.to.symbol.toUpperCase() }}
         </dd>
       </dl>
       <dl>
@@ -85,12 +89,15 @@ watch([() => state.poolAmount, balance], () => {
         <dd>
           <a href="#">
             {{ formatPercent(state.slippage) }}
-            <q-menu v-model="state.slippageDialog" transition-duration="100" transition-show="fade" transition-hide="fade">
+            <q-menu
+              v-model="state.slippageDialog" transition-duration="100" transition-show="fade"
+              transition-hide="fade"
+            >
               <q-card>
                 <q-card-section>
                   <q-btn-toggle
-                    v-model="state.slippage" spread no-caps unelevated :ripple="false" toggle-color="secondary"
-                    color="white" text-color="dark" :options="[
+                    v-model="state.slippage" spread no-caps unelevated :ripple="false"
+                    toggle-color="secondary" color="white" text-color="dark" :options="[
                       { label: '0.1%', value: 0.001 },
                       { label: '0.5%', value: 0.005 },
                       { label: '1%', value: 0.01 },
@@ -113,7 +120,11 @@ watch([() => state.poolAmount, balance], () => {
     <policy-card class="q-mt-md q-mx-auto" />
 
     <div class="swap-submit q-mt-md">
-      <q-btn :loading="state.swapping" :disable="!state.active || !tokenSwap || !state.poolAmount" rounded :ripple="false" @click="depositBothTokens">
+      <q-btn
+        :loading="state.swapping"
+        :disable="!state.active || !tokenSwap || !state.poolAmount || certificateExpired" rounded
+        :ripple="false" @click="depositBothTokens"
+      >
         Remove Liquidity
       </q-btn>
     </div>
@@ -124,12 +135,8 @@ watch([() => state.poolAmount, balance], () => {
     <div v-else class="row q-mt-md text-center relative-position full-width">
       <div class="absolute-right swap-rate__refresh">
         <q-btn
-          :loading="loadingPoolTokens"
-          class="swap-card__reload"
-          unelevated
-          :color="$q.dark.isActive ? 'white' : 'primary'"
-          round
-          @click="loadPoolTokenAccounts"
+          :loading="loadingPoolTokens" class="swap-card__reload" unelevated
+          :color="$q.dark.isActive ? 'white' : 'primary'" round @click="loadPoolTokenAccounts"
         >
           <q-icon :name="evaRefresh" :color="$q.dark.isActive ? 'primary' : 'white'" />
         </q-btn>

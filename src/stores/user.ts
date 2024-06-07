@@ -4,7 +4,7 @@ import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import type { AccountInfo, PublicKey, PublicKeyInitData } from '@solana/web3.js'
 import debounce from 'lodash-es/debounce'
 import type { ServiceProvider } from '@albus-finance/sdk'
-import { AlbusClient, ProofRequest, ProofRequestStatus } from '@albus-finance/sdk'
+import { AlbusClient, AlbusClientEnv, ProofRequest, ProofRequestStatus } from '@albus-finance/sdk'
 import { getSolanaBalance, getTokensByOwner } from '@/utils'
 import type { PolicyItem } from '@/config'
 import { APP_CONFIG, ENVIRONMENT, SOL_MINT, WRAPPED_SOL_MINT } from '@/config'
@@ -17,7 +17,12 @@ export const useUserStore = defineStore('user', () => {
   const route = useRoute()
   const emitter = useEmitter()
 
-  const client = computed(() => AlbusClient.fromWallet(connectionStore.connection, anchorWallet.value).env(ENVIRONMENT).configure('debug', true))
+  const enviromentForConverter = computed(() => route.path.includes('converter') && connectionStore.rpc === 'devnet'
+    ? AlbusClientEnv.DEV
+    : ENVIRONMENT,
+  )
+
+  const client = computed(() => AlbusClient.fromWallet(connectionStore.connection, anchorWallet.value).env(enviromentForConverter.value).configure('debug', true))
   watch(client, () => console.log('AlbusClient: ', client.value), { immediate: true })
   const { tokens } = useToken()
 
@@ -38,7 +43,7 @@ export const useUserStore = defineStore('user', () => {
   const contractPolicy = ref<{ [key: string]: string }>({})
   const requiredPolicy = computed<string>(() => {
     if (route.name) {
-      return contractPolicy.value[route.name] ?? pagePolicy.value
+      return contractPolicy.value[String(route.name)] ?? pagePolicy.value
     }
     return ''
   })
@@ -159,7 +164,7 @@ export const useUserStore = defineStore('user', () => {
       certificatesSubscriptions.value.forEach((s) => {
         try {
           connectionStore.connection.removeAccountChangeListener(s)
-        } catch {}
+        } catch { }
       })
       certificatesSubscriptions.value = []
       return
