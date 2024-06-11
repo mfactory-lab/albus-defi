@@ -28,9 +28,9 @@ export const APP_CONFIG = {
     policy: {
       transfer: {
         // Country
-        default: 'ANGgdHwXQd9UmfZdHvMDJ6b5ATzrmTCJz4bcbZzB5a76',
+        default: 'FxB2hdsGW18ftVUeAUtuEsTRH8k86V1Qiko384Twueed',
         // Age
-        usdc: '6c3ER8JD9Gq39AMMALZMi2Rf55QzvRcyPwNZMLn7ApSo',
+        usdc: '649MokFTvyxUYQNQavYPVeniyeMSx3QfA4TiT3zVKd65',
       },
     },
   },
