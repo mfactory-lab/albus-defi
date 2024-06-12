@@ -85,7 +85,7 @@ watch([() => state.poolAmount, balance], () => {
         </dd>
       </dl>
       <dl>
-        <dt>Slippage Tolerance</dt>
+        <dt>Slippage tolerance</dt>
         <dd>
           <a href="#">
             {{ formatPercent(state.slippage) }}
@@ -125,7 +125,7 @@ watch([() => state.poolAmount, balance], () => {
         :disable="!state.active || !tokenSwap || !state.poolAmount || certificateExpired" rounded
         :ripple="false" @click="depositBothTokens"
       >
-        Remove Liquidity
+        Withdraw Liquidity
       </q-btn>
     </div>
 

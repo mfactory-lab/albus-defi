@@ -108,7 +108,7 @@ const insufficientError = computed(() => {
 
       <div class="swap-info q-mt-md q-pt-xs">
         <dl>
-          <dt>Received</dt>
+          <dt>You will receive</dt>
           <dd>
             {{ tokenReceived }} {{ tokenBSymbol }}
           </dd>
@@ -118,7 +118,7 @@ const insufficientError = computed(() => {
           <dd>{{ pairLockedAmount }} {{ tokenASymbol }}</dd>
         </dl>
         <dl>
-          <dt>Ratio</dt>
+          <dt>Exchange rate</dt>
           <dd v-if="pairRatio">
             1:{{ pairRatio }}
           </dd>

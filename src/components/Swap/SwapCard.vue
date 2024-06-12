@@ -125,13 +125,13 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
 
       <div class="swap-info q-mt-md q-pt-xs">
         <dl class="text-weight-medium">
-          <dt>Minimum Received</dt>
+          <dt>Minimum received</dt>
           <dd>
             {{ formatBalance(lamportsToSol(state.minimumReceived, state.to.decimals)) }} {{ state.to.symbol.toUpperCase() }}
           </dd>
         </dl>
         <dl>
-          <dt>Slippage Tolerance</dt>
+          <dt>Slippage tolerance</dt>
           <dd>
             <a href="#">
               {{ formatPercent(state.slippage) }}
