@@ -28,7 +28,7 @@ ENDPOINTS.push({
 })
 // }
 
-export const DEFAULT_ENDPOINT = ENDPOINTS[ENDPOINTS.length - 1] as Endpoint
+export const DEFAULT_ENDPOINT = ENDPOINTS[0] as Endpoint
 
 /**
  * The level of commitment desired when querying state

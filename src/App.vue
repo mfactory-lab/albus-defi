@@ -32,9 +32,10 @@ const isPasswordProtected = computed(() => auth.isEnabled && !auth.isAuthenticat
 const route = useRoute()
 const router = useRouter()
 watch(route, () => {
-  const isDev = import.meta.env.MODE === 'dev'
-  const isDevRPC = storageRPC.value === 'devnet'
-  if (!isDev && isDevRPC) {
+  const mode = import.meta.env.MODE
+  console.log('[debug] environment: ', mode)
+  const isDev = mode === 'dev'
+  if (!isDev) {
     connectionStore.setRpc('jfactory-mainnet')
   }
   if (route.name === 'index' || route.name === 'all' || (route.name && !router.hasRoute(route.name))) {

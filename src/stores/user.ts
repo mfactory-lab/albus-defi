@@ -17,13 +17,13 @@ export const useUserStore = defineStore('user', () => {
   const route = useRoute()
   const emitter = useEmitter()
 
-  const environmentForConverter = computed(() => route.path.includes('converter') && connectionStore.rpc === 'devnet'
+  const environmentForConverter = computed(() => (route.path.includes('converter') && connectionStore.rpc === 'devnet')
     ? AlbusClientEnv.DEV
     : ENVIRONMENT,
   )
 
   const client = computed(() => AlbusClient.fromWallet(connectionStore.connection, anchorWallet.value).env(environmentForConverter.value).configure('debug', true))
-  watch(client, () => console.log('[debug] AlbusClient: ', client.value), { immediate: true })
+  watch(client, () => console.log('[debug] AlbusClient : ', client.value), { immediate: true })
   const { tokens } = useToken()
 
   const serviceLoading = ref(false)
