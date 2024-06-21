@@ -42,7 +42,7 @@ const expiredAt = computed(() => {
     />
     <div>
       <q-inner-loading :showing="serviceLoading" label-class="text-teal" label-style="font-size: 1.1em" />
-      <div v-if="connected" class="q-px-md q-pt-md">
+      <div v-if="connected" class="q-px-md q-py-md">
         <q-inner-loading :showing="certificateLoading" label-class="text-teal" label-style="font-size: 1.1em" />
         <div class="policy-card__title q-mb-xs">
           Your certificate
