@@ -42,6 +42,7 @@ declare module 'vue' {
     PoolsTotal: typeof import('./../src/components/pools/PoolsTotal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SelectLanguage: typeof import('./../src/components/SelectLanguage.vue')['default']
     SelectPair: typeof import('./../src/components/liquidity/SelectPair.vue')['default']
     SelectPolicyItem: typeof import('./../src/components/CreatePool/SelectPolicyItem.vue')['default']
     SelectPool: typeof import('./../src/components/swap/SelectPool.vue')['default']

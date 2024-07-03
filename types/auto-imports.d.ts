@@ -148,6 +148,7 @@ declare global {
   const useClientStore: typeof import('../src/stores/client')['useClientStore']
   const useClipboard: typeof import('@vueuse/core')['useClipboard']
   const useCloned: typeof import('@vueuse/core')['useCloned']
+  const useCoinRateStore: typeof import('../src/stores/coin-rate')['useCoinRateStore']
   const useColorMode: typeof import('@vueuse/core')['useColorMode']
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
   const useConnectionStore: typeof import('../src/stores/connection')['useConnectionStore']

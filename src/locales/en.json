@@ -1,0 +1,22 @@
+{
+  "priorityFee": {
+    "priorityFee": "Priority fee",
+    "globalFee": "Global Priority Fee",
+    "priorityLevel": "Priority level",
+    "priorityMode": "Priority Mode",
+    "setMaxCap": "Set Max Cap",
+    "maxCapInfo": "JPool intelligently minimizes the fee for you. <br> Set a max cap to prevent overpaying.",
+    "maxCap": "Max Cap",
+    "exactFee": "Exact Fee",
+    "exactInfo": "JPool will use the exact fee you set.",
+    "save": "Save changes",
+    "mode": {
+      "fast": "Fast",
+      "turbo": "Turbo",
+      "ultra": "Ultra"
+    }
+  },
+  "error": {
+    "changeFee": "Please try to change priority fee"
+  }
+}

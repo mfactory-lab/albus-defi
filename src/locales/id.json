@@ -1,0 +1,22 @@
+{
+  "priorityFee": {
+    "priorityFee": "Biaya prioritas",
+    "globalFee": "Biaya Prioritas Global",
+    "priorityLevel": "Tingkat Prioritas",
+    "priorityMode": "Mode Prioritas",
+    "setMaxCap": "Atur Batas Maks",
+    "maxCapInfo": "JPool secara cerdas meminimalkan dan memutuskan biaya terbaik untuk Anda. <br> Tetapkan batas maks untuk mencegah pembayaran berlebih.",
+    "maxCap": "Batas Maks",
+    "exactFee": "Biaya Tepat",
+    "exactInfo": "JPool akan menggunakan biaya tepat yang Anda atur.",
+    "save": "Simpan perubahan",
+    "mode": {
+      "fast": "Cepat",
+      "turbo": "Turbo",
+      "ultra": "Ultra"
+    }
+  },
+  "error": {
+    "changeFee": "Silakan coba ubah biaya prioritas"
+  }
+}

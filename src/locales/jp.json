@@ -1,0 +1,22 @@
+{
+  "priorityFee": {
+    "priorityFee": "優先手数料",
+    "globalFee": "全体的な優先手数料",
+    "priorityLevel": "優先レベル",
+    "priorityMode": "優先モード",
+    "setMaxCap": "最大キャップを設定する",
+    "maxCapInfo": "JPoolは、最適な手数料を最小限に抑えて決定します。<br>オーバーペイを防ぐために最大キャップを設定してください。",
+    "maxCap": "最大キャップ",
+    "exactFee": "正確な手数料",
+    "exactInfo": "JPoolは設定した正確な手数料を使用します。",
+    "save": "変更を保存する",
+    "mode": {
+      "fast": "高速",
+      "turbo": "ターボ",
+      "ultra": "ウルトラ"
+    }
+  },
+  "error": {
+    "changeFee": "Silakan coba ubah biaya prioritas"
+  }
+}

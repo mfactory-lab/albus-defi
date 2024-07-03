@@ -5,6 +5,7 @@ import { PROGRAM_ID, createCreateMetadataAccountV3Instruction, createUpdateMetad
 import { createSetAuthorityInstruction } from '@solana/spl-token'
 import { getCreateMintTx, getOrInitAssociatedTokenAddress, sendTransaction } from '@/utils'
 import { LP_DECIMALS, type PolicyItem, type TokenData } from '@/config'
+import { withPriorityFees } from '@/features/priority-fee'
 
 export function useCreateSwap() {
   const swapStore = useSwapStore()
@@ -128,7 +129,12 @@ export function useCreateSwap() {
       console.log('[create swap] poolMint = ', poolMint.publicKey.toBase58())
       if (tx.instructions.length > 0) {
         await monitorTransaction(
-          sendTransaction(connectionStore.connection, wallet.value!, tx.instructions, [poolMint]),
+          sendTransaction(
+            connectionStore.connection,
+            wallet.value!,
+            await withPriorityFees({ instructions: tx.instructions }),
+            [poolMint],
+          ),
           {
             onSuccess: () => {
               state.poolMint = poolMint.publicKey
@@ -189,7 +195,11 @@ export function useCreateSwap() {
       console.log('[create swap] swapTokenB = ', swapTokenB.toBase58())
       if (tx.instructions.length > 0) {
         await monitorTransaction(
-          sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
+          sendTransaction(
+            connectionStore.connection,
+            wallet.value!,
+            await withPriorityFees({ instructions: tx.instructions }),
+          ),
           {
             commitment: 'finalized',
             onSuccess: () => {
