@@ -12,10 +12,10 @@ export const ENDPOINTS: Endpoint[] = []
 // TODO: uncomment
 // if (ENVIRONMENT !== 'dev') {
 ENDPOINTS.push({
-  id: 'jfactory-mainnet',
-  name: 'JFactory RPC',
+  id: 'jpool-mainnet',
+  name: 'JPool RPC',
   cluster: 'mainnet-beta',
-  url: 'https://marketa-1sh8m6-fast-mainnet.helius-rpc.com/',
+  url: 'https://rpc.jpool.one',
 })
 // }
 
