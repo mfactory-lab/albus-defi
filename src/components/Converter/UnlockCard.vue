@@ -112,9 +112,9 @@ const insufficientError = computed(() => {
           <dd>{{ pairLockedAmount }} {{ tokenASymbol }}</dd>
         </dl>
         <dl>
-          <dt>Ratio</dt>
+          <dt>Exchange rate</dt>
           <dd v-if="pairRatio">
-            {{ pairRatio }}:1
+            1 {{ tokenBSymbol }}  = {{ 1 / pairRatio }} {{ tokenASymbol }}
           </dd>
           <dd v-else>
             -

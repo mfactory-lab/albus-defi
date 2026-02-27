@@ -82,3 +82,41 @@ export function formatRule(key: string, label: string, value: number[]) {
   }
   return `- ${formatCamelCase(key)}: ${label}`
 }
+
+export function formatMoney(val: string | number, integer = false): string {
+  if (typeof val === 'undefined' || val === null || val === '') {
+    return ''
+  }
+
+  val = val.toString()
+
+  const decimalSeparator = val.lastIndexOf('.')
+
+  let integerPart = decimalSeparator >= 0 ? val.slice(0, decimalSeparator) : val
+  let fractionalPart = decimalSeparator >= 0 ? val.slice(decimalSeparator + 1) : null
+
+  if (fractionalPart) {
+    fractionalPart = fractionalPart.slice(0, 2).replace(/\D+/g, '')
+    if (fractionalPart.length === 1) {
+      fractionalPart += '0'
+    }
+  } else if (!fractionalPart) {
+    fractionalPart = '00'
+  }
+
+  integerPart = integerPart.replace(/\D+/g, '')
+  if (!integerPart) {
+    integerPart = '0'
+  }
+
+  let formatted = ''
+  for (let i = 0; i < integerPart.length; i++) {
+    if (i !== 0 && i % 3 === 0) {
+      formatted = `${integerPart[integerPart.length - i - 1]},${formatted}`
+    } else {
+      formatted = integerPart[integerPart.length - i - 1] + formatted
+    }
+  }
+
+  return integer ? formatted : `${formatted}.${fractionalPart}`
+}

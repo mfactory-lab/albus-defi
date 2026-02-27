@@ -112,7 +112,7 @@ export const useLiquidityStore = defineStore('liquidity', () => {
       return
     }
 
-    const tokenB = Number(solToLamports(state.amountTokenA ?? 0, swapState.value.to.decimals))
+    const tokenB = Number(solToLamports(state.amountTokenB ?? 0, swapState.value.to.decimals))
     const tokenBBalance = Number(solToLamports(userStore.tokenBalance(swapState.value.to.mint) ?? 0, swapState.value.to.decimals))
     if (tokenB > tokenBBalance) {
       notify({ type: 'negative', message: `Insufficient balance ${swapState.value.to.symbol}.` })

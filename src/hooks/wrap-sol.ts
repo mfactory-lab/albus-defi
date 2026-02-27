@@ -11,6 +11,7 @@ import {
 } from '@solana/spl-token'
 import { sendTransaction, solToLamports } from '@/utils'
 import { SOL_MINT } from '@/config'
+import { withPriorityFees } from '@/features/priority-fee'
 
 export function useWrapSol() {
   const wallet = useAnchorWallet()
@@ -80,7 +81,11 @@ export function useWrapSol() {
       )
 
       await monitorTransaction(
-        sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
+        sendTransaction(
+          connectionStore.connection,
+          wallet.value!,
+          await withPriorityFees({ instructions: tx.instructions }),
+        ),
         {
           onSuccess: () => {
             state.processing = false

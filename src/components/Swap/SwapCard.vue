@@ -155,7 +155,7 @@ watch([() => state.from.amount, tokenSwap, balanceFrom], (a) => {
         </dl>
         <dl>
           <dt>Swap fee</dt>
-          <dd>{{ formatPercent(swapFee) }} SOL</dd>
+          <dd>{{ formatPercent(swapFee) }}</dd>
         </dl>
       </div>
 

@@ -7,15 +7,15 @@ import type { Endpoint } from '@/stores'
 // import { getJFRpcToken } from '@/utils/rpc'
 
 export const ENVIRONMENT = import.meta.env.MODE as AlbusClientEnv
-const isDev = import.meta.env.DEV
+// const isDev = import.meta.env.DEV
 export const ENDPOINTS: Endpoint[] = []
 // TODO: uncomment
 // if (ENVIRONMENT !== 'dev') {
 ENDPOINTS.push({
-  id: 'jfactory-mainnet',
-  name: 'JFactory RPC',
+  id: 'jpool-mainnet',
+  name: 'JPool RPC',
   cluster: 'mainnet-beta',
-  url: 'https://marketa-1sh8m6-fast-mainnet.helius-rpc.com/',
+  url: 'https://rpc.jpool.one',
 })
 // }
 
@@ -28,7 +28,7 @@ ENDPOINTS.push({
 })
 // }
 
-export const DEFAULT_ENDPOINT = ENDPOINTS[ENDPOINTS.length - 1] as Endpoint
+export const DEFAULT_ENDPOINT = ENDPOINTS[0] as Endpoint
 
 /**
  * The level of commitment desired when querying state

@@ -13,7 +13,7 @@ export const APP_CONFIG = {
     policy: {
       transfer: {
         // Age : Country
-        default: ENVIRONMENT === 'prod' ? '6nFcqxabckK5REZkUbvnmBtGB2B73Wa3HjA6qLEbgojm' : '21iMuKCP4gSKJfh7JT6byetCBLsvcAg9GpEVqPj2Adcw',
+        default: ENVIRONMENT === 'prod' ? 'H26ynTX82BFW32Ce7S4NV1H8Q2D6YyZRVQzhoadMhgQa' : '88zfWhrwxQu9MBZCBK2iaqpsRScCSVS35KGKuNH7t6Sf',
       },
       swap: {
         default: '',
@@ -28,9 +28,9 @@ export const APP_CONFIG = {
     policy: {
       transfer: {
         // Country
-        default: 'ANGgdHwXQd9UmfZdHvMDJ6b5ATzrmTCJz4bcbZzB5a76',
+        default: 'BSzgtXKkv9enRnuhq4Wh7WSuyYNTYFRg9sVqY27k5n52',
         // Age
-        usdc: '6c3ER8JD9Gq39AMMALZMi2Rf55QzvRcyPwNZMLn7ApSo',
+        usdc: 'BSzgtXKkv9enRnuhq4Wh7WSuyYNTYFRg9sVqY27k5n52',
       },
     },
   },

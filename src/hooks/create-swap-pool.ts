@@ -1,11 +1,11 @@
 import { useAnchorWallet, useWallet } from 'solana-wallets-vue'
 import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
-import { CurveType } from '@albus-finance/swap-sdk'
 import type { DataV2 } from '@metaplex-foundation/mpl-token-metadata'
 import { PROGRAM_ID, createCreateMetadataAccountV3Instruction, createUpdateMetadataAccountV2Instruction } from '@metaplex-foundation/mpl-token-metadata'
 import { createSetAuthorityInstruction } from '@solana/spl-token'
 import { getCreateMintTx, getOrInitAssociatedTokenAddress, sendTransaction } from '@/utils'
 import { LP_DECIMALS, type PolicyItem, type TokenData } from '@/config'
+import { withPriorityFees } from '@/features/priority-fee'
 
 export function useCreateSwap() {
   const swapStore = useSwapStore()
@@ -129,7 +129,12 @@ export function useCreateSwap() {
       console.log('[create swap] poolMint = ', poolMint.publicKey.toBase58())
       if (tx.instructions.length > 0) {
         await monitorTransaction(
-          sendTransaction(connectionStore.connection, wallet.value!, tx.instructions, [poolMint]),
+          sendTransaction(
+            connectionStore.connection,
+            wallet.value!,
+            await withPriorityFees({ instructions: tx.instructions }),
+            [poolMint],
+          ),
           {
             onSuccess: () => {
               state.poolMint = poolMint.publicKey
@@ -190,7 +195,11 @@ export function useCreateSwap() {
       console.log('[create swap] swapTokenB = ', swapTokenB.toBase58())
       if (tx.instructions.length > 0) {
         await monitorTransaction(
-          sendTransaction(connectionStore.connection, wallet.value!, tx.instructions),
+          sendTransaction(
+            connectionStore.connection,
+            wallet.value!,
+            await withPriorityFees({ instructions: tx.instructions }),
+          ),
           {
             commitment: 'finalized',
             onSuccess: () => {
@@ -262,7 +271,6 @@ export function useCreateSwap() {
       tokenB: state.swapTokenB.toBase58(),
       swapPolicy: state.swapPolicy.pubkey.toBase58(),
       addLiquidityPolicy: state.addLiquidityPolicy.pubkey.toBase58(),
-      curveType: CurveType.ConstantProduct,
       curveParameters: [],
       fees: {
         tradeFeeNumerator: state.tradeFeeNumerator,
@@ -287,7 +295,7 @@ export function useCreateSwap() {
         tokenB: state.swapTokenB,
         swapPolicy: state.swapPolicy.pubkey,
         addLiquidityPolicy: state.addLiquidityPolicy.pubkey,
-        curveType: CurveType.ConstantProduct,
+        curveType: 0,
         curveParameters: [],
         fees: {
           tradeFeeNumerator: state.tradeFeeNumerator,
