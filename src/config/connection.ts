@@ -15,7 +15,7 @@ ENDPOINTS.push({
   id: 'jpool-mainnet',
   name: 'JPool RPC',
   cluster: 'mainnet-beta',
-  url: 'https://rpc.jpool.finance',
+  url: 'https://rpc.jpool.one',
 })
 // }
 
